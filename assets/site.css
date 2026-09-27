@@ -39,8 +39,10 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
 .player-info { display: flex; flex-direction: column; gap: 12px; }
 .player-motto { font: italic 600 17px/1.4 var(--nu-font); color: var(--nu-text-soft); margin: 0; }
 
-/* Play Data tab */
-.data-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 40px; padding: 18px 22px; background: #f6f2f0; border-radius: 16px; }
+/* Play Data tab: result screen (info card left, milestone + platform tiles right) */
+.results-grid { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 2.15fr); gap: 22px; align-items: start; }
+.results-sections { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.results-sections .nu-tiles + .nu-info__label { margin-top: 8px; }
 
 /* Links tab */
 .records-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 20px; }
@@ -81,7 +83,15 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
   .player-grid .nu-render { min-height: 230px; }
   .nu-move { font-size: 19px; }
   .nu-desc { font-size: 14px; }
-  .data-columns { grid-template-columns: 1fr; padding: 14px; }
+  .results-grid { grid-template-columns: 1fr; }
+  .nu-result { padding: 14px 12px 16px; }
+  .nu-result__title { font-size: 24px; }
+  .nu-result-banner { margin: 16px -12px; padding: 14px 12px 14px 118px; min-height: 108px; }
+  .nu-result-banner__art { left: 14px; width: 92px; height: 92px; border-radius: 18px; }
+  .nu-gain { font-size: 38px; }
+  .nu-result-banner .nu-counter { min-width: 0; font-size: 17px; }
+  .nu-ribbon-flag { padding: 4px 24px; font-size: 13px; }
+  .nu-tiles { gap: 10px; }
   .nu-row { font-size: 17px; min-height: 54px; }
   .record-stats .nu-stat { flex: 1 1 100%; height: 36px; font-size: 14px; }   /* 3 pills don't fit side by side on a phone */
   .nu-hints { justify-content: center; gap: 8px; }

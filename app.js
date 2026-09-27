@@ -93,6 +93,8 @@ const useGamingStats = () => {
                 xboxAchievements: xb.unlockedAchievements ?? null,
                 xboxCompleted:    xb.perfectCount ?? null,
                 xboxUser:         xbox?.profile?.gamertag ?? null,
+                completions: (ra || steam || xbox) ? (results.filter(g => g.highestAwardKind === 'mastered').length + (st.perfectCount ?? 0) + (xb.perfectCount ?? 0)) : null,
+                profiles:    { ra, steam, xbox },   // raw, for the Play Data result screen
                 motto:       config?.motto ?? null,
                 genres:      config?.tags?.genre ?? [],
                 styles:      config?.tags?.style ?? [],
@@ -266,35 +268,150 @@ const PlayerTab = ({ site, gs }) => (
     </>
 );
 
-const DataTab = ({ gs }) => {
-    const left = [
-        ['RetroAchievements points', gs?.raPoints],
-        ['Mastered (RA)',            gs?.raMastered],
-        ['Beaten (RA)',              gs?.raBeaten],
-        ['Steam hours played',       gs?.steamHours],
-        ['Perfect games (Steam)',    gs?.steamPerfect],
+// ── Play Data: a result screen ───────────────────────────────────────────────
+// After the game's Result screen (リザルト): parchment sheet, a dark banner with the month's
+// gain, an info card (now playing / streak), and item tiles (recent milestones, platforms).
+const RA_MEDIA = 'https://media.retroachievements.org';
+const PF_ICON = { ra: './assets/links/retroachievements.png', steam: './assets/links/steam.png', xbox: './assets/links/xbox.png' };
+const EDS_WIDTHS = [64, 128, 150, 200, 208, 300, 424];
+const xboxImg = (url, w) => !url ? url
+    : url.includes('store-images.s-microsoft.com') ? `${url}${url.includes('?') ? '&' : '?'}w=${w}`
+    : url.includes('images-eds') ? `${url}&w=${EDS_WIDTHS.find(x => x >= w) ?? 424}` : url;
+// RA dates are UTC "YYYY-MM-DD HH:MM:SS" without a zone; Steam/Xbox are ISO.
+const toDate = (v) => (v ? new Date(/^\d{4}-\d{2}-\d{2} \d/.test(v) ? v.replace(' ', 'T') + 'Z' : v) : null);
+const dayKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const ago = (d) => {
+    if (!d) return '';
+    const m = Math.round((Date.now() - d) / 60000);
+    if (m < 60) return `${Math.max(1, m)} min ago`;
+    if (m < 1440) return `${Math.round(m / 60)} h ago`;
+    const days = Math.round(m / 1440);
+    return days === 1 ? 'yesterday' : days < 30 ? `${days} days ago` : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+};
+
+// Last 91 days of unlocks from all platforms (Gaming Hub's chunk 1 files), fetched once when
+// the tab first opens: gives "unlocked this month" and the current streak in local days.
+let recentCache = null;
+const useRecentUnlocks = () => {
+    const [dates, setDates] = useState(recentCache);
+    useEffect(() => {
+        if (recentCache) return;
+        Promise.all(['ra', 'steam', 'xbox'].map(pf => getJson(`/gaming-hub/data/${pf}/achievements/1.json`)))
+            .then(files => {
+                recentCache = files.flatMap((f, i) => (f?.recentAchievements ?? []).map(a => ({ pf: ['ra', 'steam', 'xbox'][i], at: toDate(a.date || a.unlockedAt) }))).filter(u => u.at);
+                setDates(recentCache);
+            });
+    }, []);
+    return useMemo(() => {
+        if (!dates) return null;
+        const now = new Date();
+        const inMonth = dates.filter(u => u.at.getFullYear() === now.getFullYear() && u.at.getMonth() === now.getMonth());
+        const thisMonth = inMonth.length;
+        const monthBy = { ra: 0, steam: 0, xbox: 0 };
+        inMonth.forEach(u => { monthBy[u.pf]++; });
+        const days = new Set(dates.map(u => dayKey(u.at)));
+        const cur = new Date(now);
+        if (!days.has(dayKey(cur))) cur.setDate(cur.getDate() - 1);   // a quiet today doesn't break the streak yet
+        let streak = 0;
+        while (days.has(dayKey(cur))) { streak++; cur.setDate(cur.getDate() - 1); }
+        return { thisMonth, monthBy, streak };
+    }, [dates]);
+};
+
+const DataTab = ({ site, gs }) => {
+    const recent = useRecentUnlocks();
+    const { ra, steam, xbox } = gs?.profiles ?? {};
+
+    // Now playing: the most recently played game across the three platforms.
+    const nowPlaying = useMemo(() => {
+        const r = ra?.recentlyPlayedGames?.[0], s = steam?.mostRecentGame, x = xbox?.mostRecentGame;
+        return [
+            r && { name: r.title, where: `RetroAchievements · ${r.consoleName}`, at: toDate(r.lastPlayed), done: r.numAchieved, total: r.numPossibleAchievements },
+            s && { name: s.name, where: 'Steam', at: toDate(s.lastPlayedTs), done: s.achUnlocked, total: s.achTotal },
+            x && { name: x.name, where: 'Xbox', at: toDate(x.lastPlayedTs), done: x.achUnlocked, total: x.achTotal },
+        ].filter(g => g?.at).sort((a, b) => b.at - a.at)[0] ?? null;
+    }, [ra, steam, xbox]);
+
+    // Recent milestones: RA mastered (gold) / beaten (silver), Steam perfect and Xbox completed (gold).
+    // ×N = achievements earned in that game (all of them for a completion). A beaten entry is dropped
+    // when the same game was completed in
+    // the same calendar year (same rule as Gaming Hub's Completions page).
+    const milestones = useMemo(() => {
+        const raEarned = Object.fromEntries((ra?.gameAwardsAndProgress?.results ?? []).map(g => [g.gameId, g.numAwarded]));
+        const all = [
+            ...(ra?.pageAwards?.visibleUserAwards ?? []).filter(a => a.awardType === 'Mastery/Completion' || a.awardType === 'Game Beaten')
+                .map(a => ({ key: `ra-${a.awardData}`, name: a.title, at: toDate(a.awardedAt), icon: RA_MEDIA + a.imageIcon, pf: 'ra', count: raEarned[a.awardData], tier: a.awardType === 'Game Beaten' ? 'silver' : 'gold' })),
+            ...(steam?.perfectGames ?? []).map(g => ({ key: `steam-${g.appId}`, name: g.gameName, at: toDate(g.completedAt), icon: g.iconUrl, pf: 'steam', count: g.total, tier: 'gold' })),
+            ...(xbox?.perfectGames ?? []).map(g => ({ key: `xbox-${g.titleId}`, name: g.gameName, at: toDate(g.completedAt), icon: xboxImg(g.iconUrl, 128), pf: 'xbox', count: g.total, tier: 'gold' })),
+        ].filter(m => m.at);
+        const goldYear = {};
+        all.forEach(m => { if (m.tier === 'gold') (goldYear[m.key] ??= new Set()).add(m.at.getFullYear()); });
+        return all.filter(m => m.tier === 'gold' || !goldYear[m.key]?.has(m.at.getFullYear()))
+            .sort((a, b) => b.at - a.at).slice(0, 6);
+    }, [ra, steam, xbox]);
+
+    const platforms = [
+        { id: 'ra',    name: 'RetroAchievements', value: gs?.raPoints,   unit: 'pts', href: '/gaming-hub/profile/ra/' },
+        { id: 'steam', name: 'Steam',             value: gs?.steamHours, unit: 'h',   href: '/gaming-hub/profile/steam/' },
+        { id: 'xbox',  name: 'Xbox',              value: gs?.gamerscore, unit: 'G',   href: '/gaming-hub/profile/xbox/' },
     ];
-    const right = [
-        ['Xbox gamerscore',          gs?.gamerscore],
-        ['Achievements unlocked',    gs?.achievements],
-        ['Games tracked',            gs?.games],
-        ['Platforms',                3],
-        ['Site progress',            '20%'],
-    ];
-    const col = (rows) => (
-        <div className="nu-data nu-stagger">
-            {rows.map(([label, v], i) => (
-                <React.Fragment key={label}>
-                    <span className="nu-data__label" style={{ '--i': i }}>{label}</span>
-                    <span className="nu-data__value" style={{ '--i': i }}>{typeof v === 'string' ? v : <CountUp id={`data:${label}`} value={v} />}</span>
-                </React.Fragment>
-            ))}
-        </div>
-    );
+
     return (
         <>
-            <p className="nu-heading">Play data — live from Gaming Hub</p>
-            <div className="data-columns">{col(left)}{col(right)}</div>
+            <p className="nu-heading">Latest results across all platforms.</p>
+            <div className="nu-result">
+                <div className="nu-result__title">RESULTS</div>
+                <div className="nu-result__top">
+                    <span className="nu-counter" title="Completed games (RA mastered, Steam perfect, Xbox completed)"><span className="nu-counter__icon">★</span><CountUp id="res:completions" value={gs?.completions} /></span>
+                </div>
+
+                <div className="nu-result-banner">
+                    <img className="nu-result-banner__art" src={site.avatar} alt="" />
+                    <span className="nu-ribbon-flag">Unlocked this month</span>
+                    <span className="nu-gain">+<CountUp id="res:month" value={recent?.thisMonth} /></span>
+                    <span className="nu-counter" title="Achievements unlocked, all platforms"><i className="nu-key" /><CountUp id="res:total" value={gs?.achievements} /></span>
+                </div>
+
+                <div className="results-grid">
+                    <div className="nu-info">
+                        <span className="nu-info__label">Now playing</span>
+                        <span className="nu-info__value">{nowPlaying?.name ?? '—'}</span>
+                        {nowPlaying && <span className="nu-info__sub">{nowPlaying.where} · {ago(nowPlaying.at)}{nowPlaying.total ? ` · ${nowPlaying.done}/${nowPlaying.total}` : ''}</span>}
+                        <span className="nu-info__label">Streak</span>
+                        <span className="nu-info__value">{recent ? `${recent.streak} day${recent.streak === 1 ? '' : 's'}` : '—'}</span>
+                        <span className="nu-info__sub">in a row with an unlock</span>
+                        <span className="nu-info__label">Games tracked</span>
+                        <span className="nu-info__value">{fmt(gs?.games)}</span>
+                    </div>
+                    <div className="results-sections">
+                        <span className="nu-info__label">Recent milestones</span>
+                        <div className="nu-tiles nu-stagger">
+                            {milestones.map(m => (
+                                <a key={m.key + m.tier} className={`nu-tile nu-tile--${m.tier}`} href="/gaming-hub/completions/" title={`${m.name} — ${m.tier === 'gold' ? 'completed' : 'beaten'}${m.count ? `, ${m.count} achievements earned` : ''}`}>
+                                    <span className="nu-tile__box">
+                                        <img src={m.icon} alt={m.name} />
+                                        <img className="nu-tile__pf" src={PF_ICON[m.pf]} alt="" />
+                                        {m.count > 0 && <span className="nu-tile__badge">×{m.count}</span>}
+                                    </span>
+                                    <span className="nu-tile__count">{m.at.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                                </a>
+                            ))}
+                        </div>
+                        <span className="nu-info__label">Platforms</span>
+                        <div className="nu-tiles nu-stagger">
+                            {platforms.map(pf => (
+                                <a key={pf.name} className="nu-tile" href={pf.href} title={`${pf.name} on Gaming Hub`}>
+                                    <span className="nu-tile__box nu-tile__box--logo">
+                                        <img src={PF_ICON[pf.id]} alt={pf.name} />
+                                        {recent && <span className="nu-tile__badge">+{recent.monthBy[pf.id]}</span>}
+                                    </span>
+                                    <span className="nu-tile__count"><CountUp id={`res:${pf.unit}`} value={pf.value} /> {pf.unit}</span>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     );
 };
@@ -545,7 +662,7 @@ const App = () => {
                     <div key={tab} className={`nu-enter nu-stagger${tabDir ? ` nu-enter--from-${tabDir}` : ''}`}>
                         {tab === 'creations' && <CreationsTab site={site} selected={selected} setSelected={setSelected} clStats={clStats} />}
                         {tab === 'player' && <PlayerTab site={site} gs={gs} />}
-                        {tab === 'data'   && <DataTab gs={gs} />}
+                        {tab === 'data'   && <DataTab site={site} gs={gs} />}
                         {tab === 'links'  && <LinksTab site={site} gs={gs} />}
                     </div>
                 </div>
