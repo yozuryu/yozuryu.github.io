@@ -21,6 +21,14 @@ We recreate the *style* only: never use the game's art, characters, logo or scre
 7. **Show controls like a game.** Actions get a button hint: a round glyph (`.nu-glyph`: A, B, X, Y, or a key like Q) plus a short verb ("Open", "Source", "Intro"). Keep keyboard shortcuts in sync with the hints.
 8. **Rounded, soft, chunky.** Pills and rounded rectangles everywhere; bold rounded font; soft shadows. No sharp corners, no thin 1px dashboard borders.
 9. **Placeholders look like the game's.** Unfinished things are locked cards (`.nu-card--locked`, "???"), empty slots (`.nu-slot`) or a locked plate ("🔒 ???"), not "TODO" text.
+11. **Motion: snappy like a game menu.** Use the motion tokens and classes below, never ad-hoc timings.
+    - **Durations:** 120–320 ms (`--nu-dur-fast` / `--nu-dur` / `--nu-dur-slow`).
+    - **Transform and opacity only:** never animate width, height or layout.
+    - **Entries animate, exits don't:** a new tab replaces the old one instantly.
+    - **Direction follows navigation:** next tab slides in from the right, previous from the left.
+    - **Overshoot (`--nu-ease-pop`) only for "reward" moments:** the selected card, a record emblem.
+    - **Keep the world still:** the backdrop, HUD layout and frame never move.
+    - **Reduced motion:** `prefers-reduced-motion` turns everything instant, including the count-ups and typewriter in `app.js`.
 10. **Mobile:** the tab bar becomes a carousel (active tab centered at full size with ornaments, neighbours peeking in dimmed, LB/RB buttons, swipe, position dots) so it works for any number of tabs — never shrink tabs to fit; grids stack to one column, cards shrink to 64px (see the phone block in `site.css`). Keep a 12px+ side gutter and no horizontal page scroll.
 
 ---
@@ -46,6 +54,9 @@ We recreate the *style* only: never use the game's art, characters, logo or scre
 | `--nu-red` / `--nu-blue` / `--nu-green` / `--nu-hp-arc` | `#fa687b` / `#3d8ee8` / `#58c25a` / `#ff5f7e` | Element badges / HP bar / HUD arc |
 | `--nu-r-panel` / `-section` / `-card` / `-pill` | 24px / 16px / 8px / 999px | Radii |
 | `--nu-outline` | text-shadow | White-on-art text outline |
+| `--nu-dur-fast` / `--nu-dur` / `--nu-dur-slow` | 120 / 200 / 320 ms | Press feedback / entries / larger moves |
+| `--nu-ease-out` / `--nu-ease-pop` | cubic-bezier | Default easing / small overshoot for reward moments |
+| `--nu-stagger` | 40 ms | Delay between items in a `.nu-stagger` list (capped at 5 steps) |
 | `--nu-curl-cream`, `--nu-curl-gold`, `--nu-crest`, `--nu-scroll-icon` | inline SVG | Ornaments (tab ends, header ends, frame crest & corners, label curl) |
 
 ---
@@ -74,7 +85,8 @@ We recreate the *style* only: never use the game's art, characters, logo or scre
 | `.nu-list`, `.nu-row.is-selected`, `.nu-row__badge`, `.nu-row__no`, `.nu-new` | Records list: white rows, round badge, "No.01", red `!` for new | |
 | `.nu-ribbon`, `.nu-tag`, `.nu-tag--orange` | Title on an ornamental divider; gray / orange tag pills ("Condition", "Reward") | |
 | `.nu-hud` (`__portrait` with `--nu-hp`, `__code`, `__bar`, `__fill`, `__hp`, `__counters`), `.nu-coin`, `.nu-gem`, `.nu-key` | Battle HUD: round portrait with health arc, name, green bar, counters | Bottom-left |
-| `.nu-dialog` (`__art`, `__box`, `__hints`), `.nu-nameplate`, `.nu-caret` | Dialogue: portrait art, white speech box, name plate, bobbing ▼, Next/Skip hints | Full-screen overlay |
+| `.nu-dialog` (`__art`, `__box`, `__hints`), `.nu-nameplate`, `.nu-caret`, `.nu-type__rest` | Dialogue: portrait art, white speech box, name plate, bobbing ▼, Next/Skip hints | Full-screen overlay. Box rises, portrait slides in; text types out 25 ms/char (first click finishes the line); the untyped rest stays in the layout, hidden, so the box never grows |
+| `.nu-enter` (`--from-right` / `--from-left`), `.nu-rise`, `.nu-stagger` | Motion utilities: page entry from the side you navigated toward; in-place swap (fade + rise 8px); children appearing one after another | Put `key={…}` on the element so React remounts it and the animation replays. Set `--i` inline to control a stagger step |
 
 Reference screen layouts from the game, as used on the landing page:
 

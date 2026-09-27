@@ -24,6 +24,8 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
 .detail-render-icon { position: absolute; inset: 44px 18% 64px; display: flex; align-items: center; justify-content: center; }
 .detail-render-icon img { max-width: 100%; max-height: 100%; border-radius: 28px; box-shadow: 0 10px 24px rgba(59, 42, 34, .35); }
 .detail-preview { position: relative; margin-top: 10px; }
+.detail-preview__frame { overflow: hidden; border-radius: 12px; }   /* screenshots slide inside it */
+.record-detail > img { animation: nu-pop-in 240ms var(--nu-ease-pop) both; animation-delay: calc(var(--i, 0) * var(--nu-stagger)); }
 .detail-preview .nu-pager { position: absolute; right: -24px; top: 50%; transform: translateY(-50%); }
 .detail-move { cursor: pointer; }
 .detail-move:hover { color: #000; }

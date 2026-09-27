@@ -17,6 +17,30 @@ const store = {
     set: (k, v) => { try { sessionStorage.setItem(k, v); } catch { /* ignore */ } },
 };
 const getJson = (url) => fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null);
+const reducedMotion = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
+
+// Numbers count up from 0 like a game results screen — once per page visit per
+// counter (`id`), so reopening a tab shows the final value straight away.
+const countedUp = new Set();
+const useCountUp = (id, target, ms = 600) => {
+    const skip = () => typeof target !== 'number' || countedUp.has(id) || reducedMotion();
+    const [v, setV] = useState(() => (skip() ? target : 0));
+    useEffect(() => {
+        if (skip()) { setV(target); return; }
+        countedUp.add(id);
+        let raf, start;
+        const step = (t) => {
+            start ??= t;
+            const k = Math.min(1, (t - start) / ms);
+            setV(k < 1 ? Math.round(target * (1 - Math.pow(1 - k, 3))) : target);   // ease-out cubic
+            if (k < 1) raf = requestAnimationFrame(step);
+        };
+        raf = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(raf);
+    }, [id, target, ms]);
+    return v;
+};
+const CountUp = ({ id, value }) => fmt(useCountUp(id, value));
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -105,8 +129,9 @@ const Hint = ({ glyph, children, onClick, href }) => {
 const LineupTab = ({ site, selected, setSelected, clStats }) => {
     const projects = site.projects;
     const p = projects[selected] ?? projects[0];
-    const [page, setPage] = useState(0);
-    useEffect(() => setPage(0), [selected]);
+    const [{ page, dir }, setView] = useState({ page: 0, dir: null });
+    useEffect(() => setView({ page: 0, dir: null }), [selected]);
+    const setPage = (i, d) => setView({ page: i, dir: d ?? (i > page ? 'right' : 'left') });
     const previews = p?.previews ?? [];
     const st = clStats[p?.id];
     const locked = site.lockedSlots ?? 0;
@@ -159,7 +184,7 @@ const LineupTab = ({ site, selected, setSelected, clStats }) => {
                             <span className={`nu-card__el${p.element === 'red' ? ' nu-card__el--red' : ''}`} style={{ position: 'static', width: 26, height: 26 }} />
                             {p.name}{st ? ` Lv.${st.releases}` : ''}
                         </div>
-                        <div className="nu-section__body detail-body">
+                        <div key={p.id} className="nu-section__body detail-body nu-rise">
                             <div className="nu-render">
                                 <span className="nu-render__stars"><Stars n={p.stars} /></span>
                                 <span className="nu-render__pwr"><span>PWR</span><b>{st ? st.changes : '—'}</b></span>
@@ -174,8 +199,10 @@ const LineupTab = ({ site, selected, setSelected, clStats }) => {
                                 </div>
                                 {previews.length > 0 && (
                                     <div className="detail-preview">
-                                        <img className="nu-preview" src={previews[page]} alt={`${p.name} screenshot`} />
-                                        {previews.length > 1 && <button className="nu-pager" aria-label="Next screenshot" onClick={() => setPage((page + 1) % previews.length)} />}
+                                        <div className="detail-preview__frame">
+                                            <img key={page} className={`nu-preview${dir ? ` nu-enter nu-enter--from-${dir}` : ''}`} src={previews[page]} alt={`${p.name} screenshot`} />
+                                        </div>
+                                        {previews.length > 1 && <button className="nu-pager" aria-label="Next screenshot" onClick={() => setPage((page + 1) % previews.length, 'right')} />}
                                     </div>
                                 )}
                                 <p className="nu-desc">{p.description}</p>
@@ -243,11 +270,11 @@ const DataTab = ({ gs }) => {
         ['Site progress',            '20%'],
     ];
     const col = (rows) => (
-        <div className="nu-data">
-            {rows.map(([label, v]) => (
+        <div className="nu-data nu-stagger">
+            {rows.map(([label, v], i) => (
                 <React.Fragment key={label}>
-                    <span className="nu-data__label">{label}</span>
-                    <span className="nu-data__value">{typeof v === 'string' ? v : fmt(v)}</span>
+                    <span className="nu-data__label" style={{ '--i': i }}>{label}</span>
+                    <span className="nu-data__value" style={{ '--i': i }}>{typeof v === 'string' ? v : <CountUp id={`data:${label}`} value={v} />}</span>
                 </React.Fragment>
             ))}
         </div>
@@ -267,7 +294,7 @@ const LinksTab = ({ site }) => {
         <>
             <p className="nu-heading">Records</p>
             <div className="records-grid">
-                <div className="nu-list">
+                <div className="nu-list nu-stagger">
                     {site.links.map((link, i) => (
                         <button key={link.url} className={`nu-row${i === sel ? ' is-selected' : ''}`} onClick={() => setSel(i)}>
                             {link.new && <span className="nu-new">!</span>}
@@ -278,7 +305,7 @@ const LinksTab = ({ site }) => {
                     ))}
                 </div>
                 {l && (
-                    <div className="nu-section record-detail">
+                    <div key={sel} className="nu-section record-detail nu-stagger">
                         <span style={{ alignSelf: 'flex-end', font: '600 16px var(--nu-font)', color: 'var(--nu-text-soft)' }}>No. {sel + 1}/{site.links.length}</span>
                         <img src={l.icon} alt="" />
                         <div className="nu-ribbon">{l.name}</div>
@@ -294,10 +321,30 @@ const LinksTab = ({ site }) => {
 
 // ── Dialogue ─────────────────────────────────────────────────────────────────
 
+const TYPE_MS = 25;   // per character
+
 const Dialog = ({ site, onClose }) => {
     const [line, setLine] = useState(0);
     const lines = site.intro || [];
-    const next = useCallback(() => (line + 1 < lines.length ? setLine(line + 1) : onClose()), [line, lines.length, onClose]);
+    const text = lines[line] || '';
+    // Typewriter: letters appear one by one; the first click finishes the line, the next one advances.
+    // The count is tied to its line, so a new line never flashes in full for a frame before typing.
+    const [typed, setTyped] = useState({ line: -1, n: 0 });
+    const shown = typed.line === line ? typed.n : (reducedMotion() ? text.length : 0);
+    useEffect(() => {
+        if (reducedMotion()) { setTyped({ line, n: text.length }); return; }
+        setTyped({ line, n: 0 });
+        const id = setInterval(() => setTyped(t => {
+            if (t.line !== line || t.n >= text.length) { clearInterval(id); return t; }
+            return { line, n: t.n + 1 };
+        }), TYPE_MS);
+        return () => clearInterval(id);
+    }, [line, text]);
+    const done = shown >= text.length;
+    const next = useCallback(() => {
+        if (!done) { setTyped({ line, n: text.length }); return; }
+        line + 1 < lines.length ? setLine(line + 1) : onClose();
+    }, [done, text.length, line, lines.length, onClose]);
     useEffect(() => {
         const onKey = (e) => {
             if (['Enter', ' ', 'a', 'A'].includes(e.key)) { e.preventDefault(); next(); }
@@ -311,8 +358,9 @@ const Dialog = ({ site, onClose }) => {
             <div className="nu-dialog__box" onClick={(e) => { e.stopPropagation(); next(); }}>
                 <img className="nu-dialog__art" src={site.avatar} alt="" />
                 <span className="nu-nameplate">{site.name}</span>
-                {lines[line]}
-                <span className="nu-caret" />
+                <span aria-hidden="true">{text.slice(0, shown)}<span className="nu-type__rest">{text.slice(shown)}</span></span>
+                <span className="sr-only">{text}</span>
+                {done && <span className="nu-caret" />}
                 <div className="nu-dialog__hints" onClick={e => e.stopPropagation()}>
                     <button onClick={next}><span className="nu-glyph nu-glyph--sm">A</span>Next</button>
                     <button onClick={onClose}><span className="nu-glyph nu-glyph--sm">Y</span>Skip</button>
@@ -331,6 +379,15 @@ const App = () => {
         return TABS.some(t => t.id === h) ? h : 'lineup';
     });
     const [selected, setSelected] = useState(0);
+    // Direction of the last tab change, so the new page slides in from that side (null = first load: fade only).
+    const [tabDir, setTabDir] = useState(null);
+    const [pressed, setPressed] = useState(null);   // 'prev' | 'next' — keycap press feedback for Q/E
+    const goTab = useCallback((id, dir) => {
+        if (id === tab) return;
+        const a = TABS.findIndex(t => t.id === tab), b = TABS.findIndex(t => t.id === id);
+        setTabDir(dir ?? (b > a ? 'right' : 'left'));
+        setTab(id);
+    }, [tab]);
     const [showIntro, setShowIntro] = useState(() => store.get(INTRO_KEY) !== '1');
     const gs = useGamingStats();
     const clStats = useChangelogStats(site?.projects);
@@ -359,17 +416,19 @@ const App = () => {
                     const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
                     if (d < bestDist) { bestDist = d; best = el.dataset.tab; }
                 });
-                if (best) setTab(t => (t === best ? t : best));
+                if (best) goTab(best);
             }, 140);
         };
         track.addEventListener('scroll', onScroll, { passive: true });
         return () => { track.removeEventListener('scroll', onScroll); clearTimeout(timer); };
-    }, [site]);
+    }, [site, goTab]);
 
     const shiftTab = useCallback((d) => {
         const i = TABS.findIndex(t => t.id === tab);
-        setTab(TABS[(i + d + TABS.length) % TABS.length].id);
-    }, [tab]);
+        goTab(TABS[(i + d + TABS.length) % TABS.length].id, d > 0 ? 'right' : 'left');
+        setPressed(d > 0 ? 'next' : 'prev');
+        setTimeout(() => setPressed(null), 110);
+    }, [tab, goTab]);
     const closeIntro = useCallback(() => { setShowIntro(false); store.set(INTRO_KEY, '1'); }, []);
 
     const project = site?.projects?.[selected];
@@ -398,18 +457,18 @@ const App = () => {
         <div className="page">
             <div className="nu-tabbar">
                 <nav className="nu-tabs" aria-label="Sections">
-                    <button className="nu-keycap" onClick={() => shiftTab(-1)} aria-label="Previous tab (Q)">LB</button>
+                    <button className={`nu-keycap${pressed === 'prev' ? ' is-pressed' : ''}`} onClick={() => shiftTab(-1)} aria-label="Previous tab (Q)">LB</button>
                     <div className="nu-tabs__track" ref={trackRef}>
                         {TABS.map(t => (
-                            <button key={t.id} data-tab={t.id} className={`nu-tab${t.id === tab ? ' is-active' : ''}`} onClick={() => setTab(t.id)} aria-current={t.id === tab ? 'page' : undefined}>
+                            <button key={t.id} data-tab={t.id} className={`nu-tab${t.id === tab ? ' is-active' : ''}`} onClick={() => goTab(t.id)} aria-current={t.id === tab ? 'page' : undefined}>
                                 {t.label}
                             </button>
                         ))}
                     </div>
-                    <button className="nu-keycap" onClick={() => shiftTab(1)} aria-label="Next tab (E)">RB</button>
+                    <button className={`nu-keycap${pressed === 'next' ? ' is-pressed' : ''}`} onClick={() => shiftTab(1)} aria-label="Next tab (E)">RB</button>
                 </nav>
                 <div className="nu-tabs__dots" aria-hidden="true">
-                    {TABS.map(t => <button key={t.id} tabIndex={-1} className={`nu-dot${t.id === tab ? ' is-active' : ''}`} onClick={() => setTab(t.id)} />)}
+                    {TABS.map(t => <button key={t.id} tabIndex={-1} className={`nu-dot${t.id === tab ? ' is-active' : ''}`} onClick={() => goTab(t.id)} />)}
                 </div>
             </div>
 
@@ -417,10 +476,14 @@ const App = () => {
                 <div className="nu-frame">
                     <span className="nu-frame__corner nu-frame__corner--tl" />
                     <span className="nu-frame__corner nu-frame__corner--tr" />
-                    {tab === 'lineup' && <LineupTab site={site} selected={selected} setSelected={setSelected} clStats={clStats} />}
-                    {tab === 'player' && <PlayerTab site={site} gs={gs} />}
-                    {tab === 'data'   && <DataTab gs={gs} />}
-                    {tab === 'links'  && <LinksTab site={site} />}
+                    {/* Keyed by tab: each change remounts, so the entry animation replays. The new page
+                        slides in from the side you moved toward; its blocks rise in one after another. */}
+                    <div key={tab} className={`nu-enter nu-stagger${tabDir ? ` nu-enter--from-${tabDir}` : ''}`}>
+                        {tab === 'lineup' && <LineupTab site={site} selected={selected} setSelected={setSelected} clStats={clStats} />}
+                        {tab === 'player' && <PlayerTab site={site} gs={gs} />}
+                        {tab === 'data'   && <DataTab gs={gs} />}
+                        {tab === 'links'  && <LinksTab site={site} />}
+                    </div>
                 </div>
             </main>
 
@@ -434,9 +497,9 @@ const App = () => {
                             <span className="nu-hud__hp">{hpPct}/100</span>
                         </div>
                         <div className="nu-hud__counters">
-                            <span title="RetroAchievements points"><i className="nu-coin" />{fmt(gs?.raPoints)}</span>
-                            <span title="Xbox gamerscore"><i className="nu-gem" />{fmt(gs?.gamerscore)}</span>
-                            <span title="Achievements unlocked"><i className="nu-key" />{fmt(gs?.achievements)}</span>
+                            <span title="RetroAchievements points"><i className="nu-coin" /><CountUp id="hud:ra" value={gs?.raPoints} /></span>
+                            <span title="Xbox gamerscore"><i className="nu-gem" /><CountUp id="hud:gs" value={gs?.gamerscore} /></span>
+                            <span title="Achievements unlocked"><i className="nu-key" /><CountUp id="hud:ach" value={gs?.achievements} /></span>
                         </div>
                     </div>
                 </div>

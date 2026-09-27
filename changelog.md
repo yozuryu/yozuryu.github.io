@@ -21,3 +21,11 @@ Replace the "Coming Soon" placeholder with a pause-menu landing page styled afte
 - `_config.yml` exclude list, `.gitignore`, `README.md`, `CLAUDE.md`
 - Lineup: Gaming Hub and Cheevo Tracker cards use the projects' new app icons (Save Crystal, pixel trophy)
 - Site icon: the intro dialogue's white speech bubble with its orange ▼ caret on a brown tile (`favicon.svg`, `favicon.ico`, `apple-touch-icon.png`, source `appicon.svg`), used by the homepage and its 404. Replaces the leftover Gaming Hub icon (`icon-192.png`, removed)
+- Motion, snappy like a game menu (transform/opacity only, 120–320 ms; entries animate, exits don't, so Q/E never waits):
+  - **Tabs:** the new page slides in from the side you moved toward, with its blocks rising in one after another; the active tab does a quick press-pop, and LB/RB keycaps press down on Q/E too
+  - **Lineup:** the selected card pops; the detail panel rises in on each new project; screenshots slide in the paging direction
+  - **Links:** list rows cascade in; the record card re-enters with its emblem popping in
+  - **Play Data and HUD:** numbers count up from 0 once per visit; the HUD bar fills on load
+  - **Intro dialogue:** backdrop fades, box rises, portrait slides in, and text types out letter by letter (first click finishes the line, next advances)
+  - **Reduced motion:** turns everything instant
+  - Motion tokens and `nu-enter` / `nu-rise` / `nu-stagger` classes live in `noah-ui.css`, documented as STYLE.md rule 11

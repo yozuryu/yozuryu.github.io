@@ -392,4 +392,56 @@
   .nu-tabs__dots .nu-dot { width: 9px; height: 9px; box-shadow: 0 0 0 2px rgba(255,255,255,.35); }
 }
 
-@media (prefers-reduced-motion: reduce) { .nu-caret { animation: none; } .nu-card, .nu-tab { transition: none; } }
+/* ── Motion ─────────────────────────────────────────────────────────────────
+   Snappy like a game menu: 120–320 ms, only transform + opacity (never layout),
+   entries animate, exits don't (a new tab replaces the old one instantly, so
+   Q/E spam never waits on an animation). See STYLE.md rule 11. */
+:root {
+  --nu-dur-fast: 120ms;
+  --nu-dur: 200ms;
+  --nu-dur-slow: 320ms;
+  --nu-ease-out: cubic-bezier(.2, .8, .2, 1);      /* quick start, soft landing */
+  --nu-ease-pop: cubic-bezier(.34, 1.56, .64, 1);  /* small overshoot — "reward" moments only */
+  --nu-stagger: 40ms;
+}
+/* Page / panel entry. Direction via --nu-enter-x (the side you navigated toward). */
+.nu-enter { animation: nu-enter var(--nu-dur) var(--nu-ease-out) both; }
+.nu-enter--from-right { --nu-enter-x: 24px; }
+.nu-enter--from-left  { --nu-enter-x: -24px; }
+/* Content swapped in place (new selection loaded): fade + rise 8px. */
+.nu-rise { animation: nu-rise var(--nu-dur) var(--nu-ease-out) both; }
+/* Children appear one after another, 40 ms apart, capped at 5 steps. */
+.nu-stagger > * { animation: nu-rise var(--nu-dur) var(--nu-ease-out) both; animation-delay: calc(var(--i, 0) * var(--nu-stagger)); }
+.nu-stagger > :nth-child(2) { --i: 1; } .nu-stagger > :nth-child(3) { --i: 2; }
+.nu-stagger > :nth-child(4) { --i: 3; } .nu-stagger > :nth-child(5) { --i: 4; }
+.nu-stagger > :nth-child(n+6) { --i: 5; }
+/* Active tab "press", selected card pop, keycap press from the keyboard. */
+.nu-tab.is-active { animation: nu-press 180ms var(--nu-ease-out); }
+.nu-card.is-selected { animation: nu-pop 160ms var(--nu-ease-pop); }
+.nu-keycap.is-pressed { transform: translateY(2px); box-shadow: 0 1px 0 #cbc3c0; }
+/* HUD bar fills on load (scaleX, not width). */
+.nu-hud__fill { transform-origin: left center; animation: nu-fill 600ms var(--nu-ease-out) 150ms both; }
+/* Dialogue: backdrop fades, box rises, portrait slides in; text types out (app.js). */
+.nu-dialog { animation: nu-fade var(--nu-dur) ease-out both; }
+.nu-dialog__box { animation: nu-rise-lg 220ms var(--nu-ease-out) both; }
+.nu-dialog__art { animation: nu-slide-in 260ms var(--nu-ease-out) 60ms both; }
+.nu-type__rest { visibility: hidden; }             /* reserves the full line so the box never grows while typing */
+
+@keyframes nu-enter    { from { opacity: 0; transform: translateX(var(--nu-enter-x, 0)); } }
+@keyframes nu-rise     { from { opacity: 0; transform: translateY(8px); } }
+@keyframes nu-rise-lg  { from { opacity: 0; transform: translateY(20px); } }
+@keyframes nu-fade     { from { opacity: 0; } }
+@keyframes nu-press    { 0% { transform: scale(.94); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
+@keyframes nu-pop      { from { transform: scale(.9); } }
+@keyframes nu-pop-in   { from { opacity: 0; transform: scale(.6); } }
+@keyframes nu-fill     { from { transform: scaleX(0); } }
+@keyframes nu-slide-in { from { opacity: 0; transform: translateX(-28px); } }
+@media (max-width: 700px) {
+  .nu-dialog__art { animation-name: nu-slide-in-right; }   /* the portrait sits at the box's top-right on phones */
+  @keyframes nu-slide-in-right { from { opacity: 0; transform: translateX(28px); } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+  .nu-caret { animation: none !important; }
+}
