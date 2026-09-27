@@ -40,4 +40,5 @@ Replace the "Coming Soon" placeholder with a pause-menu landing page styled afte
 - Intro dialogue points to Creations
 - Creations polish: Materials slots are light cream with a gold rim (were dark brown, the heaviest thing on the page; the game's menu slots are always light), with logos in each brand's deeper official color; each creation shows its one-line description as flavor text under the header; a red **!** on a pedestal marks a creation that released in the last 14 days (read from its changelog)
 - Creations effects reworded so they don't repeat the flavor text (Gaming Hub: every completion on one page, hourly pipelines, a year of unlocks and streaks; Cheevo Tracker: profile/progress/backlog, friends feed, Professor Oak Challenge guides)
+- No more blue box when tapping pedestals, tabs or other buttons on phones (the browser's tap highlight is turned off; the menu already shows its own tap feedback). Pedestals get the orange keyboard-focus ring
 
