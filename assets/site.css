@@ -23,6 +23,7 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
 .creation-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; }
 .creation-facts { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
 .creation-facts .nu-stats { width: 100%; }
+.creation-flavor { margin: 0; }
 .detail-preview { position: relative; margin-top: 10px; }
 .detail-preview__frame { overflow: hidden; border-radius: 12px; }   /* screenshots slide inside it */
 .record-detail > img { animation: nu-pop-in 240ms var(--nu-ease-pop) both; animation-delay: calc(var(--i, 0) * var(--nu-stagger)); }

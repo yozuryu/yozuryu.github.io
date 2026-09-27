@@ -84,10 +84,10 @@ We recreate the *style* only: never use the game's art, characters, logo or scre
 | `.nu-data`, `.nu-data__label`, `.nu-data__value` | Play-data rows: tan label pill + big right-aligned value | |
 | `.nu-list`, `.nu-row.is-selected`, `.nu-row__badge`, `.nu-row__no`, `.nu-new` | Records list: white rows, round badge, "P-01"-style number, red `!` for new | Grouped lists: one `.nu-section` per group, list inside its body. Keyboard focus ring is orange |
 | `.nu-ribbon`, `.nu-tag`, `.nu-tag--orange` | Title on an ornamental divider; gray / orange tag pills ("Condition", "Reward") | |
-| `.nu-pedestal` (`__item`, `__stand`, `__name`, `__lv`), `.is-selected`, `--locked` | An item on a stand; selected one gets an orange ring and a bobbing ▼ | Creations display. Ref: Statue screen (`base_image_5`) |
+| `.nu-pedestal` (`__item`, `__stand`, `__name`, `__lv`), `.is-selected`, `--locked` | An item on a stand; selected one gets an orange ring and a bobbing ▼; a `.nu-new` red ! marks a release in the last 14 days | Creations display. Ref: Statue screen (`base_image_5`) |
 | `.nu-burst` (+ `.nu-burst__spark`) | Item on a slowly turning light burst with sparkles | Detail header. Ref: item-get banner (`ability_image_1`) |
 | `.nu-progress` (`__arrow`, `__to`) | "Lv 1 ▸ 23" — muted start, orange ▸, big orange end value | Ref: shop card "2470 ▸ 1470" (Steam `ss_7e41…`) |
-| `.nu-slots`, `.nu-slot-item` (`__box`) | Dark item slots with a gold inset rim, icon + label below | Materials. Icons: Simple Icons (CC0) in `assets/materials/`. Ref: gift slots (`base_image_7`) |
+| `.nu-slots`, `.nu-slot-item` (`__box`) | Cream item slots with a gold rim (light, like the game's item slots), icon + plain label below | Materials. Icons: Simple Icons (CC0) in `assets/materials/`. Ref: gift slots (`base_image_7`) |
 | `.nu-effects` | Numbered list: brown ① ② ③ badges on light rows | Effects. Ref: support list (`base_image_7`) |
 | `.nu-hud` (`__portrait` with `--nu-hp`, `__code`, `__bar`, `__fill`, `__hp`, `__counters`), `.nu-coin`, `.nu-gem`, `.nu-key` | Battle HUD: round portrait with health arc, name, green bar, counters | Bottom-left |
 | `.nu-dialog` (`__art`, `__box`, `__hints`), `.nu-nameplate`, `.nu-caret`, `.nu-type__rest` | Dialogue: portrait art, white speech box, name plate, bobbing ▼, Next/Skip hints | Full-screen overlay. Box rises, portrait slides in; text types out 25 ms/char (first click finishes the line); the untyped rest stays in the layout, hidden, so the box never grows |

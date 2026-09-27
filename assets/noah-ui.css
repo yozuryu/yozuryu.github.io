@@ -429,6 +429,7 @@
   border-top: 16px solid var(--nu-orange); border-left: 12px solid transparent; border-right: 12px solid transparent;
   transform: translateX(-50%); filter: drop-shadow(0 2px 0 var(--nu-orange-700)); animation: nu-bob 1s ease-in-out infinite;
 }
+.nu-pedestal .nu-new { top: 16px; left: auto; right: 2px; z-index: 2; animation: nu-pop-in 240ms var(--nu-ease-pop) both; }   /* released in the last 14 days */
 .nu-pedestal--locked { cursor: default; }
 .nu-pedestal--locked .nu-pedestal__item {
   display: grid; place-items: center; background: var(--nu-slot); color: #a39590; font: 800 30px/1 var(--nu-font);
@@ -455,11 +456,11 @@
 .nu-progress__to { font-size: 38px; color: var(--nu-orange-700); text-shadow: 0 1px 0 #fff, 0 2px 0 rgba(59, 42, 34, .15); }
 
 .nu-slots { display: flex; flex-wrap: wrap; gap: 12px; }       /* materials, like gift slots */
-.nu-slot-item { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 74px; text-align: center; font: 700 12px/1.2 var(--nu-font); color: var(--nu-text-soft); }
-.nu-slot-item__box {
+.nu-slot-item { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 74px; text-align: center; font: 700 12px/1.2 var(--nu-font); color: var(--nu-text); }
+.nu-slot-item__box {                            /* light slot with a gold rim, like the game's item slots */
   width: 56px; height: 56px; border-radius: 12px; display: grid; place-items: center;
-  background: linear-gradient(180deg, #5d4a40, var(--nu-brown-900));
-  box-shadow: inset 0 0 0 2px var(--nu-frame), inset 0 0 0 4px rgba(0, 0, 0, .25), 0 3px 6px rgba(59, 42, 34, .25);
+  background: linear-gradient(180deg, #fffdf6, #f3ead6);
+  box-shadow: inset 0 0 0 2px var(--nu-gold-400), 0 2px 0 #d9c49a, 0 4px 8px rgba(59, 42, 34, .12);
 }
 .nu-slot-item__box img { width: 30px; height: 30px; }
 

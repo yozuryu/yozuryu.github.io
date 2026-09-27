@@ -107,6 +107,8 @@ const useGamingStats = () => {
 const Stars = ({ n }) => '★'.repeat(n || 0);
 
 const monthYear = (d) => (d ? d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : '—');
+// A creation is "new" (red ! on its pedestal, like the game's NEW marker) for 14 days after a release.
+const isNew = (st) => !!st?.latest && (Date.now() - st.latest.getTime()) < 14 * 864e5;
 
 // Footer button hint. `glyph` may be an array for combos, e.g. ['Q', 'E'] → "Q / E".
 const Hint = ({ glyph, children, onClick, href }) => {
@@ -144,6 +146,7 @@ const CreationsTab = ({ site, selected, setSelected, clStats }) => {
                     <div className="nu-section__body display-grid">
                         {projects.map((proj, i) => (
                             <button key={proj.id} className={`nu-pedestal${i === selected ? ' is-selected' : ''}`} onClick={() => setSelected(i)} aria-pressed={i === selected}>
+                                {isNew(clStats[proj.id]) && <span className="nu-new" title="New release in the last 2 weeks">!</span>}
                                 <span className="nu-pedestal__item"><img src={proj.icon} alt="" /></span>
                                 <span className="nu-pedestal__stand" />
                                 <span className="nu-pedestal__name">{proj.name}</span>
@@ -182,6 +185,7 @@ const CreationsTab = ({ site, selected, setSelected, clStats }) => {
                                     <a className="nu-move detail-move" href={p.url}><span className="nu-glyph">A</span>{p.move}</a>
                                 </div>
                             </div>
+                            {p.description && <p className="nu-desc creation-flavor">{p.description}</p>}
                             {p.materials?.length > 0 && <>
                                 <span className="nu-bar">Materials</span>
                                 <div className="nu-slots">
