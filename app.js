@@ -308,8 +308,8 @@ const Dialog = ({ site, onClose }) => {
     }, [next, onClose]);
     return (
         <div className="nu-dialog" onClick={next} role="dialog" aria-label="Welcome message">
-            <img className="nu-dialog__art" src={site.avatar} alt="" />
             <div className="nu-dialog__box" onClick={(e) => { e.stopPropagation(); next(); }}>
+                <img className="nu-dialog__art" src={site.avatar} alt="" />
                 <span className="nu-nameplate">{site.name}</span>
                 {lines[line]}
                 <span className="nu-caret" />

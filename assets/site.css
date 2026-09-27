@@ -87,7 +87,7 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
   .nu-hint { height: 38px; font-size: 16px; padding: 0 14px 0 6px; }
   .bottom-row { justify-content: center; }
   .nu-hud__bar { width: 170px; }
-  .nu-dialog__art { width: 130px; left: 12px; bottom: auto; top: 24vh; }
+  .nu-dialog__art { width: 150px; right: 10px; bottom: calc(100% - 28px); border-radius: 50% 50% 0 0; }
   .nu-dialog__box { margin-left: 0; font-size: 17px; padding: 34px 22px 30px; border-radius: 26px; }
   .nu-dialog__hints { position: static; transform: none; flex-direction: row; justify-content: flex-end; margin-top: 12px; color: var(--nu-text); text-shadow: none; font-size: 15px; }
   .nu-dialog { padding-bottom: 24px; }

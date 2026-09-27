@@ -12,6 +12,7 @@ Replace the "Coming Soon" placeholder with a pause-menu landing page styled afte
 - **Play Data:** live numbers from Gaming Hub's data (RA points, mastered, beaten, Steam hours, perfect games, gamerscore, achievements, games tracked)
 - **Links:** records-style list with a detail card
 - Battle-style HUD (portrait with health arc, "site progress" bar, coin/gem/key counters), footer button-hint pills, keyboard controls (Q/E, ←/→, Enter, Y, X), and an intro dialogue with name plate shown once per session (`root_intro_seen`, prefixed because storage is shared with the project sites)
+- Intro dialogue portrait is anchored to the speech box: behind its left edge on desktop, on its top-right edge on mobile (it was floating mid-screen on phones)
 - Design system in `assets/noah-ui.css` (colors sampled from the game's menus; `nu-` tokens and components) documented in `STYLE.md`; page layout in `assets/site.css`. Only the style is recreated, no game assets
 - Content in `data/site.json`; project icons and previews in `assets/projects/`
 - Plain-HTML `404.html` that also works as the fallback 404 for project sites without their own, with links home and to each project
