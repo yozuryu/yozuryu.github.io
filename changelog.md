@@ -19,3 +19,4 @@ Replace the "Coming Soon" placeholder with a pause-menu landing page styled afte
 - Plain-HTML `404.html` in the menu style with links home and to each project. It only covers this site's paths: GitHub Pages doesn't use it for project sites, so Gaming Hub and Cheevo Tracker got their own matching `404.html` (loading this site's `assets/noah-ui.css`)
 - No service worker on purpose: this site owns the `/` scope shared with the project sites
 - `_config.yml` exclude list, `.gitignore`, `README.md`, `CLAUDE.md`
+- Lineup: Gaming Hub and Cheevo Tracker cards use the projects' new app icons (Save Crystal, pixel trophy)
