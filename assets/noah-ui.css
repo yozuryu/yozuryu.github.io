@@ -315,6 +315,7 @@
   border: 3px solid transparent; cursor: pointer; width: 100%;
 }
 .nu-row.is-selected { border-color: var(--nu-orange); }
+.nu-row:focus-visible { outline: 3px solid var(--nu-orange); outline-offset: 2px; }   /* keyboard focus in the menu's own color */
 .nu-row__badge { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex: none; background: var(--nu-slot); }
 .nu-row__no { margin-left: auto; align-self: flex-end; margin-bottom: 10px; font: 600 16px/1 var(--nu-font); color: var(--nu-text-soft); }
 .nu-new { position: absolute; top: -8px; left: -8px; width: 26px; height: 26px; border-radius: 50%; background: #ff3b30; color: #fff; font: 800 17px/26px var(--nu-font); text-align: center; border: 2px solid #fff; }

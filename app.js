@@ -84,6 +84,13 @@ const useGamingStats = () => {
                 gamerscore:  xb.gamerscore ?? null,
                 achievements: (ra || steam || xbox) ? raAch + (st.unlockedAchievements ?? 0) + (xb.unlockedAchievements ?? 0) : null,
                 games:       (ra || steam || xbox) ? results.length + (st.totalGames ?? 0) + (xb.totalGames ?? 0) : null,
+                raAchievements:   ra ? raAch : null,
+                raUser:           ra?.coreProfile?.user ?? null,
+                steamAchievements: st.unlockedAchievements ?? null,
+                steamUser:        steam?.profile?.displayName ?? null,
+                xboxAchievements: xb.unlockedAchievements ?? null,
+                xboxCompleted:    xb.perfectCount ?? null,
+                xboxUser:         xbox?.profile?.gamertag ?? null,
                 motto:       config?.motto ?? null,
                 genres:      config?.tags?.genre ?? [],
                 styles:      config?.tags?.style ?? [],
@@ -287,33 +294,88 @@ const DataTab = ({ gs }) => {
     );
 };
 
-const LinksTab = ({ site }) => {
+// Records, grouped: your projects (with the Lineup's Lv / PWR) and your gamer profiles
+// (with live stats from Gaming Hub). Two section boxes on the left; the detail card adapts to the group.
+const LINK_GROUPS = [
+    { id: 'project', title: 'Projects',       prefix: 'P' },
+    { id: 'profile', title: 'Gamer Profiles', prefix: 'G' },
+];
+const PROFILE_STATS = {
+    ra:    (gs) => ({ user: gs?.raUser,    stats: [['Points', gs?.raPoints], ['Mastered', gs?.raMastered], ['Beaten', gs?.raBeaten]] }),
+    steam: (gs) => ({ user: gs?.steamUser, stats: [['Hours', gs?.steamHours], ['Perfect', gs?.steamPerfect], ['Achievements', gs?.steamAchievements]] }),
+    xbox:  (gs) => ({ user: gs?.xboxUser,  stats: [['Gamerscore', gs?.gamerscore], ['Completed', gs?.xboxCompleted], ['Achievements', gs?.xboxAchievements]] }),
+};
+
+const LinksTab = ({ site, gs, clStats }) => {
+    const groups = LINK_GROUPS.map(g => ({ ...g, items: site.links.filter(l => (l.group || 'project') === g.id) })).filter(g => g.items.length);
+    const flat = groups.flatMap(g => g.items.map((link, n) => ({ link, group: g, n })));
     const [sel, setSel] = useState(0);
-    const l = site.links[sel];
+    const cur = flat[sel];
+    useEffect(() => {
+        const onKey = (e) => {
+            if (document.querySelector('.nu-dialog')) return;
+            if (e.key === 'ArrowDown') { e.preventDefault(); setSel(i => (i + 1) % flat.length); }
+            if (e.key === 'ArrowUp')   { e.preventDefault(); setSel(i => (i - 1 + flat.length) % flat.length); }
+            if ((e.key === 'Enter' || e.key === 'a') && cur) window.open(cur.link.url, cur.link.url.startsWith('http') ? '_blank' : '_self', 'noreferrer');
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [flat.length, cur]);
+    if (!cur) return null;
+    const { link: l, group, n } = cur;
+    const code = (g, i) => `${g.prefix}-${String(i + 1).padStart(2, '0')}`;
+
+    // Detail stats: a profile shows live numbers; a project shows its Lineup Lv / PWR and first tag.
+    let player = null, stats = [];
+    if (group.id === 'profile' && PROFILE_STATS[l.platform]) {
+        ({ user: player, stats } = PROFILE_STATS[l.platform](gs));
+    } else if (l.project) {
+        const proj = site.projects.find(p => p.id === l.project), cl = clStats[l.project];
+        stats = [['Lv', cl?.releases], ['PWR', cl?.changes], ...(proj?.tags?.[0] ? [[proj.tags[0].label, proj.tags[0].value]] : [])];
+    } else {
+        stats = [['Live', site.projects.length], ['Soon', site.lockedSlots ?? 0]];   // GitHub: mirrors the Lineup's Live / Soon
+    }
+
+    let i = -1;
     return (
         <>
             <p className="nu-heading">Records</p>
             <div className="records-grid">
-                <div className="nu-list nu-stagger">
-                    {site.links.map((link, i) => (
-                        <button key={link.url} className={`nu-row${i === sel ? ' is-selected' : ''}`} onClick={() => setSel(i)}>
-                            {link.new && <span className="nu-new">!</span>}
-                            <img className="nu-row__badge" src={link.icon} alt="" />
-                            {link.name}
-                            <span className="nu-row__no">No.{String(i + 1).padStart(2, '0')}</span>
-                        </button>
+                <div className="records-groups nu-stagger">
+                    {groups.map(g => (
+                        <section key={g.id} className="nu-section">
+                            <div className="nu-section__header">{g.title}</div>
+                            <div className="nu-section__body nu-list nu-stagger">
+                            {g.items.map((link, gi) => {
+                                i += 1;
+                                const idx = i;
+                                return (
+                                    <button key={link.url} className={`nu-row${idx === sel ? ' is-selected' : ''}`} onClick={() => setSel(idx)}>
+                                        {link.new && <span className="nu-new">!</span>}
+                                        <img className="nu-row__badge" src={link.icon} alt="" />
+                                        {link.name}
+                                        <span className="nu-row__no">{code(g, gi)}</span>
+                                    </button>
+                                );
+                            })}
+                            </div>
+                        </section>
                     ))}
                 </div>
-                {l && (
-                    <div key={sel} className="nu-section record-detail nu-stagger">
-                        <span style={{ alignSelf: 'flex-end', font: '600 16px var(--nu-font)', color: 'var(--nu-text-soft)' }}>No. {sel + 1}/{site.links.length}</span>
-                        <img src={l.icon} alt="" />
-                        <div className="nu-ribbon">{l.name}</div>
-                        <div className="record-line"><span className="nu-tag">Destination</span>{l.url.replace(/^https?:\/\//, '')}</div>
-                        <div className="record-line"><span className="nu-tag nu-tag--orange">Note</span>{l.note}</div>
-                        <Hint glyph="A" href={l.url}>Open</Hint>
-                    </div>
-                )}
+                <div key={sel} className="nu-section record-detail nu-stagger">
+                    <span style={{ alignSelf: 'flex-end', font: '600 16px var(--nu-font)', color: 'var(--nu-text-soft)' }}>{code(group, n)} · {n + 1}/{group.items.length}</span>
+                    <img src={l.icon} alt="" />
+                    <div className="nu-ribbon">{l.name}</div>
+                    {stats.length > 0 && (
+                        <div className="nu-stats record-stats">
+                            {stats.map(([label, v]) => <span key={label} className="nu-stat">{label}<b>{typeof v === 'number' ? fmt(v) : (v ?? '—')}</b></span>)}
+                        </div>
+                    )}
+                    {player && <div className="record-line"><span className="nu-tag">Player</span>{player}</div>}
+                    {!player && <div className="record-line"><span className="nu-tag">Destination</span>{l.url.replace(/^https?:\/\//, '')}</div>}
+                    <div className="record-line"><span className="nu-tag nu-tag--orange">Note</span>{l.note}</div>
+                    <Hint glyph="A" href={l.url}>{group.id === 'profile' ? 'Open profile' : 'Open'}</Hint>
+                </div>
             </div>
         </>
     );
@@ -482,7 +544,7 @@ const App = () => {
                         {tab === 'lineup' && <LineupTab site={site} selected={selected} setSelected={setSelected} clStats={clStats} />}
                         {tab === 'player' && <PlayerTab site={site} gs={gs} />}
                         {tab === 'data'   && <DataTab gs={gs} />}
-                        {tab === 'links'  && <LinksTab site={site} />}
+                        {tab === 'links'  && <LinksTab site={site} gs={gs} clStats={clStats} />}
                     </div>
                 </div>
             </main>

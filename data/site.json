@@ -73,37 +73,48 @@
       "name": "GitHub",
       "url": "https://github.com/yozuryu",
       "icon": "./assets/avatar.png",
-      "note": "Source code for everything here."
+      "note": "Source code for everything here.",
+      "group": "project"
     },
     {
       "name": "Gaming Hub",
       "url": "/gaming-hub/",
       "icon": "./assets/projects/gaming-hub-icon.png",
-      "note": "RetroAchievements, Steam and Xbox in one dashboard."
+      "note": "RetroAchievements, Steam and Xbox in one dashboard.",
+      "group": "project",
+      "project": "gaming-hub"
     },
     {
       "name": "Cheevo Tracker",
       "url": "/cheevo-tracker/",
       "icon": "./assets/projects/cheevo-tracker-icon.png",
-      "note": "RetroAchievements profile tracker."
+      "note": "RetroAchievements profile tracker.",
+      "group": "project",
+      "project": "cheevo-tracker"
     },
     {
       "name": "RetroAchievements",
       "url": "https://retroachievements.org/user/Yozuryu",
       "icon": "./assets/links/retroachievements.png",
-      "note": "Retro games with achievements: profile, mastered and beaten games."
+      "note": "Retro games with achievements: profile, mastered and beaten games.",
+      "group": "profile",
+      "platform": "ra"
     },
     {
       "name": "Steam",
       "url": "https://steamcommunity.com/id/yozuryu/",
       "icon": "./assets/links/steam.png",
-      "note": "Steam community profile: library, playtime and achievements."
+      "note": "Steam community profile: library, playtime and achievements.",
+      "group": "profile",
+      "platform": "steam"
     },
     {
       "name": "Xbox",
       "url": "https://www.xbox.com/en-US/play/user/Yozuryu",
       "icon": "./assets/links/xbox.png",
-      "note": "Xbox profile: gamerscore and achievements."
+      "note": "Xbox profile: gamerscore and achievements.",
+      "group": "profile",
+      "platform": "xbox"
     }
   ]
 }

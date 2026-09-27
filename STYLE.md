@@ -82,7 +82,7 @@ We recreate the *style* only: never use the game's art, characters, logo or scre
 | `.nu-glyph` (`--sm`) | Round button glyph (A, B, X, Y, Q…) | |
 | `.nu-hints`, `.nu-hint`, `.nu-hint__sep` | Footer button-hint pills ("Ⓐ OK", "Q / E Tabs") | Bottom-right |
 | `.nu-data`, `.nu-data__label`, `.nu-data__value` | Play-data rows: tan label pill + big right-aligned value | |
-| `.nu-list`, `.nu-row.is-selected`, `.nu-row__badge`, `.nu-row__no`, `.nu-new` | Records list: white rows, round badge, "No.01", red `!` for new | |
+| `.nu-list`, `.nu-row.is-selected`, `.nu-row__badge`, `.nu-row__no`, `.nu-new` | Records list: white rows, round badge, "P-01"-style number, red `!` for new | Grouped lists: one `.nu-section` per group, list inside its body. Keyboard focus ring is orange |
 | `.nu-ribbon`, `.nu-tag`, `.nu-tag--orange` | Title on an ornamental divider; gray / orange tag pills ("Condition", "Reward") | |
 | `.nu-hud` (`__portrait` with `--nu-hp`, `__code`, `__bar`, `__fill`, `__hp`, `__counters`), `.nu-coin`, `.nu-gem`, `.nu-key` | Battle HUD: round portrait with health arc, name, green bar, counters | Bottom-left |
 | `.nu-dialog` (`__art`, `__box`, `__hints`), `.nu-nameplate`, `.nu-caret`, `.nu-type__rest` | Dialogue: portrait art, white speech box, name plate, bobbing ▼, Next/Skip hints | Full-screen overlay. Box rises, portrait slides in; text types out 25 ms/char (first click finishes the line); the untyped rest stays in the layout, hidden, so the box never grows |
@@ -92,7 +92,7 @@ Reference screen layouts from the game, as used on the landing page:
 
 - **Lineup (character menu):** heading → lineup band → two sections side by side: *Stock* (6-column card grid, 3 rows) and a *detail* section (render box left; gold bar, move, stat pills, preview, description, dots right).
 - **Play Data:** heading → two columns of `.nu-data` rows on a light gray panel.
-- **Records:** list of `.nu-row`s left, detail card right (emblem, ribbon title, tags, hint pill).
+- **Records:** lists of `.nu-row`s left, one `.nu-section` box per group (Projects / Gamer Profiles, numbered P-01… / G-01…), detail card right (emblem, ribbon title, stat pills, tags, hint pill). The card adapts to the group: a project shows its Lineup Lv / PWR, a gamer profile shows live stats and the player name.
 - **Dialogue:** intro lines from `data/site.json` → `intro`; shown once per session.
 
 ---
