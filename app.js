@@ -301,7 +301,7 @@ const PlayerTab = ({ site, gs }) => {
 
 // ── Play Data: a result screen ───────────────────────────────────────────────
 // After the game's Result screen (リザルト): parchment sheet, a dark banner with the month's
-// gain, an info card (now playing / streak), and item tiles (recent milestones, platforms).
+// gain, an info card (now playing / streak), and item tiles (games this month, platforms).
 const RA_MEDIA = 'https://media.retroachievements.org';
 const PF_ICON = { ra: './assets/links/retroachievements.png', steam: './assets/links/steam.png', xbox: './assets/links/xbox.png' };
 const EDS_WIDTHS = [64, 128, 150, 200, 208, 300, 424];
@@ -329,7 +329,11 @@ const useRecentUnlocks = () => {
         if (recentCache) return;
         Promise.all(['ra', 'steam', 'xbox'].map(pf => getJson(`/gaming-hub/data/${pf}/achievements/1.json`)))
             .then(files => {
-                recentCache = files.flatMap((f, i) => (f?.recentAchievements ?? []).map(a => ({ pf: ['ra', 'steam', 'xbox'][i], at: toDate(a.date || a.unlockedAt) }))).filter(u => u.at);
+                recentCache = files.flatMap((f, i) => (f?.recentAchievements ?? []).map(a => ({
+                    pf: ['ra', 'steam', 'xbox'][i], at: toDate(a.date || a.unlockedAt),
+                    id: String(a.appId ?? a.titleId ?? a.gameId ?? ''), apiName: a.apiName,
+                    game: a.gameName ?? a.gameTitle, raIcon: a.gameIcon,
+                }))).filter(u => u.at);
                 setDates(recentCache);
             });
     }, []);
@@ -347,12 +351,48 @@ const useRecentUnlocks = () => {
         while (days.has(dayKey(cur))) { streak++; cur.setDate(cur.getDate() - 1); }
         const recentBy = { ra: 0, steam: 0, xbox: 0 };   // last 91 days, for the Player tab's main platform
         dates.forEach(u => { recentBy[u.pf]++; });
-        return { thisMonth, monthBy, recentBy, streak };
+        return { thisMonth, monthBy, recentBy, streak, unlocks: dates };
     }, [dates]);
+};
+
+// Steam / Xbox games beaten this month. A game is beaten when its hand-picked win
+// condition is met (Gaming Hub's win-conditions.json): "or" = any listed achievement, dated by the
+// first one; "and" = all of them, dated by the last. Only games with a listed achievement unlocked
+// in the window are checked, reading exact unlock times from that game's own file.
+const monthStart = () => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), 1).getTime(); };
+let beatenCache = null;
+const useRecentBeaten = (unlocks) => {
+    const [beaten, setBeaten] = useState(beatenCache);
+    useEffect(() => {
+        if (beatenCache || !unlocks) return;
+        Promise.all(['steam', 'xbox'].map(pf => getJson(`/gaming-hub/data/${pf}/win-conditions.json`))).then(async ([steamWc, xboxWc]) => {
+            const wc = { steam: steamWc ?? {}, xbox: xboxWc ?? {} };
+            const since = monthStart();
+            const candidates = [...new Set(unlocks
+                .filter(u => (u.pf === 'steam' || u.pf === 'xbox') && u.at >= since && wc[u.pf][u.id]?.achievements?.includes(u.apiName))
+                .map(u => `${u.pf}:${u.id}`))];
+            const found = await Promise.all(candidates.map(async key => {
+                const [pf, id] = key.split(':');
+                const game = await getJson(`/gaming-hub/data/${pf}/games/${id}.json`);
+                const rule = wc[pf][id];
+                const times = rule.achievements.map(api => game?.achievements?.find(a => a.apiName === api)).map(a => (a?.unlocked && a.unlockedAt ? toDate(a.unlockedAt) : null));
+                const at = rule.mode === 'and'
+                    ? (times.every(Boolean) ? new Date(Math.max(...times)) : null)
+                    : (times.some(Boolean) ? new Date(Math.min(...times.filter(Boolean))) : null);
+                if (!at || at < since) return null;
+                return { key: `${pf}-${id}`, name: game.gameName, at, pf, count: game.unlocked, tier: 'silver',
+                         icon: pf === 'steam' ? game.iconUrl : xboxImg(game.iconUrl, 128) };
+            }));
+            beatenCache = found.filter(Boolean);
+            setBeaten(beatenCache);
+        });
+    }, [unlocks]);
+    return beaten ?? [];
 };
 
 const DataTab = ({ site, gs }) => {
     const recent = useRecentUnlocks();
+    const beatenElsewhere = useRecentBeaten(recent?.unlocks);
     const { ra, steam, xbox } = gs?.profiles ?? {};
 
     // Now playing: the most recently played game across the three platforms.
@@ -365,29 +405,60 @@ const DataTab = ({ site, gs }) => {
         ].filter(g => g?.at).sort((a, b) => b.at - a.at)[0] ?? null;
     }, [ra, steam, xbox]);
 
-    // Recent milestones: RA mastered (gold) / beaten (silver), Steam perfect and Xbox completed (gold).
-    // ×N = achievements earned in that game (all of them for a completion). A beaten entry is dropped
-    // when the same game was completed in
-    // the same calendar year (same rule as Gaming Hub's Completions page).
-    const milestones = useMemo(() => {
-        const raEarned = Object.fromEntries((ra?.gameAwardsAndProgress?.results ?? []).map(g => [g.gameId, g.numAwarded]));
-        const all = [
-            ...(ra?.pageAwards?.visibleUserAwards ?? []).filter(a => a.awardType === 'Mastery/Completion' || a.awardType === 'Game Beaten')
-                .map(a => ({ key: `ra-${a.awardData}`, name: a.title, at: toDate(a.awardedAt), icon: RA_MEDIA + a.imageIcon, pf: 'ra', count: raEarned[a.awardData], tier: a.awardType === 'Game Beaten' ? 'silver' : 'gold' })),
-            ...(steam?.perfectGames ?? []).map(g => ({ key: `steam-${g.appId}`, name: g.gameName, at: toDate(g.completedAt), icon: g.iconUrl, pf: 'steam', count: g.total, tier: 'gold' })),
-            ...(xbox?.perfectGames ?? []).map(g => ({ key: `xbox-${g.titleId}`, name: g.gameName, at: toDate(g.completedAt), icon: xboxImg(g.iconUrl, 128), pf: 'xbox', count: g.total, tier: 'gold' })),
-        ].filter(m => m.at);
-        const goldYear = {};
-        all.forEach(m => { if (m.tier === 'gold') (goldYear[m.key] ??= new Set()).add(m.at.getFullYear()); });
-        return all.filter(m => m.tier === 'gold' || !goldYear[m.key]?.has(m.at.getFullYear()))
-            .sort((a, b) => b.at - a.at).slice(0, 6);
-    }, [ra, steam, xbox]);
+    // Games this month: every game with an unlock this calendar month, grouped per game and ordered
+    // by its latest unlock (newest first). ×N = that game's unlocks this month; the tiles add up to
+    // the banner's +n. Gold rim = completed this month, silver = beaten this month.
+    // Steam and Xbox icons aren't in the unlock files. Steam: the game's square store icon, from
+    // profile.json when the game is there (recently played, perfect games), else from its own file.
+    // Xbox: the games index.
+    const [xboxIcons, setXboxIcons] = useState(null);
+    const [steamIcons, setSteamIcons] = useState(null);
+    const monthUnlocks = useMemo(() => (recent?.unlocks ?? []).filter(u => u.at >= monthStart()), [recent]);
+    useEffect(() => {
+        if (xboxIcons || !monthUnlocks.some(u => u.pf === 'xbox')) return;
+        getJson('/gaming-hub/data/xbox/games/index.json').then(d => setXboxIcons(Object.fromEntries(
+            Object.entries(d?.achievementProgress ?? {}).map(([id, g]) => [id, xboxImg(g.iconUrl, 128)]))));
+    }, [monthUnlocks, xboxIcons]);
+    useEffect(() => {
+        if (steamIcons || !steam) return;
+        const ids = [...new Set(monthUnlocks.filter(u => u.pf === 'steam').map(u => String(u.id)))];
+        if (!ids.length) return;
+        const known = Object.fromEntries([...(steam.recentlyPlayed ?? []), ...(steam.perfectGames ?? [])]
+            .filter(g => g.iconUrl).map(g => [String(g.appId), g.iconUrl]));
+        Promise.all(ids.map(async id => [id, known[id] ?? (await getJson(`/gaming-hub/data/steam/games/${id}.json`))?.iconUrl ?? null]))
+            .then(pairs => setSteamIcons(Object.fromEntries(pairs)));
+    }, [monthUnlocks, steam, steamIcons]);
+    const monthGames = useMemo(() => {
+        const start = monthStart();
+        const tier = {};   // pf-id → 'gold' | 'silver'
+        (ra?.pageAwards?.visibleUserAwards ?? []).forEach(a => {
+            if (toDate(a.awardedAt) < start) return;
+            if (a.awardType === 'Mastery/Completion') tier[`ra-${a.awardData}`] = 'gold';
+            else if (a.awardType === 'Game Beaten' && !tier[`ra-${a.awardData}`]) tier[`ra-${a.awardData}`] = 'silver';
+        });
+        (steam?.perfectGames ?? []).forEach(g => { if (toDate(g.completedAt) >= start) tier[`steam-${g.appId}`] = 'gold'; });
+        (xbox?.perfectGames ?? []).forEach(g => { if (toDate(g.completedAt) >= start) tier[`xbox-${g.titleId}`] = 'gold'; });
+        beatenElsewhere.forEach(b => { if (!tier[b.key]) tier[b.key] = 'silver'; });
+        const games = {};
+        monthUnlocks.forEach(u => {
+            const key = `${u.pf}-${u.id}`;
+            const g = games[key] ??= { key, pf: u.pf, id: u.id, name: u.game, count: 0, last: u.at,
+                icon: u.pf === 'ra' ? RA_MEDIA + u.raIcon : null };
+            g.count++;
+            if (u.at > g.last) g.last = u.at;
+        });
+        return Object.values(games).map(g => ({ ...g, tier: tier[g.key] ?? null })).sort((a, b) => b.last - a.last);
+    }, [monthUnlocks, ra, steam, xbox, beatenElsewhere]);
+    const MAX_TILES = 12;
+    const shownGames = monthGames.length > MAX_TILES ? monthGames.slice(0, MAX_TILES - 1) : monthGames;
+    const moreGames = monthGames.length - shownGames.length;
 
-    const platforms = [
+    const allPlatforms = [
         { id: 'ra',    name: 'RetroAchievements', value: gs?.raPoints,   unit: 'pts', href: '/gaming-hub/profile/ra/' },
         { id: 'steam', name: 'Steam',             value: gs?.steamHours, unit: 'h',   href: '/gaming-hub/profile/steam/' },
         { id: 'xbox',  name: 'Xbox',              value: gs?.gamerscore, unit: 'G',   href: '/gaming-hub/profile/xbox/' },
     ];
+    const platforms = recent ? allPlatforms.filter(pf => recent.monthBy[pf.id] > 0) : allPlatforms;   // only platforms played this month
 
     return (
         <>
@@ -417,18 +488,26 @@ const DataTab = ({ site, gs }) => {
                         <span className="nu-info__value">{fmt(gs?.games)}</span>
                     </div>
                     <div className="results-sections">
-                        <span className="nu-info__label">Recent milestones</span>
+                        <span className="nu-info__label">Games this month</span>
+                        {recent && monthGames.length === 0 && <p className="nu-desc results-empty">No unlocks yet this month.</p>}
                         <div className="nu-tiles nu-stagger">
-                            {milestones.map(m => (
-                                <a key={m.key + m.tier} className={`nu-tile nu-tile--${m.tier}`} href="/gaming-hub/completions/" title={`${m.name} — ${m.tier === 'gold' ? 'completed' : 'beaten'}${m.count ? `, ${m.count} achievements earned` : ''}`}>
+                            {shownGames.map(g => (
+                                <span key={g.key} className={`nu-tile${g.tier ? ` nu-tile--${g.tier}` : ''}`}
+                                      title={`${g.name} — ${g.count} unlock${g.count === 1 ? '' : 's'} this month${g.tier === 'gold' ? ', completed' : g.tier === 'silver' ? ', beaten' : ''}`}>
                                     <span className="nu-tile__box">
-                                        <img src={m.icon} alt={m.name} />
-                                        <img className="nu-tile__pf" src={PF_ICON[m.pf]} alt="" />
-                                        {m.count > 0 && <span className="nu-tile__badge">×{m.count}</span>}
+                                        {(g.icon ?? (g.pf === 'steam' ? steamIcons : xboxIcons)?.[g.id]) ? <img src={g.icon ?? (g.pf === 'steam' ? steamIcons : xboxIcons)[g.id]} alt={g.name} /> : null}
+                                        <img className="nu-tile__pf" src={PF_ICON[g.pf]} alt="" />
+                                        <span className="nu-tile__badge">×{g.count}</span>
                                     </span>
-                                    <span className="nu-tile__count">{m.at.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
-                                </a>
+                                    <span className="nu-tile__count">{g.last.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                                </span>
                             ))}
+                            {moreGames > 0 && (
+                                <a className="nu-tile" href="/gaming-hub/activity/" title="See all of this month's activity on Gaming Hub">
+                                    <span className="nu-tile__box nu-tile__box--more">+{moreGames}</span>
+                                    <span className="nu-tile__count">more</span>
+                                </a>
+                            )}
                         </div>
                         <span className="nu-info__label">Platforms</span>
                         <div className="nu-tiles nu-stagger">

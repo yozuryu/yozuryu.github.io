@@ -538,6 +538,7 @@
   border-radius: 50%; background: #fff; padding: 1px; object-fit: contain !important; box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
 }
 .nu-tile__box--logo { background: #fff; }
+.nu-tile__box--more { display: grid; place-items: center; background: var(--nu-slot); color: var(--nu-text); font: 800 20px/1 var(--nu-font); }
 .nu-tile__box--logo img { object-fit: contain; padding: 9px 9px 16px; }   /* room for the +N badge */
 .nu-tile--gold   { --nu-tile-rim: var(--nu-gold-400); }   /* completed */
 .nu-tile--silver { --nu-tile-rim: #b8c4ce; }              /* beaten */
