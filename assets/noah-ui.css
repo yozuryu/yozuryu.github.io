@@ -104,8 +104,16 @@
 }
 .nu-scene::after { content: ""; position: absolute; inset: 0; background: rgba(40, 20, 8, 0.55); }
 
-/* --- Tabs (LB [tab][tab*][tab] RB) --------------------------------------- */
+/* --- Tabs (LB [tab][tab*][tab] RB) ---------------------------------------
+   Markup: .nu-tabbar > nav.nu-tabs > [.nu-keycap, .nu-tabs__track > .nu-tab…, .nu-keycap]
+           + .nu-tabs__dots > .nu-dot…
+   Desktop: all tabs in one row. Phone (≤700px): a carousel — the active tab is
+   centered at full size, neighbours peek in dimmed at the edges, LB/RB and
+   swipe move between tabs, dots show position. Scales to any number of tabs. */
+.nu-tabbar { display: flex; flex-direction: column; gap: 6px; }
 .nu-tabs { display: flex; align-items: center; gap: 14px; }
+.nu-tabs__track { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 14px; }
+.nu-tabs__dots { display: none; }
 .nu-keycap {
   flex: none; min-width: 44px; height: 38px; padding: 0 8px;
   display: inline-flex; align-items: center; justify-content: center;
@@ -357,5 +365,31 @@
 .nu-dialog__hints { position: absolute; right: -8px; bottom: 16px; transform: translateX(100%); display: flex; flex-direction: column; gap: 10px; color: #fff; font: 700 18px/1 var(--nu-font); text-shadow: 0 1px 3px rgba(0,0,0,.6); }
 .nu-dialog__hints button { display: flex; align-items: center; gap: 8px; background: none; border: none; color: inherit; font: inherit; cursor: pointer; padding: 0; }
 @keyframes nu-bob { 50% { transform: translate(-50%, 4px); } }
+
+/* Tab carousel on phones */
+@media (max-width: 700px) {
+  .nu-tabs { gap: 8px; }
+  .nu-keycap { min-width: 38px; height: 32px; padding: 0 6px; font-size: 13px; border-radius: 8px 8px 8px 12px; }
+  .nu-tabs__track {
+    gap: 10px; overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scrollbar-width: none;
+    padding: 10px 0 14px; margin: -10px 0 -14px;          /* room for the active glow */
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+  }
+  .nu-tabs__track::-webkit-scrollbar { display: none; }
+  .nu-tabs__track::before, .nu-tabs__track::after { content: ""; flex: 0 0 50%; }   /* room so the first/last tab can snap to center */
+  .nu-tab {
+    flex: 0 0 auto; min-width: 128px; height: 48px; padding: 0 36px; font-size: 17px; border-radius: 18px;
+    scroll-snap-align: center; opacity: .6; transform: scale(.9);
+    transition: opacity .2s, transform .2s, filter .15s;
+  }
+  .nu-tab::before, .nu-tab::after { width: 24px; height: 24px; }
+  .nu-tab::before { left: 7px; }
+  .nu-tab::after { right: 7px; }
+  .nu-tab.is-active { opacity: 1; transform: none; }
+  .nu-tabs__dots { display: flex; justify-content: center; gap: 8px; }
+  .nu-tabs__dots .nu-dot { width: 9px; height: 9px; box-shadow: 0 0 0 2px rgba(255,255,255,.35); }
+}
 
 @media (prefers-reduced-motion: reduce) { .nu-caret { animation: none; } .nu-card, .nu-tab { transition: none; } }

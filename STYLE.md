@@ -21,7 +21,7 @@ We recreate the *style* only: never use the game's art, characters, logo or scre
 7. **Show controls like a game.** Actions get a button hint: a round glyph (`.nu-glyph`: A, B, X, Y, or a key like Q) plus a short verb ("Open", "Source", "Intro"). Keep keyboard shortcuts in sync with the hints.
 8. **Rounded, soft, chunky.** Pills and rounded rectangles everywhere; bold rounded font; soft shadows. No sharp corners, no thin 1px dashboard borders.
 9. **Placeholders look like the game's.** Unfinished things are locked cards (`.nu-card--locked`, "???"), empty slots (`.nu-slot`) or a locked plate ("🔒 ???"), not "TODO" text.
-10. **Mobile:** keycaps hide, tabs scroll sideways, grids stack to one column, cards shrink to 64px (see the phone block in `site.css`). Keep a 12px+ side gutter and no horizontal page scroll.
+10. **Mobile:** the tab bar becomes a carousel (active tab centered at full size with ornaments, neighbours peeking in dimmed, LB/RB buttons, swipe, position dots) so it works for any number of tabs — never shrink tabs to fit; grids stack to one column, cards shrink to 64px (see the phone block in `site.css`). Keep a 12px+ side gutter and no horizontal page scroll.
 
 ---
 
@@ -56,7 +56,7 @@ We recreate the *style* only: never use the game's art, characters, logo or scre
 |---|---|---|
 | `.nu-root` | Font + base text color | On `<body>` |
 | `.nu-scene` | Blurred, dimmed world behind the menu | One per page, fixed, `aria-hidden` |
-| `.nu-tabs`, `.nu-tab`, `.nu-tab.is-active`, `.nu-keycap` | Tab bar: `LB [tab] [tab*] [tab] RB` | Brown glossy pills with curl ends; active glows gold |
+| `.nu-tabbar`, `.nu-tabs`, `.nu-tabs__track`, `.nu-tab`, `.nu-tab.is-active`, `.nu-keycap`, `.nu-tabs__dots` | Tab bar: `LB [tab] [tab*] [tab] RB` | Brown glossy pills with curl ends; active glows gold. Phone: carousel (see rule 10). The page keeps the active tab centered and switches tab when a swipe snaps a new one to the center (`app.js`); give each tab `data-tab` |
 | `.nu-frame` (+ `.nu-frame__corner--tl/tr/bl/br`) | White panel in gold filigree with a crest top & bottom | Every screen's container |
 | `.nu-heading` | Centered instruction line ("Choose a project to explore.") | First line inside the frame |
 | `.nu-band`, `.nu-label`, `.nu-arrow` | Pale-gold lineup strip; "(curl) Label ___" group label; orange ▸ between cards | |

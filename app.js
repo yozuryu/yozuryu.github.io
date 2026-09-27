@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
 // Landing page, styled as a game pause menu (see STYLE.md / assets/noah-ui.css).
@@ -337,10 +337,34 @@ const App = () => {
 
     useEffect(() => { getJson('./data/site.json').then(setSite); }, []);
     useEffect(() => { history.replaceState(null, '', `#${tab}`); }, [tab]);
-    // On phones the tab bar scrolls sideways; keep the active tab visible
+    // Phone tab carousel: keep the active tab centered, and when the user swipes
+    // the track, make whichever tab snapped to the center the active one.
+    const trackRef = useRef(null);
     useEffect(() => {
-        document.querySelector('.nu-tab.is-active')?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+        const track = trackRef.current, el = track?.querySelector('.nu-tab.is-active');
+        if (!track || !el || track.scrollWidth <= track.clientWidth) return;   // desktop: no scrolling
+        track.scrollTo({ left: el.offsetLeft - (track.clientWidth - el.offsetWidth) / 2, behavior: 'smooth' });
     }, [tab, site]);
+    useEffect(() => {
+        const track = trackRef.current;
+        if (!track) return;
+        let timer;
+        const onScroll = () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                if (track.scrollWidth <= track.clientWidth) return;
+                const mid = track.scrollLeft + track.clientWidth / 2;
+                let best = null, bestDist = Infinity;
+                track.querySelectorAll('.nu-tab').forEach(el => {
+                    const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
+                    if (d < bestDist) { bestDist = d; best = el.dataset.tab; }
+                });
+                if (best) setTab(t => (t === best ? t : best));
+            }, 140);
+        };
+        track.addEventListener('scroll', onScroll, { passive: true });
+        return () => { track.removeEventListener('scroll', onScroll); clearTimeout(timer); };
+    }, [site]);
 
     const shiftTab = useCallback((d) => {
         const i = TABS.findIndex(t => t.id === tab);
@@ -372,15 +396,22 @@ const App = () => {
 
     return (
         <div className="page">
-            <nav className="nu-tabs" aria-label="Sections">
-                <button className="nu-keycap" onClick={() => shiftTab(-1)} aria-label="Previous tab (Q)">LB</button>
-                {TABS.map(t => (
-                    <button key={t.id} className={`nu-tab${t.id === tab ? ' is-active' : ''}`} onClick={() => setTab(t.id)} aria-current={t.id === tab ? 'page' : undefined}>
-                        {t.label}
-                    </button>
-                ))}
-                <button className="nu-keycap" onClick={() => shiftTab(1)} aria-label="Next tab (E)">RB</button>
-            </nav>
+            <div className="nu-tabbar">
+                <nav className="nu-tabs" aria-label="Sections">
+                    <button className="nu-keycap" onClick={() => shiftTab(-1)} aria-label="Previous tab (Q)">LB</button>
+                    <div className="nu-tabs__track" ref={trackRef}>
+                        {TABS.map(t => (
+                            <button key={t.id} data-tab={t.id} className={`nu-tab${t.id === tab ? ' is-active' : ''}`} onClick={() => setTab(t.id)} aria-current={t.id === tab ? 'page' : undefined}>
+                                {t.label}
+                            </button>
+                        ))}
+                    </div>
+                    <button className="nu-keycap" onClick={() => shiftTab(1)} aria-label="Next tab (E)">RB</button>
+                </nav>
+                <div className="nu-tabs__dots" aria-hidden="true">
+                    {TABS.map(t => <button key={t.id} tabIndex={-1} className={`nu-dot${t.id === tab ? ' is-active' : ''}`} onClick={() => setTab(t.id)} />)}
+                </div>
+            </div>
 
             <main className="menu-panel">
                 <div className="nu-frame">
