@@ -44,7 +44,7 @@ This site owns `/` on `yozuryu.github.io`. The project sites live under it (`/ga
 
 - **No service worker at scope `/`.** It would intercept every request for the project sites too. gaming-hub's worker is scoped to `/gaming-hub/`, cheevo-tracker's to `/cheevo-tracker/`. If this site ever needs one, scope it narrowly and exclude the project paths.
 - **Browser storage is shared** (`localStorage`, `sessionStorage`, IndexedDB, cookies). Prefix any keys (e.g. `root_…`) and never use the `cheevo_tracker` IndexedDB name.
-- **`404.html` is the fallback 404 for project sites without their own.** Keep it plain HTML with absolute links (`/`, `/gaming-hub/`, …) so it works from any path.
+- **`404.html` only covers this site's own paths.** GitHub Pages does *not* use it for project sites (checked 2026-09-27: `/gaming-hub/<missing>` got GitHub's default 404), so each project repo has its own `404.html`. Those project 404 pages load this site's `/assets/noah-ui.css` by absolute URL, so **renaming or removing `noah-ui.css` classes breaks them too**. Keep 404 pages plain HTML with absolute URLs so they work from any depth.
 - Adding a project site: add it to `data/site.json` → `projects` (icon + preview in `assets/projects/`, `changelog` path for Lv/PWR) and `links`, and to the 404 page's links if it should be offered there.
 
 ## Conventions

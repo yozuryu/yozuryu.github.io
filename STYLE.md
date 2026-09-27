@@ -4,6 +4,8 @@ The site is styled after the **pause / character menu of *Little Noah: Scion of 
 
 **Source of truth:** [`assets/noah-ui.css`](assets/noah-ui.css) (tokens + components, all prefixed `nu-`). Page arrangement goes in [`assets/site.css`](assets/site.css). This file explains how to use them.
 
+**Shared with other repos:** the `404.html` pages of Gaming Hub and Cheevo Tracker load `/assets/noah-ui.css` from this site (they use `nu-root`, `nu-scene`, `nu-frame`, `nu-section`, `nu-desc`, `nu-hints`, `nu-hint`, `nu-glyph` and the `--nu-font` / `--nu-brown-600` tokens). Don't rename or remove those without updating them.
+
 We recreate the *style* only: never use the game's art, characters, logo or screenshots on the site. Your avatar and your own project images fill those roles.
 
 ---

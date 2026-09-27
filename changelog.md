@@ -15,6 +15,6 @@ Replace the "Coming Soon" placeholder with a pause-menu landing page styled afte
 - Intro dialogue portrait is anchored to the speech box: behind its left edge on desktop, on its top-right edge on mobile (it was floating mid-screen on phones)
 - Design system in `assets/noah-ui.css` (colors sampled from the game's menus; `nu-` tokens and components) documented in `STYLE.md`; page layout in `assets/site.css`. Only the style is recreated, no game assets
 - Content in `data/site.json`; project icons and previews in `assets/projects/`
-- Plain-HTML `404.html` that also works as the fallback 404 for project sites without their own, with links home and to each project
+- Plain-HTML `404.html` in the menu style with links home and to each project. It only covers this site's paths: GitHub Pages doesn't use it for project sites, so Gaming Hub and Cheevo Tracker got their own matching `404.html` (loading this site's `assets/noah-ui.css`)
 - No service worker on purpose: this site owns the `/` scope shared with the project sites
 - `_config.yml` exclude list, `.gitignore`, `README.md`, `CLAUDE.md`
