@@ -72,7 +72,7 @@
     {
       "name": "GitHub",
       "url": "https://github.com/yozuryu",
-      "icon": "./assets/avatar.png",
+      "icon": "./assets/links/github.png",
       "note": "Source code for everything here.",
       "group": "project"
     },
