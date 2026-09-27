@@ -1,0 +1,54 @@
+{
+  "name": "Yozuryu",
+  "avatar": "./assets/avatar.png",
+  "intro": [
+    "Oh! A visitor!",
+    "Welcome to my little corner of the internet. The place is still under construction...",
+    "Have a look around the menu in the meantime. My projects are in the Lineup!"
+  ],
+  "about": "Gamer, tinkerer and achievement hunter. This page is still being built — more soon!",
+  "projects": [
+    {
+      "id": "gaming-hub",
+      "name": "Gaming Hub",
+      "stars": 3,
+      "element": "blue",
+      "icon": "./assets/projects/gaming-hub-icon.png",
+      "previews": ["./assets/projects/gaming-hub.jpg"],
+      "url": "/gaming-hub/",
+      "repo": "https://github.com/yozuryu/gaming-hub",
+      "changelog": "/gaming-hub/changelog.md",
+      "move": "Open Dashboard",
+      "tags": [
+        { "label": "Platforms", "value": "3" },
+        { "label": "PWA", "value": "✓" },
+        { "label": "Build", "value": "–" }
+      ],
+      "description": "Achievement dashboard for RetroAchievements, Steam and Xbox, fed by hourly data pipelines."
+    },
+    {
+      "id": "cheevo-tracker",
+      "name": "Cheevo Tracker",
+      "stars": 3,
+      "element": "red",
+      "icon": "./assets/projects/cheevo-tracker-icon.png",
+      "previews": ["./assets/projects/cheevo-tracker.jpg"],
+      "url": "/cheevo-tracker/",
+      "repo": "https://github.com/yozuryu/cheevo-tracker",
+      "changelog": "/cheevo-tracker/changelog.md",
+      "move": "Open Tracker",
+      "tags": [
+        { "label": "Server", "value": "–" },
+        { "label": "PWA", "value": "✓" },
+        { "label": "Build", "value": "–" }
+      ],
+      "description": "Personal RetroAchievements profile tracker. No server, no build step: runs entirely in your browser."
+    }
+  ],
+  "lockedSlots": 4,
+  "links": [
+    { "name": "GitHub", "url": "https://github.com/yozuryu", "icon": "./assets/avatar.png", "note": "Source code for everything here." },
+    { "name": "Gaming Hub", "url": "/gaming-hub/", "icon": "./assets/projects/gaming-hub-icon.png", "note": "RetroAchievements, Steam and Xbox in one dashboard." },
+    { "name": "Cheevo Tracker", "url": "/cheevo-tracker/", "icon": "./assets/projects/cheevo-tracker-icon.png", "note": "RetroAchievements profile tracker." }
+  ]
+}

@@ -1,0 +1,360 @@
+/* ==========================================================================
+   noah-ui.css — yozuryu.github.io design system
+   Modelled on the menu UI of *Little Noah: Scion of Paradise* (Cygames):
+   cream panels in a gold filigree frame, glossy chocolate tabs with a glowing
+   gold active tab, brown section header strips, gold-bordered portrait cards,
+   rounded button-hint pills, and a white speech box with a name plate.
+   Colors were sampled from in-game screenshots. Only the *style* is recreated:
+   no game art, characters or logos are used.
+
+   Rules: see STYLE.md. Use these tokens and classes; don't hardcode colors.
+   All class names are prefixed `nu-`.
+   ========================================================================== */
+
+/* --- Tokens ------------------------------------------------------------- */
+:root {
+  /* type */
+  --nu-font: 'M PLUS Rounded 1c', 'Nunito', system-ui, sans-serif;
+
+  /* browns (tabs, header strips, text) */
+  --nu-brown-900: #3b2a22;   /* outlines, deepest text */
+  --nu-brown-800: #503625;   /* tab border */
+  --nu-brown-700: #664b42;   /* tab body (dark band) */
+  --nu-brown-600: #6b554a;   /* section header strip */
+  --nu-brown-500: #856155;   /* tab body (lower sheen) */
+  --nu-brown-400: #9d7c69;   /* tab body (top sheen) */
+  --nu-text:      #4e3e3e;   /* body text on light */
+  --nu-text-soft: #6f615e;   /* secondary text */
+  --nu-text-mute: #9b8e7e;   /* hints, inactive dots */
+
+  /* golds & oranges (active, selected, highlights) */
+  --nu-gold-100: #fff6b0;
+  --nu-gold-200: #fff28a;    /* active tab top */
+  --nu-gold-300: #fdc662;    /* active tab bottom */
+  --nu-gold-400: #f3c150;    /* label bar */
+  --nu-gold-500: #daac00;    /* card border deep */
+  --nu-amber:    #f99f51;    /* active tab middle */
+  --nu-orange:   #ff962c;    /* arrows, active dot, caret */
+  --nu-orange-700: #e88426;  /* selected card border */
+
+  /* frame (gold filigree) */
+  --nu-frame:        #b29e6b;
+  --nu-frame-light:  #e6dfc3;
+  --nu-frame-dark:   #a99260;
+
+  /* surfaces */
+  --nu-panel:      #ffffff;  /* main panel */
+  --nu-cream:      #f2eee3;  /* lineup band */
+  --nu-band-glow:  #f6dc9f;  /* lineup band inner glow */
+  --nu-section:    #e7dfdc;  /* section boxes */
+  --nu-slot:       #dcd3cf;  /* empty slots */
+  --nu-pill:       #cbbcb5;  /* stat pills, data pills */
+  --nu-hint:       #ece6e4;  /* footer hint pills */
+  --nu-count:      #645a58;  /* dark count pills */
+
+  /* accents */
+  --nu-red:   #fa687b;       /* element badge (fire) */
+  --nu-blue:  #3d8ee8;       /* element badge (water) */
+  --nu-green: #58c25a;       /* HP bar */
+  --nu-hp-arc: #ff5f7e;      /* HUD portrait arc */
+
+  /* shape */
+  --nu-r-panel:   24px;
+  --nu-r-section: 16px;
+  --nu-r-card:    8px;
+  --nu-r-pill:    999px;
+
+  /* shadows */
+  --nu-shadow-panel: 0 10px 40px rgba(20, 10, 5, 0.45);
+  --nu-shadow-soft:  0 2px 6px rgba(59, 42, 34, 0.18);
+
+  /* text outline (white text over art: HUD numbers, card levels) */
+  --nu-outline: 0 0 2px var(--nu-brown-900), 1px 1px 0 var(--nu-brown-900), -1px 1px 0 var(--nu-brown-900),
+                1px -1px 0 var(--nu-brown-900), -1px -1px 0 var(--nu-brown-900), 0 2px 3px rgba(0,0,0,.4);
+
+  /* ornaments (inline SVG) */
+  --nu-curl-cream: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='%23e9dccb' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M6 34c0-12 8-22 20-22 5 0 9 3 9 8 0 4-3 6-6 6-3 0-5-2-5-4 0-2 1-3 3-3'/%3E%3Cpath d='M14 10c3-5 9-7 14-5'/%3E%3Cpath d='M10 22c-3-1-5-4-4-7'/%3E%3Ccircle cx='31' cy='31' r='1.6' fill='%23e9dccb' stroke='none'/%3E%3C/svg%3E");
+  --nu-curl-gold:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='%23c9b27a' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 34c0-12 8-22 20-22 5 0 9 3 9 8 0 4-3 6-6 6-3 0-5-2-5-4 0-2 1-3 3-3'/%3E%3Cpath d='M14 10c3-5 9-7 14-5'/%3E%3Cpath d='M10 22c-3-1-5-4-4-7'/%3E%3C/svg%3E");
+  --nu-crest: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 26' fill='none' stroke='%23b29e6b' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M4 20c14 0 22-4 30-10 6-4 12-5 16-1 3 3 2 8-2 8-3 0-4-3-2-5'/%3E%3Cpath d='M116 20c-14 0-22-4-30-10-6-4-12-5-16-1-3 3-2 8 2 8 3 0 4-3 2-5'/%3E%3Cpath d='M52 20c2-8 5-12 8-14 3 2 6 6 8 14' fill='%23e6dfc3'/%3E%3C/svg%3E");
+  --nu-scroll-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b554a' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M17 5c-6-3-13 1-13 8 0 4 3 7 7 7 3 0 5-2 5-5 0-2-2-4-4-4-2 0-3 1-3 3'/%3E%3C/svg%3E");
+}
+
+/* --- Base ---------------------------------------------------------------- */
+.nu-root {
+  font-family: var(--nu-font);
+  color: var(--nu-text);
+  -webkit-font-smoothing: antialiased;
+}
+.nu-root *, .nu-root *::before, .nu-root *::after { box-sizing: border-box; }
+.nu-outline { color: #fff; text-shadow: var(--nu-outline); }
+.nu-num { font-variant-numeric: tabular-nums; font-weight: 800; }
+
+/* --- Scene: blurred world behind the menu -------------------------------- */
+.nu-scene {
+  position: fixed; inset: -40px; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(40% 30% at 18% 22%, rgba(255,255,255,.85), transparent 70%),
+    radial-gradient(30% 25% at 70% 15%, rgba(255,255,255,.7), transparent 70%),
+    radial-gradient(35% 40% at 85% 70%, #3f7d3a, transparent 70%),
+    radial-gradient(40% 35% at 10% 85%, #4f8f3f, transparent 70%),
+    radial-gradient(25% 30% at 55% 60%, #c9a36a, transparent 70%),
+    radial-gradient(18% 22% at 35% 55%, #9a5a3a, transparent 70%),
+    linear-gradient(180deg, #7fb6e8 0%, #b9dcf2 38%, #8cc46a 62%, #4e8a3e 100%);
+  filter: blur(22px) saturate(1.1);
+}
+.nu-scene::after { content: ""; position: absolute; inset: 0; background: rgba(40, 20, 8, 0.55); }
+
+/* --- Tabs (LB [tab][tab*][tab] RB) --------------------------------------- */
+.nu-tabs { display: flex; align-items: center; gap: 14px; }
+.nu-keycap {
+  flex: none; min-width: 44px; height: 38px; padding: 0 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #fff; color: var(--nu-brown-900);
+  border-radius: 9px 9px 9px 14px;
+  font: 800 17px/1 var(--nu-font); letter-spacing: .02em;
+  box-shadow: 0 3px 0 #cbc3c0, 0 4px 8px rgba(0,0,0,.35);
+  border: none; cursor: pointer;
+}
+.nu-keycap:active { transform: translateY(2px); box-shadow: 0 1px 0 #cbc3c0; }
+.nu-tab {
+  position: relative; flex: 1 1 0; min-width: 0; height: 58px; padding: 0 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 22px; border: 3px solid var(--nu-brown-800);
+  background: linear-gradient(180deg, var(--nu-brown-400) 0%, var(--nu-brown-700) 48%, var(--nu-brown-700) 62%, var(--nu-brown-500) 100%);
+  box-shadow: inset 0 0 0 2px rgba(233, 220, 203, .55), 0 4px 10px rgba(0,0,0,.35);
+  color: #fff; font: 800 21px/1 var(--nu-font); letter-spacing: .01em;
+  text-shadow: 0 2px 0 rgba(59,42,34,.8), 0 0 3px rgba(59,42,34,.6);
+  cursor: pointer; white-space: nowrap; transition: filter .15s;
+}
+.nu-tab::before, .nu-tab::after {
+  content: ""; position: absolute; top: 50%; width: 34px; height: 34px; transform: translateY(-50%);
+  background: var(--nu-curl-cream) center / contain no-repeat; opacity: .75;
+}
+.nu-tab::before { left: 8px; }
+.nu-tab::after  { right: 8px; transform: translateY(-50%) scaleX(-1); }
+.nu-tab:hover { filter: brightness(1.08); }
+.nu-tab.is-active {
+  border-color: #ffe27a;
+  background: linear-gradient(180deg, var(--nu-gold-200) 0%, var(--nu-amber) 50%, #fbb35a 72%, var(--nu-gold-300) 100%);
+  box-shadow: inset 0 0 0 2px rgba(255, 250, 210, .8), 0 0 14px 3px rgba(255, 190, 80, .75), 0 4px 10px rgba(0,0,0,.3);
+  text-shadow: 0 2px 0 rgba(150, 70, 10, .75), 0 0 4px rgba(150, 70, 10, .5);
+}
+.nu-tab.is-active::before, .nu-tab.is-active::after { filter: sepia(1) saturate(2) hue-rotate(-10deg) brightness(1.1); opacity: .9; }
+
+/* --- Frame: white panel in gold filigree --------------------------------- */
+.nu-frame {
+  position: relative; background: var(--nu-panel);
+  border-radius: var(--nu-r-panel);
+  border: 4px solid var(--nu-frame);
+  box-shadow: inset 0 0 0 3px var(--nu-frame-light), 0 0 0 1.5px var(--nu-frame-dark), var(--nu-shadow-panel);
+  padding: 28px 26px 26px;
+}
+.nu-frame::before, .nu-frame::after {           /* top & bottom crest */
+  content: ""; position: absolute; left: 50%; width: 120px; height: 26px;
+  background: var(--nu-crest) center / contain no-repeat;
+}
+.nu-frame::before { top: -18px; transform: translateX(-50%); }
+.nu-frame::after  { bottom: -18px; transform: translateX(-50%) scaleY(-1); }
+.nu-frame__corner {                              /* optional corner flourishes */
+  position: absolute; width: 46px; height: 46px; pointer-events: none;
+  background: var(--nu-curl-gold) center / contain no-repeat;
+}
+.nu-frame__corner--tl { top: -10px; left: -10px; transform: rotate(-90deg) scaleX(-1); }
+.nu-frame__corner--tr { top: -10px; right: -10px; transform: rotate(90deg); }
+.nu-frame__corner--bl { bottom: -10px; left: -10px; transform: rotate(-90deg); }
+.nu-frame__corner--br { bottom: -10px; right: -10px; transform: rotate(90deg) scaleX(-1); }
+
+.nu-heading { text-align: center; font: 700 22px/1.3 var(--nu-font); color: #574949; margin: 0 0 18px; }
+
+/* --- Lineup band (pale gold strip with inner glow) ----------------------- */
+.nu-band {
+  background: var(--nu-cream); border-radius: 14px;
+  box-shadow: inset 0 0 0 3px var(--nu-band-glow), inset 0 0 22px rgba(246, 220, 159, .9);
+  padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.nu-label {                                     /* "(curl) Attack ______ (X)" */
+  display: inline-flex; align-items: flex-end; gap: 6px; min-width: 150px;
+  padding: 0 4px 3px 0; border-bottom: 2px solid #bdb0a9;
+  font: 700 19px/1 var(--nu-font); color: #5a4a45;
+}
+.nu-label::before { content: ""; width: 22px; height: 22px; background: var(--nu-scroll-icon) center / contain no-repeat; }
+.nu-arrow { width: 0; height: 0; border-left: 9px solid var(--nu-orange); border-top: 7px solid transparent; border-bottom: 7px solid transparent; flex: none; }
+
+/* --- Glyph (Ⓐ Ⓑ Ⓧ Ⓨ) --------------------------------------------------- */
+.nu-glyph {
+  flex: none; width: 30px; height: 30px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #fff; color: var(--nu-brown-900); border: 2.5px solid #7d706c;
+  font: 800 15px/1 var(--nu-font);
+}
+.nu-glyph--sm { width: 24px; height: 24px; font-size: 12px; border-width: 2px; }
+
+/* --- Portrait card ------------------------------------------------------- */
+.nu-card {
+  position: relative; width: 92px; aspect-ratio: 1; flex: none;
+  border-radius: var(--nu-r-card); padding: 4px;
+  background: linear-gradient(160deg, #f9fab4 0%, #f0de62 30%, var(--nu-gold-500) 100%);
+  box-shadow: 0 2px 4px rgba(59,42,34,.3);
+  cursor: pointer; border: none; display: block;
+  transition: transform .12s;
+}
+.nu-card:hover { transform: translateY(-2px); }
+.nu-card__img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: block; background: linear-gradient(160deg, #fdf7ea, #d9cbb8); }
+.nu-card__lv { position: absolute; top: 2px; right: 6px; font: 800 26px/1 var(--nu-font); color: #fff; text-shadow: var(--nu-outline); }
+.nu-card__el {                                  /* element badge */
+  position: absolute; top: 5px; left: 5px; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--nu-blue); border: 2px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+.nu-card__el--red { background: var(--nu-red); }
+.nu-card__stars {
+  position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%);
+  padding: 1px 7px; border-radius: var(--nu-r-pill); background: rgba(90, 80, 78, .82);
+  color: #ffd84a; font-size: 11px; letter-spacing: 1px; line-height: 14px; white-space: nowrap;
+}
+.nu-card.is-selected { background: linear-gradient(160deg, #ffb35c, var(--nu-orange-700)); box-shadow: 0 0 0 2px #fff, 0 0 10px rgba(232, 132, 38, .9); }
+.nu-card--silver { background: linear-gradient(160deg, #f4f4f4 0%, #c9c9c9 45%, #9e9e9e 100%); }
+.nu-card--locked { background: var(--nu-slot); box-shadow: none; cursor: default; }
+.nu-card--locked:hover { transform: none; }
+.nu-card--locked .nu-card__img { display: flex; align-items: center; justify-content: center; background: #cfc5c1; color: #8d807b; font: 800 20px/1 var(--nu-font); }
+.nu-slot { width: 92px; aspect-ratio: 1; border-radius: var(--nu-r-card); background: var(--nu-slot); flex: none; }
+.nu-count {                                     /* "x2" pill under a card */
+  display: block; margin: 5px auto 0; width: 76px; text-align: center;
+  border-radius: var(--nu-r-pill); background: var(--nu-count); color: #fff;
+  font: 700 14px/22px var(--nu-font);
+}
+
+/* --- Section box with brown header strip ---------------------------------- */
+.nu-section { background: var(--nu-section); border-radius: var(--nu-r-section); overflow: hidden; }
+.nu-section__header {
+  position: relative; height: 46px; display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--nu-brown-600); color: #fff; font: 800 24px/1 var(--nu-font); padding: 0 56px;
+}
+.nu-section__header::before, .nu-section__header::after {
+  content: ""; position: absolute; top: 50%; width: 38px; height: 38px; transform: translateY(-50%);
+  background: var(--nu-curl-cream) center / contain no-repeat; opacity: .35;
+}
+.nu-section__header::before { left: 10px; }
+.nu-section__header::after  { right: 10px; transform: translateY(-50%) scaleX(-1); }
+.nu-section__body { padding: 14px; }
+
+/* --- Detail pieces --------------------------------------------------------- */
+.nu-render {                                    /* big character/preview box */
+  position: relative; border-radius: 10px; overflow: hidden;
+  background: radial-gradient(80% 70% at 50% 40%, #ffffff 0%, #eae3dc 55%, #cdbfb2 100%);
+}
+.nu-render__stars { position: absolute; top: 8px; left: 10px; color: #ffd84a; font-size: 20px; letter-spacing: 1px; text-shadow: 0 0 2px var(--nu-brown-900), 0 1px 0 var(--nu-brown-900); }
+.nu-render__pwr { position: absolute; top: 6px; right: 12px; display: flex; align-items: baseline; gap: 6px; color: #fff; text-shadow: var(--nu-outline); }
+.nu-render__pwr b { font: 800 34px/1 var(--nu-font); }
+.nu-render__pwr span { font: 800 17px/1 var(--nu-font); }
+.nu-render__plate {                             /* "🔒 ???" plate at the bottom */
+  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+  min-width: 70%; height: 32px; padding: 0 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: rgba(150, 150, 150, .85); color: #fff; font: 800 16px/1 var(--nu-font); white-space: nowrap;
+}
+.nu-render__plate::before, .nu-render__plate::after {
+  content: ""; position: absolute; top: 50%; width: 22px; height: 22px; transform: translateY(-50%);
+  background: var(--nu-curl-cream) center / contain no-repeat; opacity: .8;
+}
+.nu-render__plate::before { left: 8px; }
+.nu-render__plate::after { right: 8px; transform: translateY(-50%) scaleX(-1); }
+
+.nu-bar {                                       /* gold label bar ("Attack") */
+  display: block; text-align: center; border-radius: var(--nu-r-pill);
+  background: linear-gradient(180deg, #ffd477, var(--nu-gold-400));
+  color: #6b4a1f; font: 700 18px/30px var(--nu-font);
+}
+.nu-move { display: flex; align-items: center; gap: 8px; font: 700 24px/1.2 var(--nu-font); color: var(--nu-text); margin: 8px 0; text-decoration: none; }
+.nu-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+.nu-stat {                                      /* [icon  S] pill */
+  flex: 1 1 auto; min-width: 0; height: 34px; border-radius: var(--nu-r-pill);
+  display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 12px;
+  background: var(--nu-pill); color: #574949; font: 700 13px/1 var(--nu-font); white-space: nowrap;
+}
+.nu-stat b { font: 800 19px/1 var(--nu-font); color: #fff9c2; text-shadow: 0 0 2px #8a7a2e, 1px 1px 0 #8a7a2e, -1px -1px 0 #8a7a2e, 1px -1px 0 #8a7a2e, -1px 1px 0 #8a7a2e; }
+.nu-preview { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; display: block; background: #d9cfca; }
+.nu-desc { font: 600 16px/1.35 var(--nu-font); color: #574949; margin: 8px 0 0; }
+.nu-dots { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+.nu-dot { width: 13px; height: 13px; border-radius: 50%; background: var(--nu-text-mute); border: none; padding: 0; cursor: pointer; }
+.nu-dot.is-active { background: var(--nu-orange); }
+.nu-pager {                                     /* orange ▶ + "RT" keycap on the side */
+  width: 0; height: 0; border-left: 16px solid var(--nu-orange); border-top: 16px solid transparent; border-bottom: 16px solid transparent;
+  background: none; padding: 0; cursor: pointer;
+}
+
+/* --- Footer hint pills ([Ⓐ OK] [Ⓑ Close]) --------------------------------- */
+.nu-hints { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
+.nu-hint {
+  display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 18px 0 8px;
+  border-radius: 18px; background: var(--nu-hint); color: var(--nu-text);
+  font: 700 21px/1 var(--nu-font); border: none; cursor: pointer; text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+.nu-hint:hover { background: #fff; }
+.nu-hint__sep { margin: 0 -4px; color: var(--nu-text-soft); }
+
+/* --- Play-data pills (label pill + big value) ------------------------------ */
+.nu-data { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px 22px; }
+.nu-data__label { border-radius: var(--nu-r-pill); background: var(--nu-pill); color: #574949; text-align: center; font: 700 16px/30px var(--nu-font); padding: 0 12px; }
+.nu-data__value { font: 700 21px/1 var(--nu-font); color: var(--nu-text); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* --- Record list (white rows, badge, No.) ---------------------------------- */
+.nu-list { display: flex; flex-direction: column; gap: 10px; padding: 12px; background: #f1ecea; border-radius: 16px; }
+.nu-row {
+  position: relative; display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 0 16px;
+  background: #fff; border-radius: 10px; box-shadow: var(--nu-shadow-soft);
+  font: 700 21px/1 var(--nu-font); color: var(--nu-text); text-align: left;
+  border: 3px solid transparent; cursor: pointer; width: 100%;
+}
+.nu-row.is-selected { border-color: var(--nu-orange); }
+.nu-row__badge { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex: none; background: var(--nu-slot); }
+.nu-row__no { margin-left: auto; align-self: flex-end; margin-bottom: 10px; font: 600 16px/1 var(--nu-font); color: var(--nu-text-soft); }
+.nu-new { position: absolute; top: -8px; left: -8px; width: 26px; height: 26px; border-radius: 50%; background: #ff3b30; color: #fff; font: 800 17px/26px var(--nu-font); text-align: center; border: 2px solid #fff; }
+.nu-ribbon {                                    /* title on an ornamental divider */
+  display: flex; align-items: center; gap: 8px; font: 700 22px/1.2 var(--nu-font); color: #574949; text-align: center;
+}
+.nu-ribbon::before, .nu-ribbon::after { content: ""; flex: 1; height: 2px; background: #7b6a62; border-radius: 2px; }
+.nu-tag { display: inline-block; border-radius: var(--nu-r-pill); padding: 0 18px; font: 700 15px/26px var(--nu-font); background: #d6ccc8; color: #574949; }
+.nu-tag--orange { background: var(--nu-orange); color: #fff; }
+
+/* --- Battle HUD (portrait with health arc, bar, counters) ------------------ */
+.nu-hud { display: flex; align-items: flex-end; gap: 12px; color: #fff; }
+.nu-hud__portrait {
+  position: relative; width: 84px; height: 84px; flex: none; border-radius: 50%;
+  background: conic-gradient(from 200deg, var(--nu-hp-arc) 0 var(--nu-hp, 70%), rgba(255,255,255,.25) 0 100%);
+  padding: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.4);
+}
+.nu-hud__portrait img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #fff; background: #f3e9df; }
+.nu-hud__code { font: 800 26px/1 var(--nu-font); text-shadow: var(--nu-outline); margin-bottom: 4px; }
+.nu-hud__bar { position: relative; width: 240px; height: 16px; border-radius: var(--nu-r-pill); background: rgba(20, 20, 20, .65); border: 2px solid rgba(255,255,255,.85); overflow: hidden; }
+.nu-hud__fill { height: 100%; background: linear-gradient(180deg, #a6ef7c, var(--nu-green) 60%, #3c9a3f); border-radius: var(--nu-r-pill); }
+.nu-hud__hp { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font: 800 11px/1 var(--nu-font); text-shadow: var(--nu-outline); }
+.nu-hud__counters { display: flex; gap: 16px; margin-top: 6px; font: 800 15px/1 var(--nu-font); text-shadow: var(--nu-outline); }
+.nu-hud__counters span { display: inline-flex; align-items: center; gap: 5px; }
+.nu-coin { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff2a8, #f1b82c 60%, #b07d12); box-shadow: 0 0 0 1px #6b4a12; }
+.nu-gem { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #d8f3ff, #3fb2ec 60%, #1466a8); box-shadow: 0 0 0 1px #0c3f6b; }
+.nu-key { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffe0e8, #ff7a94 60%, #b8324d); box-shadow: 0 0 0 1px #6b1225; }
+
+/* --- Dialogue (portrait + speech box + name plate) ------------------------ */
+.nu-dialog { position: fixed; inset: 0; z-index: 50; display: flex; align-items: flex-end; justify-content: center; padding: 0 16px 40px; background: linear-gradient(180deg, transparent 40%, rgba(20, 10, 5, .45)); }
+.nu-dialog__art { position: absolute; left: max(4vw, 16px); bottom: 20px; width: min(34vw, 380px); aspect-ratio: 1; object-fit: cover; border-radius: 50% 50% 18px 18px; -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent); mask-image: linear-gradient(180deg, #000 70%, transparent); }
+.nu-dialog__box {
+  position: relative; width: min(980px, 100%); margin-left: min(18vw, 220px); min-height: 150px;
+  background: #fff; border-radius: 36px; padding: 40px 48px 34px;
+  font: 700 22px/1.55 var(--nu-font); color: var(--nu-text); box-shadow: 0 6px 22px rgba(0,0,0,.35);
+}
+.nu-nameplate {
+  position: absolute; top: -20px; left: 40px; height: 40px; padding: 0 46px;
+  display: inline-flex; align-items: center; border-radius: 12px;
+  background: linear-gradient(180deg, #a0918a, #7d6e68); color: #fff; font: 800 21px/1 var(--nu-font);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.35), 0 2px 5px rgba(0,0,0,.3);
+}
+.nu-nameplate::before, .nu-nameplate::after { content: ""; position: absolute; top: 50%; width: 26px; height: 26px; transform: translateY(-50%); background: var(--nu-curl-cream) center / contain no-repeat; opacity: .8; }
+.nu-nameplate::before { left: 10px; }
+.nu-nameplate::after { right: 10px; transform: translateY(-50%) scaleX(-1); }
+.nu-caret { position: absolute; left: 50%; bottom: -2px; transform: translateX(-50%); width: 0; height: 0; border-top: 13px solid var(--nu-orange); border-left: 11px solid transparent; border-right: 11px solid transparent; animation: nu-bob 1s ease-in-out infinite; }
+.nu-dialog__hints { position: absolute; right: -8px; bottom: 16px; transform: translateX(100%); display: flex; flex-direction: column; gap: 10px; color: #fff; font: 700 18px/1 var(--nu-font); text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+.nu-dialog__hints button { display: flex; align-items: center; gap: 8px; background: none; border: none; color: inherit; font: inherit; cursor: pointer; padding: 0; }
+@keyframes nu-bob { 50% { transform: translate(-50%, 4px); } }
+
+@media (prefers-reduced-motion: reduce) { .nu-caret { animation: none; } .nu-card, .nu-tab { transition: none; } }

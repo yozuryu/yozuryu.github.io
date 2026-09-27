@@ -1,0 +1,8 @@
+# Files that must not be published to GitHub Pages.
+exclude:
+  - CLAUDE.md
+  - README.md
+  - STYLE.md
+  - .gitignore
+  - .claude/
+  - .agents/
