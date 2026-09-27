@@ -84,15 +84,21 @@ We recreate the *style* only: never use the game's art, characters, logo or scre
 | `.nu-data`, `.nu-data__label`, `.nu-data__value` | Play-data rows: tan label pill + big right-aligned value | |
 | `.nu-list`, `.nu-row.is-selected`, `.nu-row__badge`, `.nu-row__no`, `.nu-new` | Records list: white rows, round badge, "P-01"-style number, red `!` for new | Grouped lists: one `.nu-section` per group, list inside its body. Keyboard focus ring is orange |
 | `.nu-ribbon`, `.nu-tag`, `.nu-tag--orange` | Title on an ornamental divider; gray / orange tag pills ("Condition", "Reward") | |
+| `.nu-pedestal` (`__item`, `__stand`, `__name`, `__lv`), `.is-selected`, `--locked` | An item on a stand; selected one gets an orange ring and a bobbing ▼ | Creations display. Ref: Statue screen (`base_image_5`) |
+| `.nu-burst` (+ `.nu-burst__spark`) | Item on a slowly turning light burst with sparkles | Detail header. Ref: item-get banner (`ability_image_1`) |
+| `.nu-progress` (`__arrow`, `__to`) | "Lv 1 ▸ 23" — muted start, orange ▸, big orange end value | Ref: shop card "2470 ▸ 1470" (Steam `ss_7e41…`) |
+| `.nu-slots`, `.nu-slot-item` (`__box`) | Dark item slots with a gold inset rim, icon + label below | Materials. Icons: Simple Icons (CC0) in `assets/materials/`. Ref: gift slots (`base_image_7`) |
+| `.nu-effects` | Numbered list: brown ① ② ③ badges on light rows | Effects. Ref: support list (`base_image_7`) |
 | `.nu-hud` (`__portrait` with `--nu-hp`, `__code`, `__bar`, `__fill`, `__hp`, `__counters`), `.nu-coin`, `.nu-gem`, `.nu-key` | Battle HUD: round portrait with health arc, name, green bar, counters | Bottom-left |
 | `.nu-dialog` (`__art`, `__box`, `__hints`), `.nu-nameplate`, `.nu-caret`, `.nu-type__rest` | Dialogue: portrait art, white speech box, name plate, bobbing ▼, Next/Skip hints | Full-screen overlay. Box rises, portrait slides in; text types out 25 ms/char (first click finishes the line); the untyped rest stays in the layout, hidden, so the box never grows |
 | `.nu-enter` (`--from-right` / `--from-left`), `.nu-rise`, `.nu-stagger` | Motion utilities: page entry from the side you navigated toward; in-place swap (fade + rise 8px); children appearing one after another | Put `key={…}` on the element so React remounts it and the animation replays. Set `--i` inline to control a stagger step |
 
 Reference screen layouts from the game, as used on the landing page:
 
-- **Lineup (character menu):** heading → lineup band → two sections side by side: *Stock* (6-column card grid, 3 rows) and a *detail* section (render box left; gold bar, move, stat pills, preview, description, dots right).
+- **Creations** (after the Statue screen, `design-references/little-noah/official-system/base_image_5.png`): heading → *Display* section (pedestals, 3 per row; locked `???` pedestals for future projects) and *Preview* section (screenshot) on the left; *details* section on the right: `.nu-burst` icon with `Lv 1 ▸ n` (`.nu-progress`) and PWR / Since / Latest pills, the move link, *Materials* (`.nu-slots`) and *Effects* (`.nu-effects`). Phone: Display → details → Preview.
+  (The earlier *Lineup* screen used the lineup band, Stock grid and render box; those components remain in the system.)
 - **Play Data:** heading → two columns of `.nu-data` rows on a light gray panel.
-- **Records:** lists of `.nu-row`s left, one `.nu-section` box per group (Projects / Gamer Profiles, numbered P-01… / G-01…), detail card right (emblem, ribbon title, stat pills, tags, hint pill). The card adapts to the group: a project shows its Lineup Lv / PWR, a gamer profile shows live stats and the player name.
+- **Records (Links):** lists of `.nu-row`s left, one `.nu-section` box per group (Gamer Profiles / Developer, numbered G-01… / D-01…), detail card right (emblem, ribbon title, stat pills, tags, hint pill). The card adapts to the group: a project shows its Lineup Lv / PWR, a gamer profile shows live stats and the player name.
 - **Dialogue:** intro lines from `data/site.json` → `intro`; shown once per session.
 
 ---

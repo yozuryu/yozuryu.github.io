@@ -22,8 +22,8 @@ Status: **"Coming Soon" landing page** styled after the pause/character menu of 
 
 ```
 index.html            Shell: fonts, noah-ui.css, site.css, React via import map, app.js
-app.js                Pause-menu landing page: tabs Player / Lineup / Play Data / Links, HUD, button hints, intro dialogue
-data/site.json        Content: name, avatar, intro lines, about, projects (Lineup cards), links (Records)
+app.js                Pause-menu landing page: tabs Player / Creations / Play Data / Links, HUD, button hints, intro dialogue
+data/site.json        Content: name, avatar, intro lines, about, projects (Creations: materials, effects, previews), links (Records: gamer profiles + developer)
 assets/noah-ui.css    Design system (tokens + nu- components)
 assets/site.css       Page layout + responsive rules
 assets/projects/      Project icons and preview screenshots
@@ -35,7 +35,7 @@ _config.yml           Jekyll exclude list — anything private must be listed he
 changelog.md          Changelog
 ```
 
-Live data: the Player / Play Data tabs and the HUD read Gaming Hub's public JSON (`/gaming-hub/data/*/profile.json`, `/gaming-hub/data/hub/config.json`); Lineup card level/PWR count releases/changes in each project's `changelog.md`. All same-origin, so no CORS. Everything must degrade to "—" when a fetch fails (e.g. local dev without the sibling folders).
+Live data: the Player / Play Data tabs and the HUD read Gaming Hub's public JSON (`/gaming-hub/data/*/profile.json`, `/gaming-hub/data/hub/config.json`); Creations level/PWR count releases/changes in each project's `changelog.md`. All same-origin, so no CORS. Everything must degrade to "—" when a fetch fails (e.g. local dev without the sibling folders).
 
 Local dev: serve the **parent** folder (`~/projects/personal`, e.g. `python3 -m http.server`) and open `/yozuryu.github.io/`, so `/gaming-hub/…` and `/cheevo-tracker/…` resolve to the sibling repos like on GitHub Pages.
 

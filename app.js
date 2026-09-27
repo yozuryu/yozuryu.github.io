@@ -6,7 +6,7 @@ import { createRoot } from 'react-dom/client';
 
 const TABS = [
     { id: 'player',  label: 'Player' },
-    { id: 'lineup',  label: 'Lineup' },
+    { id: 'creations', label: 'Creations' },
     { id: 'data',    label: 'Play Data' },
     { id: 'links',   label: 'Links' },
 ];
@@ -44,8 +44,8 @@ const CountUp = ({ id, value }) => fmt(useCountUp(id, value));
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
-// Level / PWR for a project card, derived from its public changelog:
-// Lv = number of releases, PWR = number of logged changes.
+// Level / PWR / release span for a creation, derived from its public changelog:
+// Lv = number of releases, PWR = number of logged changes, first/latest = oldest/newest vYY.MM.DD.
 const useChangelogStats = (projects) => {
     const [stats, setStats] = useState({});
     useEffect(() => {
@@ -55,7 +55,9 @@ const useChangelogStats = (projects) => {
                 if (!md) return;
                 const releases = (md.match(/^## v/gm) || []).length;
                 const changes  = (md.match(/^- /gm) || []).length;
-                setStats(s => ({ ...s, [p.id]: { releases, changes } }));
+                const versions = [...md.matchAll(/^## v(\d{2})\.(\d{2})\.(\d{2})/gm)];
+                const toDate = (m) => m && new Date(2000 + +m[1], +m[2] - 1, +m[3]);
+                setStats(s => ({ ...s, [p.id]: { releases, changes, latest: toDate(versions[0]), first: toDate(versions[versions.length - 1]) } }));
             }).catch(() => {});
         });
     }, [projects]);
@@ -104,20 +106,7 @@ const useGamingStats = () => {
 
 const Stars = ({ n }) => '★'.repeat(n || 0);
 
-const ProjectCard = ({ p, lv, selected, onClick }) => (
-    <button className={`nu-card${selected ? ' is-selected' : ''}`} onClick={onClick} title={p.name} aria-pressed={selected}>
-        <img className="nu-card__img" src={p.icon} alt={p.name} />
-        <span className={`nu-card__el${p.element === 'red' ? ' nu-card__el--red' : ''}`} />
-        {lv != null && <span className="nu-card__lv">{lv}</span>}
-        <span className="nu-card__stars"><Stars n={p.stars} /></span>
-    </button>
-);
-
-const LockedCard = () => (
-    <div className="nu-card nu-card--locked" aria-label="Locked slot">
-        <div className="nu-card__img">???</div>
-    </div>
-);
+const monthYear = (d) => (d ? d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : '—');
 
 // Footer button hint. `glyph` may be an array for combos, e.g. ['Q', 'E'] → "Q / E".
 const Hint = ({ glyph, children, onClick, href }) => {
@@ -133,7 +122,10 @@ const Hint = ({ glyph, children, onClick, href }) => {
 
 // ── Tabs ─────────────────────────────────────────────────────────────────────
 
-const LineupTab = ({ site, selected, setSelected, clStats }) => {
+// Creations: each project shown as a crafted item. Pedestals on the left pick one (the
+// Statue screen), the right panel shows it like an item-get card: glow burst, Lv 1 ▸ n,
+// materials as item slots, effects as a numbered list, screenshots, Open / Source.
+const CreationsTab = ({ site, selected, setSelected, clStats }) => {
     const projects = site.projects;
     const p = projects[selected] ?? projects[0];
     const [{ page, dir }, setView] = useState({ page: 0, dir: null });
@@ -142,83 +134,92 @@ const LineupTab = ({ site, selected, setSelected, clStats }) => {
     const previews = p?.previews ?? [];
     const st = clStats[p?.id];
     const locked = site.lockedSlots ?? 0;
-    const emptySlots = Math.max(0, 18 - projects.length - locked);   // 3 rows of 6, like the game's stock grid
 
     return (
         <>
-            <p className="nu-heading">Choose a project to explore.</p>
-
-            <div className="nu-band lineup-band">
-                <div className="lineup-group">
-                    <span className="nu-label">Live</span>
-                    <span className="nu-glyph">A</span>
-                    {projects.map((proj, i) => (
-                        <React.Fragment key={proj.id}>
-                            {i > 0 && <span className="nu-arrow" />}
-                            <ProjectCard p={proj} lv={clStats[proj.id]?.releases} selected={i === selected} onClick={() => setSelected(i)} />
-                        </React.Fragment>
-                    ))}
-                </div>
-                <div className="lineup-group">
-                    <span className="nu-label">Soon</span>
-                    <span className="nu-glyph">Y</span>
-                    <LockedCard /><LockedCard />
-                </div>
-            </div>
-
-            <div className="lineup-grid">
-                <section className="nu-section">
-                    <div className="nu-section__header">Stock</div>
-                    <div className="nu-section__body">
-                        <div className="stock-grid">
-                            {projects.map((proj, i) => (
-                                <div key={proj.id}>
-                                    <ProjectCard p={proj} lv={clStats[proj.id]?.releases} selected={i === selected} onClick={() => setSelected(i)} />
-                                    <span className="nu-count">Live</span>
-                                </div>
-                            ))}
-                            {Array.from({ length: locked }, (_, i) => (
-                                <div key={`l${i}`}><LockedCard /><span className="nu-count">Soon</span></div>
-                            ))}
-                            {Array.from({ length: emptySlots }, (_, i) => <div key={`e${i}`} className="nu-slot" />)}
-                        </div>
+            <p className="nu-heading">Choose a creation to inspect.</p>
+            <div className="creations-grid">
+                <section className="nu-section creations-display">
+                    <div className="nu-section__header">Display</div>
+                    <div className="nu-section__body display-grid">
+                        {projects.map((proj, i) => (
+                            <button key={proj.id} className={`nu-pedestal${i === selected ? ' is-selected' : ''}`} onClick={() => setSelected(i)} aria-pressed={i === selected}>
+                                <span className="nu-pedestal__item"><img src={proj.icon} alt="" /></span>
+                                <span className="nu-pedestal__stand" />
+                                <span className="nu-pedestal__name">{proj.name}</span>
+                                <span className="nu-pedestal__lv">Lv {clStats[proj.id]?.releases ?? '—'}</span>
+                            </button>
+                        ))}
+                        {Array.from({ length: locked }, (_, i) => (
+                            <div key={`l${i}`} className="nu-pedestal nu-pedestal--locked" aria-label="Locked: coming soon">
+                                <span className="nu-pedestal__item">?</span>
+                                <span className="nu-pedestal__stand" />
+                                <span className="nu-pedestal__name">???</span>
+                            </div>
+                        ))}
                     </div>
                 </section>
 
                 {p && (
-                    <section className="nu-section">
+                    <section className="nu-section creations-details">
                         <div className="nu-section__header">
                             <span className={`nu-card__el${p.element === 'red' ? ' nu-card__el--red' : ''}`} style={{ position: 'static', width: 26, height: 26 }} />
-                            {p.name}{st ? ` Lv.${st.releases}` : ''}
+                            {p.name} <span style={{ color: '#ffd84a' }}><Stars n={p.stars} /></span>
                         </div>
-                        <div key={p.id} className="nu-section__body detail-body nu-rise">
-                            <div className="nu-render">
-                                <span className="nu-render__stars"><Stars n={p.stars} /></span>
-                                <span className="nu-render__pwr"><span>PWR</span><b>{st ? st.changes : '—'}</b></span>
-                                <div className="detail-render-icon"><img src={p.icon} alt="" /></div>
-                                <span className="nu-render__plate">{p.url}</span>
-                            </div>
-                            <div>
-                                <span className="nu-bar">Info</span>
-                                <a className="nu-move detail-move" href={p.url}><span className="nu-glyph">A</span>{p.move}</a>
-                                <div className="nu-stats">
-                                    {(p.tags || []).map(t => <span key={t.label} className="nu-stat">{t.label}<b>{t.value}</b></span>)}
+                        <div key={p.id} className="nu-section__body creation-body nu-rise">
+                            <div className="creation-head">
+                                <div className="nu-burst">
+                                    <span className="nu-burst__spark">✦</span><span className="nu-burst__spark">✦</span><span className="nu-burst__spark">✦</span>
+                                    <img src={p.icon} alt="" />
                                 </div>
-                                {previews.length > 0 && (
-                                    <div className="detail-preview">
-                                        <div className="detail-preview__frame">
-                                            <img key={page} className={`nu-preview${dir ? ` nu-enter nu-enter--from-${dir}` : ''}`} src={previews[page]} alt={`${p.name} screenshot`} />
-                                        </div>
-                                        {previews.length > 1 && <button className="nu-pager" aria-label="Next screenshot" onClick={() => setPage((page + 1) % previews.length, 'right')} />}
+                                <div className="creation-facts">
+                                    <span className="nu-progress" aria-label={`Level ${st?.releases ?? ''}`}>Lv 1<span className="nu-progress__arrow">▸</span><span className="nu-progress__to">{st?.releases ?? '—'}</span></span>
+                                    <div className="nu-stats">
+                                        <span className="nu-stat">PWR<b>{st ? fmt(st.changes) : '—'}</b></span>
+                                        <span className="nu-stat">Since<b>{monthYear(st?.first)}</b></span>
+                                        <span className="nu-stat">Latest<b>{monthYear(st?.latest)}</b></span>
                                     </div>
-                                )}
-                                <p className="nu-desc">{p.description}</p>
+                                    <a className="nu-move detail-move" href={p.url}><span className="nu-glyph">A</span>{p.move}</a>
+                                </div>
+                            </div>
+                            {p.materials?.length > 0 && <>
+                                <span className="nu-bar">Materials</span>
+                                <div className="nu-slots">
+                                    {p.materials.map(m => (
+                                        <span key={m.name} className="nu-slot-item">
+                                            <span className="nu-slot-item__box"><img src={m.icon} alt="" /></span>
+                                            {m.name}
+                                        </span>
+                                    ))}
+                                </div>
+                            </>}
+                            {p.effects?.length > 0 && <>
+                                <span className="nu-bar">Effects</span>
+                                <ol className="nu-effects">{p.effects.map(e => <li key={e}>{e}</li>)}</ol>
+                            </>}
+                        </div>
+                    </section>
+                )}
+
+                {p && previews.length > 0 && (
+                    <section className="nu-section creations-preview">
+                        <div className="nu-section__header">Preview</div>
+                        <div key={p.id} className="nu-section__body nu-rise">
+                            {previews.length > 0 && (
+                                <div className="detail-preview">
+                                    <div className="detail-preview__frame">
+                                        <img key={page} className={`nu-preview${dir ? ` nu-enter nu-enter--from-${dir}` : ''}`} src={previews[page]} alt={`${p.name} screenshot`} />
+                                    </div>
+                                    {previews.length > 1 && <button className="nu-pager" aria-label="Next screenshot" onClick={() => setPage((page + 1) % previews.length, 'right')} />}
+                                </div>
+                            )}
+                            {previews.length > 1 && (
                                 <div className="nu-dots">
-                                    {(previews.length ? previews : [0]).map((_, i) => (
+                                    {previews.map((_, i) => (
                                         <button key={i} className={`nu-dot${i === page ? ' is-active' : ''}`} aria-label={`Screenshot ${i + 1}`} onClick={() => setPage(i)} />
                                     ))}
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </section>
                 )}
@@ -294,11 +295,11 @@ const DataTab = ({ gs }) => {
     );
 };
 
-// Records, grouped: your projects (with the Lineup's Lv / PWR) and your gamer profiles
-// (with live stats from Gaming Hub). Two section boxes on the left; the detail card adapts to the group.
+// Records: where to find me elsewhere. Gamer profiles show live stats from Gaming Hub;
+// the developer profile (GitHub) shows the Creations count. Projects themselves live in Creations.
 const LINK_GROUPS = [
-    { id: 'project', title: 'Projects',       prefix: 'P' },
-    { id: 'profile', title: 'Gamer Profiles', prefix: 'G' },
+    { id: 'profile',   title: 'Gamer Profiles', prefix: 'G' },
+    { id: 'developer', title: 'Developer',      prefix: 'D' },
 ];
 const PROFILE_STATS = {
     ra:    (gs) => ({ user: gs?.raUser,    stats: [['Points', gs?.raPoints], ['Mastered', gs?.raMastered], ['Beaten', gs?.raBeaten]] }),
@@ -306,8 +307,8 @@ const PROFILE_STATS = {
     xbox:  (gs) => ({ user: gs?.xboxUser,  stats: [['Gamerscore', gs?.gamerscore], ['Completed', gs?.xboxCompleted], ['Achievements', gs?.xboxAchievements]] }),
 };
 
-const LinksTab = ({ site, gs, clStats }) => {
-    const groups = LINK_GROUPS.map(g => ({ ...g, items: site.links.filter(l => (l.group || 'project') === g.id) })).filter(g => g.items.length);
+const LinksTab = ({ site, gs }) => {
+    const groups = LINK_GROUPS.map(g => ({ ...g, items: site.links.filter(l => (l.group || 'profile') === g.id) })).filter(g => g.items.length);
     const flat = groups.flatMap(g => g.items.map((link, n) => ({ link, group: g, n })));
     const [sel, setSel] = useState(0);
     const cur = flat[sel];
@@ -325,15 +326,12 @@ const LinksTab = ({ site, gs, clStats }) => {
     const { link: l, group, n } = cur;
     const code = (g, i) => `${g.prefix}-${String(i + 1).padStart(2, '0')}`;
 
-    // Detail stats: a profile shows live numbers; a project shows its Lineup Lv / PWR and first tag.
+    // Detail stats: a gamer profile shows live numbers; GitHub shows the Creations count.
     let player = null, stats = [];
     if (group.id === 'profile' && PROFILE_STATS[l.platform]) {
         ({ user: player, stats } = PROFILE_STATS[l.platform](gs));
-    } else if (l.project) {
-        const proj = site.projects.find(p => p.id === l.project), cl = clStats[l.project];
-        stats = [['Lv', cl?.releases], ['PWR', cl?.changes], ...(proj?.tags?.[0] ? [[proj.tags[0].label, proj.tags[0].value]] : [])];
     } else {
-        stats = [['Live', site.projects.length], ['Soon', site.lockedSlots ?? 0]];   // GitHub: mirrors the Lineup's Live / Soon
+        stats = [['Creations', site.projects.length], ['Coming soon', site.lockedSlots ?? 0]];
     }
 
     let i = -1;
@@ -437,8 +435,8 @@ const Dialog = ({ site, onClose }) => {
 const App = () => {
     const [site, setSite] = useState(null);
     const [tab, setTab] = useState(() => {
-        const h = window.location.hash.slice(1);
-        return TABS.some(t => t.id === h) ? h : 'lineup';
+        const h = window.location.hash.slice(1) === 'lineup' ? 'creations' : window.location.hash.slice(1);   // old links
+        return TABS.some(t => t.id === h) ? h : 'creations';
     });
     const [selected, setSelected] = useState(0);
     // Direction of the last tab change, so the new page slides in from that side (null = first load: fade only).
@@ -500,7 +498,7 @@ const App = () => {
             if (e.target.closest?.('input, textarea')) return;
             if (e.key === 'q' || e.key === 'Q' || e.key === '[') shiftTab(-1);
             if (e.key === 'e' || e.key === 'E' || e.key === ']') shiftTab(1);
-            if (tab === 'lineup' && site) {
+            if (tab === 'creations' && site) {
                 if (e.key === 'ArrowRight') setSelected(s => (s + 1) % site.projects.length);
                 if (e.key === 'ArrowLeft')  setSelected(s => (s - 1 + site.projects.length) % site.projects.length);
                 if ((e.key === 'Enter' || e.key === 'a') && project) window.location.href = project.url;
@@ -541,10 +539,10 @@ const App = () => {
                     {/* Keyed by tab: each change remounts, so the entry animation replays. The new page
                         slides in from the side you moved toward; its blocks rise in one after another. */}
                     <div key={tab} className={`nu-enter nu-stagger${tabDir ? ` nu-enter--from-${tabDir}` : ''}`}>
-                        {tab === 'lineup' && <LineupTab site={site} selected={selected} setSelected={setSelected} clStats={clStats} />}
+                        {tab === 'creations' && <CreationsTab site={site} selected={selected} setSelected={setSelected} clStats={clStats} />}
                         {tab === 'player' && <PlayerTab site={site} gs={gs} />}
                         {tab === 'data'   && <DataTab gs={gs} />}
-                        {tab === 'links'  && <LinksTab site={site} gs={gs} clStats={clStats} />}
+                        {tab === 'links'  && <LinksTab site={site} gs={gs} />}
                     </div>
                 </div>
             </main>
@@ -567,8 +565,8 @@ const App = () => {
                 </div>
                 <div className="nu-hints">
                     <Hint glyph={['Q', 'E']} onClick={() => shiftTab(1)}>Tabs</Hint>
-                    {tab === 'lineup' && project && <Hint glyph="A" href={project.url}>Open</Hint>}
-                    {tab === 'lineup' && project?.repo && <Hint glyph="Y" href={project.repo}>Source</Hint>}
+                    {tab === 'creations' && project && <Hint glyph="A" href={project.url}>Open</Hint>}
+                    {tab === 'creations' && project?.repo && <Hint glyph="Y" href={project.repo}>Source</Hint>}
                     <Hint glyph="X" onClick={() => setShowIntro(true)}>Intro</Hint>
                 </div>
             </div>

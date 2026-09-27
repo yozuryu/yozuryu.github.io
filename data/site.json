@@ -4,7 +4,7 @@
   "intro": [
     "Oh! A visitor!",
     "Welcome to my little corner of the internet. The place is still under construction...",
-    "Have a look around the menu in the meantime. My projects are in the Lineup!"
+    "Have a look around the menu in the meantime. My projects are on display in Creations!"
   ],
   "about": "Gamer, tinkerer and achievement hunter. This page is still being built — more soon!",
   "projects": [
@@ -35,7 +35,30 @@
           "value": "–"
         }
       ],
-      "description": "Achievement dashboard for RetroAchievements, Steam and Xbox, fed by hourly data pipelines."
+      "description": "Achievement dashboard for RetroAchievements, Steam and Xbox, fed by hourly data pipelines.",
+      "materials": [
+        {
+          "name": "React",
+          "icon": "./assets/materials/react.svg"
+        },
+        {
+          "name": "Tailwind CSS",
+          "icon": "./assets/materials/tailwindcss.svg"
+        },
+        {
+          "name": "Node.js",
+          "icon": "./assets/materials/nodedotjs.svg"
+        },
+        {
+          "name": "GitHub Actions",
+          "icon": "./assets/materials/githubactions.svg"
+        }
+      ],
+      "effects": [
+        "RetroAchievements, Steam and Xbox in one dashboard",
+        "Updated hourly by automated pipelines",
+        "A year of unlocks, streaks and completions"
+      ]
     },
     {
       "id": "cheevo-tracker",
@@ -64,7 +87,30 @@
           "value": "–"
         }
       ],
-      "description": "Personal RetroAchievements profile tracker. No server, no build step: runs entirely in your browser."
+      "description": "Personal RetroAchievements profile tracker. No server, no build step: runs entirely in your browser.",
+      "materials": [
+        {
+          "name": "React",
+          "icon": "./assets/materials/react.svg"
+        },
+        {
+          "name": "Tailwind CSS",
+          "icon": "./assets/materials/tailwindcss.svg"
+        },
+        {
+          "name": "PWA",
+          "icon": "./assets/materials/pwa.svg"
+        },
+        {
+          "name": "IndexedDB",
+          "icon": "./assets/materials/indexeddb.svg"
+        }
+      ],
+      "effects": [
+        "Your RetroAchievements profile, progress and backlog",
+        "Friends feed with a live \"Playing now\" dot",
+        "No server: runs entirely in your browser"
+      ]
     }
   ],
   "lockedSlots": 4,
@@ -73,24 +119,8 @@
       "name": "GitHub",
       "url": "https://github.com/yozuryu",
       "icon": "./assets/links/github.png",
-      "note": "Source code for everything here.",
-      "group": "project"
-    },
-    {
-      "name": "Gaming Hub",
-      "url": "/gaming-hub/",
-      "icon": "./assets/projects/gaming-hub-icon.png",
-      "note": "RetroAchievements, Steam and Xbox in one dashboard.",
-      "group": "project",
-      "project": "gaming-hub"
-    },
-    {
-      "name": "Cheevo Tracker",
-      "url": "/cheevo-tracker/",
-      "icon": "./assets/projects/cheevo-tracker-icon.png",
-      "note": "RetroAchievements profile tracker.",
-      "group": "project",
-      "project": "cheevo-tracker"
+      "note": "Source code for all my creations.",
+      "group": "developer"
     },
     {
       "name": "RetroAchievements",

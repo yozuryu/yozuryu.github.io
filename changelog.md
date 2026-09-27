@@ -31,3 +31,11 @@ Replace the "Coming Soon" placeholder with a pause-menu landing page styled afte
   - Motion tokens and `nu-enter` / `nu-rise` / `nu-stagger` classes live in `noah-ui.css`, documented as STYLE.md rule 11
 - Links: split into **Projects** (GitHub, Gaming Hub, Cheevo Tracker — P-01…) and **Gamer Profiles** (RetroAchievements, Steam, Xbox — G-01…) each in its own section box (brown header on a gray box, like Background and Stock). The detail card adapts: projects show their Lineup Lv / PWR and first tag; gamer profiles show live stats from Gaming Hub (RA points/mastered/beaten, Steam hours/perfect/achievements, Xbox gamerscore/completed/achievements) and the player name, with "Open profile". ↑/↓ moves through both groups, Enter/A opens. Stat pills stack on phones; keyboard focus ring is orange
 - Links: GitHub uses the GitHub mark (`assets/links/github.png`, from Octicons) instead of the avatar
+- **Creations** replaces the Lineup tab (old `#lineup` links still work), built from the game's Statue, item-get, shop and support screens (references in the private design-references repo):
+  - **Display:** each project stands on a pedestal (selected: orange ring + bobbing ▼); future projects are locked `???` pedestals
+  - **Details:** the icon on a turning light burst, `Lv 1 ▸ n`, PWR, and first/latest release month read from each project's changelog, then **Materials** (tech it's built with, as item slots with brand icons from Simple Icons, CC0) and **Effects** (a numbered list)
+  - **Preview:** the screenshot in its own box under Display, so both columns stay balanced
+  - New design-system components: `nu-pedestal`, `nu-burst`, `nu-progress`, `nu-slots` / `nu-slot-item`, `nu-effects`; materials and effects per project in `data/site.json`
+- Links: projects now live only in Creations, so Links is **Gamer Profiles** (G-01…) + **Developer** (GitHub, D-01, showing the Creations count)
+- Intro dialogue points to Creations
+

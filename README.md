@@ -11,7 +11,7 @@ Personal site for **Yozuryu**, served at **[yozuryu.github.io](https://yozuryu.g
 
 The landing page is a game pause menu, styled after the menus of *Little Noah: Scion of Paradise*:
 
-- **Lineup:** my projects as character cards with a detail panel (level and "PWR" come from each project's changelog)
+- **Creations:** my projects shown like crafted items: pedestals to pick one, then its level, materials (tech it's built with), effects and a screenshot. Level, "PWR" and release dates come from each project's changelog
 - **Player:** profile, motto and favorite genres
 - **Play Data:** live stats from Gaming Hub (RA points, Steam hours, gamerscore, achievements…)
 - **Links:** a records-style list of my pages

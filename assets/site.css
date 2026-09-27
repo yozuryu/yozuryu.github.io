@@ -11,18 +11,18 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
 
 .menu-panel { display: flex; flex-direction: column; }
 
-/* Lineup tab */
-.lineup-band { justify-content: flex-start; }
-.lineup-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.lineup-group + .lineup-group { margin-left: auto; }
-.lineup-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 20px; margin-top: 20px; }
-.stock-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px 12px; }
-.stock-grid .nu-card, .stock-grid .nu-slot { width: 100%; }
-.stock-grid .nu-count { width: 86%; }
-.detail-body { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 16px; }
-.detail-body .nu-render { min-height: 250px; }
-.detail-render-icon { position: absolute; inset: 44px 18% 64px; display: flex; align-items: center; justify-content: center; }
-.detail-render-icon img { max-width: 100%; max-height: 100%; border-radius: 28px; box-shadow: 0 10px 24px rgba(59, 42, 34, .35); }
+/* Creations tab: display of pedestals (left) + creation details (right) */
+.creations-grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); grid-template-areas: "display details" "preview details"; grid-template-rows: auto 1fr; gap: 20px; }
+.creations-display { grid-area: display; }
+.creations-details { grid-area: details; }
+.creations-preview { grid-area: preview; align-self: start; }
+.creations-preview .detail-preview { margin-top: 0; }
+.creations-preview .detail-preview .nu-pager { right: 8px; }   /* the section box clips overflow: keep the ▶ inside */
+.display-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 6px; justify-items: center; padding: 4px 0 10px; }
+.creation-body { display: flex; flex-direction: column; gap: 12px; }
+.creation-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; }
+.creation-facts { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.creation-facts .nu-stats { width: 100%; }
 .detail-preview { position: relative; margin-top: 10px; }
 .detail-preview__frame { overflow: hidden; border-radius: 12px; }   /* screenshots slide inside it */
 .record-detail > img { animation: nu-pop-in 240ms var(--nu-ease-pop) both; animation-delay: calc(var(--i, 0) * var(--nu-stagger)); }
@@ -59,7 +59,9 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
 
 /* Tablet */
 @media (max-width: 1024px) {
-  .lineup-grid, .records-grid, .player-grid { grid-template-columns: 1fr; }
+  .creations-grid, .records-grid, .player-grid { grid-template-columns: 1fr; }
+  .creations-grid { grid-template-areas: "display" "details" "preview"; grid-template-rows: auto; }
+  .display-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }   /* one row of pedestals above the details */
 }
 
 /* Phone */
@@ -67,18 +69,15 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
   .page { padding: 16px 12px 16px; gap: 16px; }
   .nu-frame { padding: 22px 12px 18px; border-width: 4px; }
   .nu-heading { font-size: 17px; margin-bottom: 12px; }
-  .nu-band { padding: 12px; }
-  .lineup-group + .lineup-group { margin-left: 0; }
-  .nu-label { min-width: 0; font-size: 15px; }
-  .nu-card, .nu-slot { width: 64px; }
-  .nu-card__lv { font-size: 17px; }
-  .nu-card__el { width: 16px; height: 16px; }
-  .nu-card__stars { font-size: 8px; padding: 0 5px; line-height: 11px; }
-  .nu-count { width: 56px; font-size: 11px; line-height: 18px; }
-  .stock-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .display-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 4px; }
+  .nu-pedestal__item { width: 64px; height: 64px; border-radius: 16px; }
+  .nu-pedestal__stand { width: 84px; height: 26px; margin-top: -7px; }
+  .nu-pedestal__name { font-size: 13px; }
+  .creation-head { grid-template-columns: 1fr; justify-items: center; }
+  .creation-facts { align-items: center; }
+  .nu-burst { width: 150px; }
   .nu-section__header { font-size: 18px; height: 40px; }
-  .detail-body { grid-template-columns: 1fr; }
-  .detail-body .nu-render, .player-grid .nu-render { min-height: 230px; }
+  .player-grid .nu-render { min-height: 230px; }
   .nu-move { font-size: 19px; }
   .nu-desc { font-size: 14px; }
   .data-columns { grid-template-columns: 1fr; padding: 14px; }
