@@ -254,8 +254,8 @@
 .nu-render__pwr { position: absolute; top: 6px; right: 12px; display: flex; align-items: baseline; gap: 6px; color: #fff; text-shadow: var(--nu-outline); }
 .nu-render__pwr b { font: 800 34px/1 var(--nu-font); }
 .nu-render__pwr span { font: 800 17px/1 var(--nu-font); }
-.nu-render__plate {                             /* "🔒 ???" plate at the bottom */
-  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+.nu-render__plate {                             /* name / "🔒 ???" plate at the bottom */
+  position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
   min-width: 70%; height: 32px; padding: 0 40px; border-radius: 12px;
   display: flex; align-items: center; justify-content: center; gap: 6px;
   background: rgba(150, 150, 150, .85); color: #fff; font: 800 16px/1 var(--nu-font); white-space: nowrap;

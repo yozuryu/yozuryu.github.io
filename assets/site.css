@@ -21,7 +21,7 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
 .stock-grid .nu-count { width: 86%; }
 .detail-body { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 16px; }
 .detail-body .nu-render { min-height: 250px; }
-.detail-render-icon { position: absolute; inset: 44px 18% 56px; display: flex; align-items: center; justify-content: center; }
+.detail-render-icon { position: absolute; inset: 44px 18% 64px; display: flex; align-items: center; justify-content: center; }
 .detail-render-icon img { max-width: 100%; max-height: 100%; border-radius: 28px; box-shadow: 0 10px 24px rgba(59, 42, 34, .35); }
 .detail-preview { position: relative; margin-top: 10px; }
 .detail-preview .nu-pager { position: absolute; right: -24px; top: 50%; transform: translateY(-50%); }
@@ -31,7 +31,7 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
 /* Player tab */
 .player-grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 20px; }
 .player-grid .nu-render { min-height: 340px; }
-.player-avatar { position: absolute; inset: 46px 14% 58px; display: flex; align-items: center; justify-content: center; }
+.player-avatar { position: absolute; inset: 46px 14% 66px; display: flex; align-items: center; justify-content: center; }
 .player-avatar img { max-width: 100%; max-height: 100%; border-radius: 18px; box-shadow: 0 10px 24px rgba(59, 42, 34, .35); }
 .player-info { display: flex; flex-direction: column; gap: 12px; }
 .player-motto { font: italic 600 17px/1.4 var(--nu-font); color: var(--nu-text-soft); margin: 0; }

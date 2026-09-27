@@ -201,10 +201,10 @@ const PlayerTab = ({ site, gs }) => (
                 <span className="nu-render__stars">★★★</span>
                 <span className="nu-render__pwr"><span>PWR</span><b>{fmt(gs?.achievements)}</b></span>
                 <div className="player-avatar"><img src={site.avatar} alt={site.name} /></div>
-                <span className="nu-render__plate">🔒 ???</span>
+                <span className="nu-render__plate">{site.name}</span>
             </div>
             <section className="nu-section">
-                <div className="nu-section__header">{site.name} Lv.1</div>
+                <div className="nu-section__header">Background</div>
                 <div className="nu-section__body player-info">
                     <span className="nu-bar">About</span>
                     <p className="nu-desc" style={{ marginTop: 0 }}>{site.about}</p>
