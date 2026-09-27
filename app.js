@@ -337,6 +337,10 @@ const App = () => {
 
     useEffect(() => { getJson('./data/site.json').then(setSite); }, []);
     useEffect(() => { history.replaceState(null, '', `#${tab}`); }, [tab]);
+    // On phones the tab bar scrolls sideways; keep the active tab visible
+    useEffect(() => {
+        document.querySelector('.nu-tab.is-active')?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+    }, [tab, site]);
 
     const shiftTab = useCallback((d) => {
         const i = TABS.findIndex(t => t.id === tab);

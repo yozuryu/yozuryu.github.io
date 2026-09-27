@@ -10,8 +10,9 @@ Replace the "Coming Soon" placeholder with a pause-menu landing page styled afte
 - **Lineup:** Gaming Hub and Cheevo Tracker as portrait cards in a lineup band and a 6-column Stock grid, with locked "???" slots for future projects; detail panel with PWR, level, stat pills, screenshot and description. Level = releases and PWR = changes in each project's public changelog
 - **Player:** avatar, about text, and motto / favorite genres and styles from Gaming Hub's config
 - **Play Data:** live numbers from Gaming Hub's data (RA points, mastered, beaten, Steam hours, perfect games, gamerscore, achievements, games tracked)
-- **Links:** records-style list with a detail card
+- **Links:** records-style list with a detail card: GitHub, Gaming Hub, Cheevo Tracker, and my RetroAchievements, Steam and Xbox profiles
 - Battle-style HUD (portrait with health arc, "site progress" bar, coin/gem/key counters), footer button-hint pills, keyboard controls (Q/E, ←/→, Enter, Y, X), and an intro dialogue with name plate shown once per session (`root_intro_seen`, prefixed because storage is shared with the project sites)
+- On phones the tab bar scrolls the active tab into view (e.g. opening `#links` directly showed a bar with Links off-screen)
 - Intro dialogue portrait is anchored to the speech box: behind its left edge on desktop, on its top-right edge on mobile (it was floating mid-screen on phones)
 - Design system in `assets/noah-ui.css` (colors sampled from the game's menus; `nu-` tokens and components) documented in `STYLE.md`; page layout in `assets/site.css`. Only the style is recreated, no game assets
 - Content in `data/site.json`; project icons and previews in `assets/projects/`
