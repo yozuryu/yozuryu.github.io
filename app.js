@@ -234,39 +234,70 @@ const CreationsTab = ({ site, selected, setSelected, clStats }) => {
     );
 };
 
-const PlayerTab = ({ site, gs }) => (
-    <>
-        <p className="nu-heading">Player profile</p>
-        <div className="player-grid">
-            <div className="nu-render">
-                <span className="nu-render__stars">★★★</span>
-                <span className="nu-render__pwr"><span>PWR</span><b>{fmt(gs?.achievements)}</b></span>
-                <div className="player-avatar"><img src={site.avatar} alt={site.name} /></div>
-                <span className="nu-render__plate">{site.name}</span>
-            </div>
-            <section className="nu-section">
-                <div className="nu-section__header">Background</div>
-                <div className="nu-section__body player-info">
-                    <span className="nu-bar">About</span>
-                    <p className="nu-desc" style={{ marginTop: 0 }}>{site.about}</p>
-                    {gs?.motto && <p className="player-motto">“{gs.motto}”</p>}
-                    {(gs?.genres?.length > 0) && (
-                        <>
-                            <span className="nu-bar">Favorite genres</span>
-                            <div className="nu-stats">{gs.genres.map(g => <span key={g} className="nu-stat" style={{ justifyContent: 'center' }}>{g}</span>)}</div>
-                        </>
-                    )}
-                    {(gs?.styles?.length > 0) && (
-                        <>
-                            <span className="nu-bar">Favorite styles</span>
-                            <div className="nu-stats">{gs.styles.map(g => <span key={g} className="nu-stat" style={{ justifyContent: 'center' }}>{g}</span>)}</div>
-                        </>
+// Player: a character status screen (after the game's Anima screen + Astral House detail):
+// portrait with name plate and title ribbon; Status, Background and Traits boxes; favorites shelf.
+const PF_NAME = { ra: 'RA', steam: 'Steam', xbox: 'Xbox' };
+const PlayerTab = ({ site, gs }) => {
+    const recent = useRecentUnlocks();
+    const ra = gs?.profiles?.ra;
+    const since = toDate(ra?.coreProfile?.memberSince);
+    const rank = ra?.userSummary?.rank, ranked = ra?.userSummary?.totalRanked;
+    const mainPf = recent && Object.entries(recent.recentBy).sort((a, b) => b[1] - a[1])[0];
+    const traits = [...(gs?.genres ?? []), ...(gs?.styles ?? [])];
+    return (
+        <>
+            <p className="nu-heading">Player profile</p>
+            <div className="player-grid">
+                <div className="nu-render player-render">
+                    <span className="nu-render__stars">★★★</span>
+                    <span className="nu-render__pwr"><span>PWR</span><b>{fmt(gs?.achievements)}</b></span>
+                    <div className="player-avatar"><img src={site.avatar} alt={site.name} /></div>
+                    <span className="nu-render__plate">{site.name}</span>
+                    {site.title && <span className="nu-ribbon-flag player-title">{site.title}</span>}
+                </div>
+                <div className="player-sections nu-stagger">
+                    <section className="nu-section">
+                        <div className="nu-section__header">Status</div>
+                        <div className="nu-section__body">
+                            <div className="nu-stats player-stats">
+                                <span className="nu-stat">Adventuring since<b>{since ? monthYear(since) : '—'}</b></span>
+                                <span className="nu-stat" title={rank ? `#${fmt(rank)} of ${fmt(ranked)} on RetroAchievements` : ''}>RA rank<b>{rank && ranked ? `Top ${(rank / ranked * 100).toFixed(1)}%` : '—'}</b></span>
+                                <span className="nu-stat" title="Platform with the most unlocks in the last 3 months">Main platform<b>{mainPf && mainPf[1] > 0 ? PF_NAME[mainPf[0]] : '—'}</b></span>
+                            </div>
+                        </div>
+                    </section>
+                    <section className="nu-section">
+                        <div className="nu-section__header">Background</div>
+                        <div className="nu-section__body player-info">
+                            <p className="nu-desc" style={{ marginTop: 0 }}>{site.about}</p>
+                            {gs?.motto && <p className="player-motto">“{gs.motto}”</p>}
+                        </div>
+                    </section>
+                    {traits.length > 0 && (
+                        <section className="nu-section">
+                            <div className="nu-section__header">Traits</div>
+                            <div className="nu-section__body"><ul className="nu-traits">{traits.map(t => <li key={t}>{t}</li>)}</ul></div>
+                        </section>
                     )}
                 </div>
-            </section>
-        </div>
-    </>
-);
+            </div>
+            {site.favorites?.length > 0 && (
+                <section className="nu-section player-favorites">
+                    <div className="nu-section__header">All-time Favorites</div>
+                    <div className="nu-section__body nu-covers nu-stagger">
+                        {site.favorites.map(f => (
+                            <a key={f.name} className="nu-cover" href={f.url} target="_blank" rel="noreferrer" title={f.name}>
+                                <img className="nu-cover__art" src={f.cover} alt={f.name} />
+                                <span className="nu-cover__name">{f.name}</span>
+                                <span className="nu-cover__pf">{f.platform}</span>
+                            </a>
+                        ))}
+                    </div>
+                </section>
+            )}
+        </>
+    );
+};
 
 // ── Play Data: a result screen ───────────────────────────────────────────────
 // After the game's Result screen (リザルト): parchment sheet, a dark banner with the month's
@@ -314,7 +345,9 @@ const useRecentUnlocks = () => {
         if (!days.has(dayKey(cur))) cur.setDate(cur.getDate() - 1);   // a quiet today doesn't break the streak yet
         let streak = 0;
         while (days.has(dayKey(cur))) { streak++; cur.setDate(cur.getDate() - 1); }
-        return { thisMonth, monthBy, streak };
+        const recentBy = { ra: 0, steam: 0, xbox: 0 };   // last 91 days, for the Player tab's main platform
+        dates.forEach(u => { recentBy[u.pf]++; });
+        return { thisMonth, monthBy, recentBy, streak };
     }, [dates]);
 };
 

@@ -33,8 +33,14 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
 
 /* Player tab */
 .player-grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 20px; }
-.player-grid .nu-render { min-height: 340px; }
-.player-avatar { position: absolute; inset: 46px 14% 66px; display: flex; align-items: center; justify-content: center; }
+.player-grid .nu-render { min-height: 420px; }
+.player-avatar { position: absolute; inset: 46px 14% 110px; display: flex; align-items: center; justify-content: center; }
+.player-render .nu-render__plate { bottom: 62px; }
+.player-title { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); white-space: nowrap; }
+.player-sections { display: flex; flex-direction: column; gap: 16px; }
+.player-stats .nu-stat { flex: 1 1 100%; height: 38px; font-size: 14px; }
+.player-favorites { margin-top: 20px; }
+.player-favorites .nu-covers { justify-content: center; padding: 20px 14px 22px; }
 .player-avatar img { max-width: 100%; max-height: 100%; border-radius: 18px; box-shadow: 0 10px 24px rgba(59, 42, 34, .35); }
 .player-info { display: flex; flex-direction: column; gap: 12px; }
 .player-motto { font: italic 600 17px/1.4 var(--nu-font); color: var(--nu-text-soft); margin: 0; }
@@ -62,7 +68,7 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
 
 /* Tablet */
 @media (max-width: 1024px) {
-  .creations-grid, .records-grid, .player-grid { grid-template-columns: 1fr; }
+  .creations-grid, .records-grid, .player-grid { grid-template-columns: minmax(0, 1fr); }   /* minmax: a long pill can't widen the column past the screen */
   .creations-grid { grid-template-areas: "display" "details" "preview"; grid-template-rows: auto; }
   .display-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }   /* one row of pedestals above the details */
 }
@@ -80,7 +86,12 @@ html, body { margin: 0; background: #2a1a10; min-height: 100%; overflow-x: clip;
   .creation-facts { align-items: center; }
   .nu-burst { width: 150px; }
   .nu-section__header { font-size: 18px; height: 40px; }
-  .player-grid .nu-render { min-height: 230px; }
+  .player-grid .nu-render { min-height: 340px; }
+  .nu-traits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nu-covers { gap: 12px; }
+  .nu-cover { max-width: 84px; }
+  .nu-cover__art { height: 96px; max-width: 84px; }
+  .nu-cover__name { font-size: 12px; }
   .nu-move { font-size: 19px; }
   .nu-desc { font-size: 14px; }
   .results-grid { grid-template-columns: 1fr; }

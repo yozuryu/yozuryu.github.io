@@ -1,12 +1,45 @@
 {
   "name": "Yozuryu",
+  "title": "Weekend Adventurer",
   "avatar": "./assets/avatar.png",
   "intro": [
     "Oh! A visitor!",
     "Welcome to my little corner of the internet. The place is still under construction...",
     "Have a look around the menu in the meantime. My projects are on display in Creations!"
   ],
-  "about": "Gamer, tinkerer and achievement hunter. This page is still being built — more soon!",
+  "about": "Hailing from the golden age of PS1 RPGs, Yozuryu roams old and new worlds on weekends, collecting achievements and building tools to chart the journey.",
+  "favorites": [
+    {
+      "name": "Star Ocean: The Second Story R",
+      "platform": "Steam",
+      "cover": "https://cdn.akamai.steamstatic.com/steam/apps/2238900/library_600x900.jpg",
+      "url": "https://store.steampowered.com/app/2238900/"
+    },
+    {
+      "name": "Legend of Legaia",
+      "platform": "PlayStation",
+      "cover": "https://media.retroachievements.org/Images/030944.png",
+      "url": "https://retroachievements.org/game/11299"
+    },
+    {
+      "name": "Thousand Arms",
+      "platform": "PlayStation",
+      "cover": "https://media.retroachievements.org/Images/052665.png",
+      "url": "https://retroachievements.org/game/11372"
+    },
+    {
+      "name": "Threads of Fate",
+      "platform": "PlayStation",
+      "cover": "https://media.retroachievements.org/Images/073886.png",
+      "url": "https://retroachievements.org/game/11340"
+    },
+    {
+      "name": "Trails of Cold Steel",
+      "platform": "Steam",
+      "cover": "https://cdn.akamai.steamstatic.com/steam/apps/538680/library_600x900.jpg",
+      "url": "https://store.steampowered.com/app/538680/"
+    }
+  ],
   "projects": [
     {
       "id": "gaming-hub",

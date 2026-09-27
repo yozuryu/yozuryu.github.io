@@ -23,7 +23,7 @@ Status: **"Coming Soon" landing page** styled after the pause/character menu of 
 ```
 index.html            Shell: fonts, noah-ui.css, site.css, React via import map, app.js
 app.js                Pause-menu landing page: tabs Player / Creations / Play Data / Links, HUD, button hints, intro dialogue
-data/site.json        Content: name, avatar, intro lines, about, projects (Creations: materials, effects, previews), links (Records: gamer profiles + developer)
+data/site.json        Content: name, title (Player ribbon), avatar, intro lines, about, favorites (Player shelf: name, platform, cover URL, link), projects (Creations: materials, effects, previews), links (Records: gamer profiles + developer)
 assets/noah-ui.css    Design system (tokens + nu- components)
 assets/site.css       Page layout + responsive rules
 assets/projects/      Project icons and preview screenshots

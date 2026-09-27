@@ -542,6 +542,30 @@
 .nu-tile--gold   { --nu-tile-rim: var(--nu-gold-400); }   /* completed */
 .nu-tile--silver { --nu-tile-rim: #b8c4ce; }              /* beaten */
 
+/* ── Player: traits + favorite covers ────────────────────────────────────────
+   Traits follow the Astral House effect list (base_image_4: icon + text rows); covers are
+   framed like the game's cards, kept at their natural shape (square PS1 case, tall PC box). */
+.nu-traits { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.nu-traits li {
+  display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 12px; border-radius: 10px;
+  background: #f6f2f0; font: 700 14px/1.25 var(--nu-font); color: var(--nu-text);
+}
+.nu-traits li::before { content: "✦"; flex: none; color: var(--nu-orange); font-size: 14px; text-shadow: 0 0 4px rgba(255, 150, 44, .45); }
+
+.nu-covers { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; }
+.nu-cover { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 150px; text-decoration: none; color: var(--nu-text); }
+.nu-cover__art {
+  height: 150px; width: auto; max-width: 150px; border-radius: 10px; object-fit: cover; display: block; background: var(--nu-slot);
+  box-shadow: 0 0 0 3px #fff4c4, 0 0 0 5px var(--nu-gold-500), 0 8px 14px rgba(59, 42, 34, .3); transition: transform .12s;
+}
+.nu-cover:hover .nu-cover__art { transform: translateY(-4px); }
+.nu-cover__name {                              /* one line, faded out at the cover's edge (full name on hover) */
+  width: 0; min-width: 100%; overflow: hidden; white-space: nowrap;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent);
+  font: 800 13px/1.25 var(--nu-font); text-align: center;
+}
+.nu-cover__pf { padding: 1px 10px; border-radius: var(--nu-r-pill); background: var(--nu-pill); color: #574949; font: 700 11px/1.5 var(--nu-font); }
+
 /* ── Motion ─────────────────────────────────────────────────────────────────
    Snappy like a game menu: 120–320 ms, only transform + opacity (never layout),
    entries animate, exits don't (a new tab replaces the old one instantly, so
