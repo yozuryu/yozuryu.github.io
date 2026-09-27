@@ -20,3 +20,4 @@ Replace the "Coming Soon" placeholder with a pause-menu landing page styled afte
 - No service worker on purpose: this site owns the `/` scope shared with the project sites
 - `_config.yml` exclude list, `.gitignore`, `README.md`, `CLAUDE.md`
 - Lineup: Gaming Hub and Cheevo Tracker cards use the projects' new app icons (Save Crystal, pixel trophy)
+- Site icon: the intro dialogue's white speech bubble with its orange ▼ caret on a brown tile (`favicon.svg`, `favicon.ico`, `apple-touch-icon.png`, source `appicon.svg`), used by the homepage and its 404. Replaces the leftover Gaming Hub icon (`icon-192.png`, removed)

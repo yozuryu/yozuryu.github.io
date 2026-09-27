@@ -27,7 +27,8 @@ data/site.json        Content: name, avatar, intro lines, about, projects (Lineu
 assets/noah-ui.css    Design system (tokens + nu- components)
 assets/site.css       Page layout + responsive rules
 assets/projects/      Project icons and preview screenshots
-assets/avatar.png, icon-192.png
+assets/avatar.png            Avatar (player portrait, HUD, dialogue)
+assets/favicon.svg / .ico    Site icon: the intro speech bubble with its orange ▼ caret (appicon.svg = full-bleed source, apple-touch-icon.png 180 px)
 404.html              Plain-HTML 404 (see "Shared origin")
 STYLE.md              Style guide (not published)
 _config.yml           Jekyll exclude list — anything private must be listed here
