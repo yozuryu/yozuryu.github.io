@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Project sites under this domain can only be pointed at from here
+Sitemap: https://yozuryu.github.io/savepoint-site/sitemap-index.xml

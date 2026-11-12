@@ -2,11 +2,12 @@
 
 ## v26.11.12
 
-Follow the hub's move to Savepoint at its new address.
+Follow the hub's move to Savepoint at its new address, and point search engines at the Savepoint site.
 
 ### Structure
 
 - Gaming Hub is now **Savepoint** at `/my-savepoint/`: Lineup card, Play Data numbers, links and the 404 page point there
+- `robots.txt` pointing search engines at the Savepoint site's sitemap (crawlers only read it at the domain root)
 
 ## v26.09.27
 
