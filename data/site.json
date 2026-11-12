@@ -43,16 +43,16 @@
   "projects": [
     {
       "id": "gaming-hub",
-      "name": "Gaming Hub",
+      "name": "Savepoint",
       "stars": 3,
       "element": "blue",
       "icon": "./assets/projects/gaming-hub-icon.png",
       "previews": [
         "./assets/projects/gaming-hub.jpg"
       ],
-      "url": "/gaming-hub/",
-      "repo": "https://github.com/yozuryu/gaming-hub",
-      "changelog": "/gaming-hub/changelog.md",
+      "url": "/my-savepoint/",
+      "repo": "https://github.com/yozuryu/my-savepoint",
+      "changelog": "/my-savepoint/changelog.md",
       "move": "Open Dashboard",
       "tags": [
         {

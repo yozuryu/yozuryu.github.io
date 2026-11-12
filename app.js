@@ -69,10 +69,10 @@ const useGamingStats = () => {
     const [s, setS] = useState(null);
     useEffect(() => {
         Promise.all([
-            getJson('/gaming-hub/data/ra/profile.json'),
-            getJson('/gaming-hub/data/steam/profile.json'),
-            getJson('/gaming-hub/data/xbox/profile.json'),
-            getJson('/gaming-hub/data/hub/config.json'),
+            getJson('/my-savepoint/data/ra/profile.json'),
+            getJson('/my-savepoint/data/steam/profile.json'),
+            getJson('/my-savepoint/data/xbox/profile.json'),
+            getJson('/my-savepoint/data/hub/config.json'),
         ]).then(([ra, steam, xbox, config]) => {
             const results = ra?.gameAwardsAndProgress?.results ?? [];
             const raAch   = results.reduce((a, g) => a + (g.numAwarded ?? 0), 0);
@@ -327,7 +327,7 @@ const useRecentUnlocks = () => {
     const [dates, setDates] = useState(recentCache);
     useEffect(() => {
         if (recentCache) return;
-        Promise.all(['ra', 'steam', 'xbox'].map(pf => getJson(`/gaming-hub/data/${pf}/achievements/1.json`)))
+        Promise.all(['ra', 'steam', 'xbox'].map(pf => getJson(`/my-savepoint/data/${pf}/achievements/1.json`)))
             .then(files => {
                 recentCache = files.flatMap((f, i) => (f?.recentAchievements ?? []).map(a => ({
                     pf: ['ra', 'steam', 'xbox'][i], at: toDate(a.date || a.unlockedAt),
@@ -365,7 +365,7 @@ const useRecentBeaten = (unlocks) => {
     const [beaten, setBeaten] = useState(beatenCache);
     useEffect(() => {
         if (beatenCache || !unlocks) return;
-        Promise.all(['steam', 'xbox'].map(pf => getJson(`/gaming-hub/data/${pf}/win-conditions.json`))).then(async ([steamWc, xboxWc]) => {
+        Promise.all(['steam', 'xbox'].map(pf => getJson(`/my-savepoint/data/${pf}/win-conditions.json`))).then(async ([steamWc, xboxWc]) => {
             const wc = { steam: steamWc ?? {}, xbox: xboxWc ?? {} };
             const since = monthStart();
             const candidates = [...new Set(unlocks
@@ -373,7 +373,7 @@ const useRecentBeaten = (unlocks) => {
                 .map(u => `${u.pf}:${u.id}`))];
             const found = await Promise.all(candidates.map(async key => {
                 const [pf, id] = key.split(':');
-                const game = await getJson(`/gaming-hub/data/${pf}/games/${id}.json`);
+                const game = await getJson(`/my-savepoint/data/${pf}/games/${id}.json`);
                 const rule = wc[pf][id];
                 const times = rule.achievements.map(api => game?.achievements?.find(a => a.apiName === api)).map(a => (a?.unlocked && a.unlockedAt ? toDate(a.unlockedAt) : null));
                 const at = rule.mode === 'and'
@@ -416,7 +416,7 @@ const DataTab = ({ site, gs }) => {
     const monthUnlocks = useMemo(() => (recent?.unlocks ?? []).filter(u => u.at >= monthStart()), [recent]);
     useEffect(() => {
         if (xboxIcons || !monthUnlocks.some(u => u.pf === 'xbox')) return;
-        getJson('/gaming-hub/data/xbox/games/index.json').then(d => setXboxIcons(Object.fromEntries(
+        getJson('/my-savepoint/data/xbox/games/index.json').then(d => setXboxIcons(Object.fromEntries(
             Object.entries(d?.achievementProgress ?? {}).map(([id, g]) => [id, xboxImg(g.iconUrl, 128)]))));
     }, [monthUnlocks, xboxIcons]);
     useEffect(() => {
@@ -425,7 +425,7 @@ const DataTab = ({ site, gs }) => {
         if (!ids.length) return;
         const known = Object.fromEntries([...(steam.recentlyPlayed ?? []), ...(steam.perfectGames ?? [])]
             .filter(g => g.iconUrl).map(g => [String(g.appId), g.iconUrl]));
-        Promise.all(ids.map(async id => [id, known[id] ?? (await getJson(`/gaming-hub/data/steam/games/${id}.json`))?.iconUrl ?? null]))
+        Promise.all(ids.map(async id => [id, known[id] ?? (await getJson(`/my-savepoint/data/steam/games/${id}.json`))?.iconUrl ?? null]))
             .then(pairs => setSteamIcons(Object.fromEntries(pairs)));
     }, [monthUnlocks, steam, steamIcons]);
     const monthGames = useMemo(() => {
@@ -454,9 +454,9 @@ const DataTab = ({ site, gs }) => {
     const moreGames = monthGames.length - shownGames.length;
 
     const allPlatforms = [
-        { id: 'ra',    name: 'RetroAchievements', value: gs?.raPoints,   unit: 'pts', href: '/gaming-hub/profile/ra/' },
-        { id: 'steam', name: 'Steam',             value: gs?.steamHours, unit: 'h',   href: '/gaming-hub/profile/steam/' },
-        { id: 'xbox',  name: 'Xbox',              value: gs?.gamerscore, unit: 'G',   href: '/gaming-hub/profile/xbox/' },
+        { id: 'ra',    name: 'RetroAchievements', value: gs?.raPoints,   unit: 'pts', href: '/my-savepoint/profile/ra/' },
+        { id: 'steam', name: 'Steam',             value: gs?.steamHours, unit: 'h',   href: '/my-savepoint/profile/steam/' },
+        { id: 'xbox',  name: 'Xbox',              value: gs?.gamerscore, unit: 'G',   href: '/my-savepoint/profile/xbox/' },
     ];
     const platforms = recent ? allPlatforms.filter(pf => recent.monthBy[pf.id] > 0) : allPlatforms;   // only platforms played this month
 
@@ -503,7 +503,7 @@ const DataTab = ({ site, gs }) => {
                                 </span>
                             ))}
                             {moreGames > 0 && (
-                                <a className="nu-tile" href="/gaming-hub/activity/" title="See all of this month's activity on Gaming Hub">
+                                <a className="nu-tile" href="/my-savepoint/activity/" title="See all of this month's activity on Savepoint">
                                     <span className="nu-tile__box nu-tile__box--more">+{moreGames}</span>
                                     <span className="nu-tile__count">more</span>
                                 </a>
@@ -512,7 +512,7 @@ const DataTab = ({ site, gs }) => {
                         <span className="nu-info__label">Platforms</span>
                         <div className="nu-tiles nu-stagger">
                             {platforms.map(pf => (
-                                <a key={pf.name} className="nu-tile" href={pf.href} title={`${pf.name} on Gaming Hub`}>
+                                <a key={pf.name} className="nu-tile" href={pf.href} title={`${pf.name} on Savepoint`}>
                                     <span className="nu-tile__box nu-tile__box--logo">
                                         <img src={PF_ICON[pf.id]} alt={pf.name} />
                                         {recent && <span className="nu-tile__badge">+{recent.monthBy[pf.id]}</span>}

@@ -4,7 +4,7 @@ Personal site for **Yozuryu**, served at **[yozuryu.github.io](https://yozuryu.g
 
 | Project | What it is |
 |---|---|
-| [Gaming Hub](https://yozuryu.github.io/gaming-hub/) | Achievement dashboard for RetroAchievements, Steam and Xbox ([source](https://github.com/yozuryu/gaming-hub)) |
+| [Savepoint](https://yozuryu.github.io/my-savepoint/) | Achievement dashboard for RetroAchievements, Steam and Xbox ([source](https://github.com/yozuryu/my-savepoint)) |
 | [Cheevo Tracker](https://yozuryu.github.io/cheevo-tracker/) | RetroAchievements profile tracker ([source](https://github.com/yozuryu/cheevo-tracker)) |
 
 ## The page
@@ -13,7 +13,7 @@ The landing page is a game pause menu, styled after the menus of *Little Noah: S
 
 - **Creations:** my projects shown like crafted items: pedestals to pick one, then its level, materials (tech it's built with), effects and a screenshot. Level, "PWR" and release dates come from each project's changelog
 - **Player:** profile, motto and favorite genres
-- **Play Data:** live stats from Gaming Hub (RA points, Steam hours, gamerscore, achievements…)
+- **Play Data:** live stats from Savepoint (RA points, Steam hours, gamerscore, achievements…)
 - **Links:** a records-style list of my pages
 - A battle-style HUD, button hints, keyboard controls (Q/E tabs, ←/→ select, Enter open), and a short intro dialogue
 
@@ -25,7 +25,7 @@ Static files served by GitHub Pages from `main`, no build step: React loads from
 
 ## Run locally
 
-Serve the **parent** folder so `/gaming-hub/` and `/cheevo-tracker/` resolve to the sibling repos, as they do on GitHub Pages:
+Serve the **parent** folder so `/my-savepoint/` and `/cheevo-tracker/` resolve to the sibling repos, as they do on GitHub Pages:
 
 ```bash
 cd ..

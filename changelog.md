@@ -1,5 +1,13 @@
 # Changelog
 
+## v26.11.12
+
+Follow the hub's move to Savepoint at its new address.
+
+### Structure
+
+- Gaming Hub is now **Savepoint** at `/my-savepoint/`: Lineup card, Play Data numbers, links and the 404 page point there
+
 ## v26.09.27
 
 Replace the "Coming Soon" placeholder with a pause-menu landing page styled after *Little Noah: Scion of Paradise*.

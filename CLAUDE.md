@@ -8,7 +8,7 @@
 
 ---
 
-The GitHub Pages **user site** for `yozuryu`, served at `https://yozuryu.github.io/`. Same approach as the project sites [gaming-hub](https://github.com/yozuryu/gaming-hub) and [cheevo-tracker](https://github.com/yozuryu/cheevo-tracker): static files, no build step, deployed from `main`.
+The GitHub Pages **user site** for `yozuryu`, served at `https://yozuryu.github.io/`. Same approach as the project sites [gaming-hub](https://github.com/yozuryu/my-savepoint) and [cheevo-tracker](https://github.com/yozuryu/cheevo-tracker): static files, no build step, deployed from `main`.
 
 Status: **"Coming Soon" landing page** styled after the pause/character menu of *Little Noah: Scion of Paradise*. Purpose and final content are still evolving — check with the user before adding sections.
 
@@ -35,17 +35,17 @@ _config.yml           Jekyll exclude list — anything private must be listed he
 changelog.md          Changelog
 ```
 
-Live data: the Player / Play Data tabs and the HUD read Gaming Hub's public JSON (`/gaming-hub/data/*/profile.json`, `/gaming-hub/data/hub/config.json`); Creations level/PWR count releases/changes in each project's `changelog.md`. All same-origin, so no CORS. Everything must degrade to "—" when a fetch fails (e.g. local dev without the sibling folders).
+Live data: the Player / Play Data tabs and the HUD read Gaming Hub's public JSON (`/my-savepoint/data/*/profile.json`, `/my-savepoint/data/hub/config.json`); Creations level/PWR count releases/changes in each project's `changelog.md`. All same-origin, so no CORS. Everything must degrade to "—" when a fetch fails (e.g. local dev without the sibling folders).
 
-Local dev: serve the **parent** folder (`~/projects/personal`, e.g. `python3 -m http.server`) and open `/yozuryu.github.io/`, so `/gaming-hub/…` and `/cheevo-tracker/…` resolve to the sibling repos like on GitHub Pages.
+Local dev: serve the **parent** folder (`~/projects/personal`, e.g. `python3 -m http.server`) and open `/yozuryu.github.io/`, so `/my-savepoint/…` and `/cheevo-tracker/…` resolve to the sibling repos like on GitHub Pages.
 
 ## Shared origin — important
 
-This site owns `/` on `yozuryu.github.io`. The project sites live under it (`/gaming-hub/`, `/cheevo-tracker/`) and share the same origin:
+This site owns `/` on `yozuryu.github.io`. The project sites live under it (`/my-savepoint/`, `/cheevo-tracker/`) and share the same origin:
 
-- **No service worker at scope `/`.** It would intercept every request for the project sites too. gaming-hub's worker is scoped to `/gaming-hub/`, cheevo-tracker's to `/cheevo-tracker/`. If this site ever needs one, scope it narrowly and exclude the project paths.
+- **No service worker at scope `/`.** It would intercept every request for the project sites too. gaming-hub's worker is scoped to `/my-savepoint/`, cheevo-tracker's to `/cheevo-tracker/`. If this site ever needs one, scope it narrowly and exclude the project paths.
 - **Browser storage is shared** (`localStorage`, `sessionStorage`, IndexedDB, cookies). Prefix any keys (e.g. `root_…`) and never use the `cheevo_tracker` IndexedDB name.
-- **`404.html` only covers this site's own paths.** GitHub Pages does *not* use it for project sites (checked 2026-09-27: `/gaming-hub/<missing>` got GitHub's default 404), so each project repo has its own `404.html`. Those project 404 pages load this site's `/assets/noah-ui.css` by absolute URL, so **renaming or removing `noah-ui.css` classes breaks them too**. Keep 404 pages plain HTML with absolute URLs so they work from any depth.
+- **`404.html` only covers this site's own paths.** GitHub Pages does *not* use it for project sites (checked 2026-09-27: `/my-savepoint/<missing>` got GitHub's default 404), so each project repo has its own `404.html`. Those project 404 pages load this site's `/assets/noah-ui.css` by absolute URL, so **renaming or removing `noah-ui.css` classes breaks them too**. Keep 404 pages plain HTML with absolute URLs so they work from any depth.
 - Adding a project site: add it to `data/site.json` → `projects` (icon + preview in `assets/projects/`, `changelog` path for Lv/PWR) and `links`, and to the 404 page's links if it should be offered there.
 
 ## Conventions
