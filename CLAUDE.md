@@ -8,7 +8,7 @@
 
 ---
 
-The GitHub Pages **user site** for `yozuryu`, served at `https://yozuryu.github.io/`. Same approach as the project sites [gaming-hub](https://github.com/yozuryu/my-savepoint) and [cheevo-tracker](https://github.com/yozuryu/cheevo-tracker): static files, no build step, deployed from `main`.
+The GitHub Pages **user site** for `yozuryu`, served at `https://yozuryu.github.io/`. Same approach as the project sites [gaming-hub](https://github.com/yozuryu/my-savepoint) and [cheevodex](https://github.com/yozuryu/cheevodex): static files, no build step, deployed from `main`.
 
 Status: **"Coming Soon" landing page** styled after the pause/character menu of *Little Noah: Scion of Paradise*. Purpose and final content are still evolving — check with the user before adding sections.
 
@@ -37,20 +37,20 @@ changelog.md          Changelog
 
 Live data: the Player / Play Data tabs and the HUD read Gaming Hub's public JSON (`/my-savepoint/data/*/profile.json`, `/my-savepoint/data/hub/config.json`); Creations level/PWR count releases/changes in each project's `changelog.md`. All same-origin, so no CORS. Everything must degrade to "—" when a fetch fails (e.g. local dev without the sibling folders).
 
-Local dev: serve the **parent** folder (`~/projects/personal`, e.g. `python3 -m http.server`) and open `/yozuryu.github.io/`, so `/my-savepoint/…` and `/cheevo-tracker/…` resolve to the sibling repos like on GitHub Pages.
+Local dev: serve the **parent** folder (`~/projects/personal`, e.g. `python3 -m http.server`) and open `/yozuryu.github.io/`, so `/my-savepoint/…` and `/cheevodex/…` resolve to the sibling repos like on GitHub Pages.
 
 ## Shared origin — important
 
-This site owns `/` on `yozuryu.github.io`. The project sites live under it (`/my-savepoint/`, `/cheevo-tracker/`) and share the same origin:
+This site owns `/` on `yozuryu.github.io`. The project sites live under it (`/my-savepoint/`, `/cheevodex/`) and share the same origin:
 
-- **No service worker at scope `/`.** It would intercept every request for the project sites too. gaming-hub's worker is scoped to `/my-savepoint/`, cheevo-tracker's to `/cheevo-tracker/`. If this site ever needs one, scope it narrowly and exclude the project paths.
-- **Browser storage is shared** (`localStorage`, `sessionStorage`, IndexedDB, cookies). Prefix any keys (e.g. `root_…`) and never use the `cheevo_tracker` IndexedDB name.
+- **No service worker at scope `/`.** It would intercept every request for the project sites too. gaming-hub's worker is scoped to `/my-savepoint/`, Cheevodex's to `/cheevodex/` (its old `/cheevo-tracker/` path redirects from `404.html`). If this site ever needs one, scope it narrowly and exclude the project paths.
+- **Browser storage is shared** (`localStorage`, `sessionStorage`, IndexedDB, cookies). Prefix any keys (e.g. `root_…`) and never use the `cheevodex` IndexedDB name (or its old name `cheevo_tracker`, which Cheevodex deletes on load).
 - **`404.html` only covers this site's own paths.** GitHub Pages does *not* use it for project sites (checked 2026-09-27: `/my-savepoint/<missing>` got GitHub's default 404), so each project repo has its own `404.html`. Those project 404 pages load this site's `/assets/noah-ui.css` by absolute URL, so **renaming or removing `noah-ui.css` classes breaks them too**. Keep 404 pages plain HTML with absolute URLs so they work from any depth.
 - Adding a project site: add it to `data/site.json` → `projects` (icon + preview in `assets/projects/`, `changelog` path for Lv/PWR) and `links`, and to the 404 page's links if it should be offered there.
 
 ## Conventions
 
-- Tech: React 18 via `esm.sh` import map + Babel standalone, no bundler, no npm for the site (same approach as gaming-hub and cheevo-tracker). No Tailwind here: styling comes from `noah-ui.css` / `site.css`.
+- Tech: React 18 via `esm.sh` import map + Babel standalone, no bundler, no npm for the site (same approach as gaming-hub and cheevodex). No Tailwind here: styling comes from `noah-ui.css` / `site.css`.
 - Font: M PLUS Rounded 1c from Google Fonts.
 - Keyboard: Q/E switch tabs, ←/→ pick a project, Enter/A open, Y source, X replays the intro. Keep footer hints in sync.
 - Session storage key for the intro: `root_intro_seen` (prefixed — storage is shared with the project sites).

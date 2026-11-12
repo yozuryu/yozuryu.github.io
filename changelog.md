@@ -1,5 +1,15 @@
 # Changelog
 
+## v26.11.13
+
+Follow Cheevo Tracker's rename to Cheevodex and keep its old links working.
+
+### Structure
+
+- Cheevo Tracker is now **Cheevodex** at `/cheevodex/`: Lineup card, links, README and the 404 page point there
+- Old `/cheevo-tracker/…` links redirect to the same page under `/cheevodex/`, query string and hash kept, from `404.html` (the old path has no repo any more). Installed apps lose their old service worker on its next update check and land on the new address
+- Lineup: the Cheevodex card shows its new Lens boy icon and a screenshot of the new look, the description opens with "A pocket companion for RetroAchievements", and the button reads **Open Dex**. Asset files renamed to `cheevodex-icon.png` / `cheevodex.jpg`
+
 ## v26.11.12
 
 Follow the hub's move to Savepoint at its new address, and point search engines at the Savepoint site.

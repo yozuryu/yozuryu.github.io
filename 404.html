@@ -6,9 +6,17 @@
     <title>Page not found · Yozuryu</title>
     <meta name="theme-color" content="#2a1a10">
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <script>
+        // Cheevodex (formerly Cheevo Tracker) moved from /cheevo-tracker/ to /cheevodex/ (repo renamed, 2026-11-13). Its old path has no
+        // repo any more, so every request there lands here: send it on, page, query and hash kept.
+        // An installed app's old service worker gets a 404 for /cheevo-tracker/sw.js and unregisters.
+        if (/^\/cheevo-tracker(\/|$)/.test(location.pathname)) {
+            location.replace(location.pathname.replace(/^\/cheevo-tracker/, '/cheevodex') + location.search + location.hash);
+        }
+    </script>
     <!-- Plain HTML (no React), absolute URLs only, so it works for any missing
          path at any depth on this site. Project sites (/my-savepoint/,
-         /cheevo-tracker/) have their own 404.html in their repos; they reuse
+         /cheevodex/) have their own 404.html in their repos; they reuse
          /assets/noah-ui.css from here. -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap">
     <link rel="stylesheet" href="/assets/noah-ui.css">
@@ -36,7 +44,7 @@
                     <nav class="nu-hints" aria-label="Go to">
                         <a class="nu-hint" href="/"><span class="nu-glyph">A</span>Home</a>
                         <a class="nu-hint" href="/my-savepoint/"><span class="nu-glyph">X</span>Savepoint</a>
-                        <a class="nu-hint" href="/cheevo-tracker/"><span class="nu-glyph">Y</span>Cheevo Tracker</a>
+                        <a class="nu-hint" href="/cheevodex/"><span class="nu-glyph">Y</span>Cheevodex</a>
                     </nav>
                 </div>
             </section>

@@ -94,18 +94,18 @@
       ]
     },
     {
-      "id": "cheevo-tracker",
-      "name": "Cheevo Tracker",
+      "id": "cheevodex",
+      "name": "Cheevodex",
       "stars": 3,
       "element": "red",
-      "icon": "./assets/projects/cheevo-tracker-icon.png",
+      "icon": "./assets/projects/cheevodex-icon.png",
       "previews": [
-        "./assets/projects/cheevo-tracker.jpg"
+        "./assets/projects/cheevodex.jpg"
       ],
-      "url": "/cheevo-tracker/",
-      "repo": "https://github.com/yozuryu/cheevo-tracker",
-      "changelog": "/cheevo-tracker/changelog.md",
-      "move": "Open Tracker",
+      "url": "/cheevodex/",
+      "repo": "https://github.com/yozuryu/cheevodex",
+      "changelog": "/cheevodex/changelog.md",
+      "move": "Open Dex",
       "tags": [
         {
           "label": "Server",
@@ -120,7 +120,7 @@
           "value": "–"
         }
       ],
-      "description": "Personal RetroAchievements profile tracker. No server, no build step: runs entirely in your browser.",
+      "description": "A pocket companion for RetroAchievements. No server, no build step: runs entirely in your browser.",
       "materials": [
         {
           "name": "React",

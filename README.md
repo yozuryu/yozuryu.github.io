@@ -5,7 +5,7 @@ Personal site for **Yozuryu**, served at **[yozuryu.github.io](https://yozuryu.g
 | Project | What it is |
 |---|---|
 | [Savepoint](https://yozuryu.github.io/my-savepoint/) | Achievement dashboard for RetroAchievements, Steam and Xbox ([source](https://github.com/yozuryu/my-savepoint)) |
-| [Cheevo Tracker](https://yozuryu.github.io/cheevo-tracker/) | RetroAchievements profile tracker ([source](https://github.com/yozuryu/cheevo-tracker)) |
+| [Cheevodex](https://yozuryu.github.io/cheevodex/) | RetroAchievements profile tracker ([source](https://github.com/yozuryu/cheevodex)) |
 
 ## The page
 
@@ -25,7 +25,7 @@ Static files served by GitHub Pages from `main`, no build step: React loads from
 
 ## Run locally
 
-Serve the **parent** folder so `/my-savepoint/` and `/cheevo-tracker/` resolve to the sibling repos, as they do on GitHub Pages:
+Serve the **parent** folder so `/my-savepoint/` and `/cheevodex/` resolve to the sibling repos, as they do on GitHub Pages:
 
 ```bash
 cd ..
