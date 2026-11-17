@@ -1,5 +1,25 @@
 # Changelog
 
+## v26.11.17
+
+A new home page in five JRPG themes you can switch between, showing the projects and a summary of the games played.
+
+### Structure
+
+- new: **Five themes** with a switcher: Starlit Menu, Load Game, Quest Board, Stylish and Home Camp
+  The Theme button sits bottom right in every theme (or press T). Your choice is remembered. Starlit Menu is the default.
+- new: **Starlit Menu**: a pause menu over a night sky, with the years as a constellation
+  One star per year in its Memory Card colour, higher the more unlocks that year had. Each star opens that year.
+- new: **Load Game**: the projects as save files, the years as blocks on a memory card
+- new: **Quest Board**: the projects as quests pinned to a guild board, with a guild card
+- new: **Stylish**: a status screen made like a zine page, in ink, paper and hot pink
+  You on a torn slab down the left, the projects as two taped cards with their level, the games in rotation as a turn order, the year as a ticket, and marker notes scribbled over it.
+- improved: **Home Camp** is the old cream-and-gold menu opened up into one screen
+  Creations, the games being played, the adventure log and the links are all visible at once: no tabs to page through.
+- new: **Live numbers** on every theme: totals, platforms, now playing and the Memory Card year come from Savepoint
+  A project's level is its number of releases and its PWR the number of logged changes.
+- improved: the page no longer loads React: it opens faster
+
 ## v26.11.13
 
 Follow Cheevo Tracker's rename to Cheevodex and keep its old links working.

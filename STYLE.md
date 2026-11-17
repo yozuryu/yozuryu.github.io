@@ -1,5 +1,7 @@
 # Style guide — yozuryu.github.io
 
+> **Scope since 2026-11-17:** the home page now has five themes, each with its own CSS in `themes/` (see `CLAUDE.md`). This guide and `assets/noah-ui.css` describe the Little Noah menu style, which is still what every **404 page** uses (this site's and the project sites'). The home page's Home Camp theme follows the same look with its own stylesheet.
+
 The site is styled after the **pause / character menu of *Little Noah: Scion of Paradise*** (Cygames): a cream panel in a gold filigree frame over a blurred, dimmed world, glossy chocolate tabs with a glowing gold active tab, brown header strips, gold-bordered portrait cards, and rounded button-hint pills. Every new page should look like another screen of that menu.
 
 **Source of truth:** [`assets/noah-ui.css`](assets/noah-ui.css) (tokens + components, all prefixed `nu-`). Page arrangement goes in [`assets/site.css`](assets/site.css). This file explains how to use them.

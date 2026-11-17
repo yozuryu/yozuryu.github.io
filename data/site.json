@@ -2,11 +2,6 @@
   "name": "Yozuryu",
   "title": "Weekend Adventurer",
   "avatar": "./assets/avatar.png",
-  "intro": [
-    "Oh! A visitor!",
-    "Welcome to my little corner of the internet. The place is still under construction...",
-    "Have a look around the menu in the meantime. My projects are on display in Creations!"
-  ],
   "about": "Hailing from the golden age of PS1 RPGs, Yozuryu roams old and new worlds on weekends, collecting achievements and building tools to chart the journey.",
   "favorites": [
     {
@@ -46,29 +41,26 @@
       "name": "Savepoint",
       "stars": 3,
       "element": "blue",
-      "icon": "./assets/projects/gaming-hub-icon.png",
-      "previews": [
-        "./assets/projects/gaming-hub.jpg"
-      ],
+      "icon": "./assets/projects/savepoint-icon.png",
       "url": "/my-savepoint/",
       "repo": "https://github.com/yozuryu/my-savepoint",
       "changelog": "/my-savepoint/changelog.md",
-      "move": "Open Dashboard",
+      "move": "Open my hub",
       "tags": [
         {
           "label": "Platforms",
           "value": "3"
         },
         {
-          "label": "PWA",
-          "value": "✓"
+          "label": "Server",
+          "value": "none"
         },
         {
-          "label": "Build",
-          "value": "–"
+          "label": "Cost",
+          "value": "free"
         }
       ],
-      "description": "Achievement dashboard for RetroAchievements, Steam and Xbox, fed by hourly data pipelines.",
+      "description": "RetroAchievements, Steam and Xbox on one site you own. It updates itself and runs free on GitHub.",
       "materials": [
         {
           "name": "React",
@@ -91,7 +83,20 @@
         "Every completion across platforms on one page",
         "Updated hourly by automated pipelines",
         "A year of unlocks and streaks on one timeline"
-      ]
+      ],
+      "kind": "Template",
+      "shot": "./assets/projects/savepoint.jpg",
+      "facts": [
+        "3 platforms",
+        "No server",
+        "Yours in 15 minutes"
+      ],
+      "alt": {
+        "label": "Make your own",
+        "url": "/savepoint-site/"
+      },
+      "reward": "Your own gaming hub, in about fifteen minutes",
+      "party": "3 platforms · no server · phone first"
     },
     {
       "id": "cheevodex",
@@ -99,28 +104,25 @@
       "stars": 3,
       "element": "red",
       "icon": "./assets/projects/cheevodex-icon.png",
-      "previews": [
-        "./assets/projects/cheevodex.jpg"
-      ],
       "url": "/cheevodex/",
       "repo": "https://github.com/yozuryu/cheevodex",
       "changelog": "/cheevodex/changelog.md",
-      "move": "Open Dex",
+      "move": "Open the Dex",
       "tags": [
         {
-          "label": "Server",
-          "value": "–"
-        },
-        {
-          "label": "PWA",
+          "label": "Dex",
           "value": "✓"
         },
         {
-          "label": "Build",
-          "value": "–"
+          "label": "Friends",
+          "value": "✓"
+        },
+        {
+          "label": "Server",
+          "value": "none"
         }
       ],
-      "description": "A pocket companion for RetroAchievements. No server, no build step: runs entirely in your browser.",
+      "description": "A pocket companion for RetroAchievements. Every game you played, numbered like a dex.",
       "materials": [
         {
           "name": "React",
@@ -143,10 +145,22 @@
         "Your RetroAchievements profile, progress and backlog",
         "Friends feed with a live \"Playing now\" dot",
         "Professor Oak Challenge guides for Pokémon sets"
-      ]
+      ],
+      "kind": "App",
+      "shot": "./assets/projects/cheevodex.jpg",
+      "facts": [
+        "Runs in the browser",
+        "Friends",
+        "Free"
+      ],
+      "alt": {
+        "label": "Website",
+        "url": "/cheevodex-site/"
+      },
+      "reward": "A dex of every game you touched",
+      "party": "Runs entirely in your browser"
     }
   ],
-  "lockedSlots": 4,
   "links": [
     {
       "name": "GitHub",

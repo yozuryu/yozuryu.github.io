@@ -4,35 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Yozuryu</title>
-    <meta name="description" content="Yozuryu — personal site and project index">
-    <meta name="theme-color" content="#2a1a10">
+    <meta name="description" content="Yozuryu's home page: Savepoint and Cheevodex, and a summary of the games played, in five JRPG menu themes.">
+    <meta name="theme-color" content="#060b1c">
     <link rel="icon" href="./assets/favicon.ico" sizes="48x48">
     <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
     <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap">
-
-    <!-- Design system (see STYLE.md), then page layout -->
-    <link rel="stylesheet" href="./assets/noah-ui.css">
-    <link rel="stylesheet" href="./assets/site.css">
-
-    <script type="importmap">
-    {
-        "imports": {
-            "react": "https://esm.sh/react@18.2.0",
-            "react-dom/client": "https://esm.sh/react-dom@18.2.0/client"
-        }
-    }
+    <link rel="stylesheet" href="./assets/root.css">
+    <!-- The theme is known before the first paint, so the page never flashes another theme's background.
+         Storage is shared with the project sites: every key here starts with root_ -->
+    <script>
+        (function () {
+            var bg = { starlit: '#060b1c', load: '#0b1416', quest: '#231711', stylish: '#f3efe6', noah: '#cfe6d3' };
+            var t = new URLSearchParams(location.search).get('theme');
+            try { t = t || localStorage.getItem('root_theme'); } catch (e) {}
+            if (!bg[t]) t = 'starlit';
+            document.documentElement.dataset.theme = t;
+            document.documentElement.style.background = bg[t];
+        })();
     </script>
-
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style id="theme-css"></style>
 </head>
-<body class="nu-root">
-    <div class="nu-scene" aria-hidden="true"></div>
+<body>
     <div id="root"></div>
-    <script type="text/babel" data-type="module" src="./app.js"></script>
+    <div class="rt" id="switch"></div>
+    <noscript><p style="padding:24px;color:#fff;font-family:sans-serif">Yozuryu's home page. Projects: <a href="/my-savepoint/">Savepoint</a>, <a href="/cheevodex/">Cheevodex</a>.</p></noscript>
+    <script type="module" src="./app.js"></script>
     <!-- No service worker here on purpose: this site owns the "/" scope of
          yozuryu.github.io, so a worker registered here would also intercept
          requests for /my-savepoint/ and /cheevodex/. -->

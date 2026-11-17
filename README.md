@@ -9,28 +9,23 @@ Personal site for **Yozuryu**, served at **[yozuryu.github.io](https://yozuryu.g
 
 ## The page
 
-The landing page is a game pause menu, styled after the menus of *Little Noah: Scion of Paradise*:
+One page, drawn as a JRPG menu in five themes. The **Theme** button (bottom right, or press T) switches between them and remembers your choice:
 
-- **Creations:** my projects shown like crafted items: pedestals to pick one, then its level, materials (tech it's built with), effects and a screenshot. Level, "PWR" and release dates come from each project's changelog
-- **Player:** profile, motto and favorite genres
-- **Play Data:** live stats from Savepoint (RA points, Steam hours, gamerscore, achievements…)
-- **Links:** a records-style list of my pages
-- A battle-style HUD, button hints, keyboard controls (Q/E tabs, ←/→ select, Enter open), and a short intro dialogue
+- **Starlit Menu** (default): a pause menu over a night sky, with the years as a constellation
+- **Load Game**: the projects as save files, the years as blocks on a memory card
+- **Quest Board**: the projects as quests pinned to a guild's notice board
+- **Stylish**: slanted and loud, with a command window, a turn order and a dialogue box
+- **Home Camp**: a cream-and-gold menu styled after *Little Noah: Scion of Paradise*
 
-Only the look is recreated; no game art, characters or logos are used. The design system is in [`assets/noah-ui.css`](assets/noah-ui.css) and documented in [`STYLE.md`](STYLE.md).
+Every theme shows the same things: the two projects, totals across RetroAchievements, Steam and Xbox, the games being played now, this year's Memory Card, and links. The numbers are live, read from Savepoint's public data.
+
+Each theme recreates a style only; no game art, characters or logos are used.
 
 ## How it's built
 
-Static files served by GitHub Pages from `main`, no build step: React loads from a CDN and JSX compiles in the browser, the same setup as the project sites. Content lives in [`data/site.json`](data/site.json).
+Static files served by GitHub Pages from `main`, no build step and no framework: plain ES modules. The page comes in five themes (`themes/`), switched with the Theme button. Content lives in [`data/site.json`](data/site.json).
 
 ## Run locally
 
-Serve the **parent** folder so `/my-savepoint/` and `/cheevodex/` resolve to the sibling repos, as they do on GitHub Pages:
+The page reads Savepoint's data from `/my-savepoint/`, so serve this repo at `/` with the sibling repos at their live paths (`/my-savepoint/` → the hub's folder, `/cheevodex/` → Cheevodex's). Without them the page still opens, with "—" in place of the numbers. `?theme=<id>` opens a theme directly: `starlit`, `load`, `quest`, `stylish`, `noah`.
 
-```bash
-cd ..
-python3 -m http.server 8000
-# open http://localhost:8000/yozuryu.github.io/
-```
-
-Without the sibling folders, the page still works; live numbers just show "—".

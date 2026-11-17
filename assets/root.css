@@ -1,0 +1,29 @@
+/* What every theme shares: the page reset and the theme switcher. A theme's own look is themes/<id>.css,
+   loaded alone, so themes never fight each other. Switcher classes are rt- so no theme's classes touch them */
+html { -webkit-text-size-adjust: 100%; }
+html, body { overflow-x: clip; }
+body { margin: 0; }
+/* :where() keeps these at zero weight, so a theme's own link colours always win */
+:where(#root) a { color: inherit; text-decoration: none; }
+#root a:focus-visible, .rt button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+:where(#root) img { max-width: 100%; }
+#root.rt-in { animation: rt-in .28s cubic-bezier(.2, .7, .2, 1) backwards; }
+@keyframes rt-in { from { opacity: 0; transform: translateY(8px); } }
+#root .hit { animation: rt-hit .9s ease-out; }
+@keyframes rt-hit { 0%, 40% { filter: brightness(1.35); } }
+
+.rt { position: fixed; z-index: 60; right: max(14px, env(safe-area-inset-right)); bottom: calc(14px + env(safe-area-inset-bottom)); font: 600 13px/1.2 system-ui, -apple-system, 'Segoe UI', sans-serif; color: #f2f4fa; }
+.rt-btn { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px 0 12px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, .28); background: rgba(16, 18, 28, .82); color: inherit; font: inherit; cursor: pointer; backdrop-filter: blur(10px); box-shadow: 0 6px 20px rgba(0, 0, 0, .35); }
+.rt-btn:active { transform: scale(.96); }
+.rt-dots { display: flex; } .rt-dots i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid rgba(16, 18, 28, .9); margin-left: -4px; } .rt-dots i:first-child { margin-left: 0; }
+.rt-menu { position: absolute; right: 0; bottom: 50px; width: 232px; padding: 6px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, .22); background: rgba(16, 18, 28, .94); backdrop-filter: blur(14px); box-shadow: 0 14px 40px rgba(0, 0, 0, .5);
+  transform-origin: bottom right; transition: opacity .16s, transform .16s cubic-bezier(.2, .7, .2, 1), visibility .16s; }
+.rt-menu[hidden] { display: block; visibility: hidden; opacity: 0; transform: translateY(6px) scale(.97); pointer-events: none; }
+.rt-head { padding: 8px 10px 6px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #9aa3b8; }
+.rt-opt { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; border-radius: 9px; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.rt-opt:hover { background: rgba(255, 255, 255, .08); }
+.rt-opt[aria-checked="true"] { background: rgba(255, 255, 255, .13); }
+.rt-opt[aria-checked="true"]::after { content: '✓'; margin-left: auto; }
+.rt-sw { flex: none; width: 34px; height: 22px; border-radius: 5px; border: 1px solid rgba(255, 255, 255, .3); }
+@media (prefers-reduced-motion: reduce) { #root.rt-in, #root .hit { animation: none; } .rt-menu { transition: none; } }
+@media (max-width: 900px) { #root { padding-bottom: 56px; } }
