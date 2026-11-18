@@ -1,14 +1,30 @@
 /* What every theme shares: the page reset and the theme switcher. A theme's own look is themes/<id>.css,
    loaded alone, so themes never fight each other. Switcher classes are rt- so no theme's classes touch them */
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
 html, body { overflow-x: clip; }
 body { margin: 0; }
+#root { padding-top: env(safe-area-inset-top); }
+:where(#root) a, .rt button { touch-action: manipulation; }
+/* no hover on a phone: a press answers instead */
+@media (hover: none) { :where(#root) a:active { scale: .97; opacity: .88; } }
 /* :where() keeps these at zero weight, so a theme's own link colours always win */
 :where(#root) a { color: inherit; text-decoration: none; }
 #root a:focus-visible, .rt button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 :where(#root) img { max-width: 100%; }
-#root.rt-in { animation: rt-in .28s cubic-bezier(.2, .7, .2, 1) backwards; }
-@keyframes rt-in { from { opacity: 0; transform: translateY(8px); } }
+/* A new page: its pieces rise in one after another (first load and every theme switch; app.js drops the class after) */
+#root.rt-in .wrap > * { animation: rt-rise .55s cubic-bezier(.22, 1, .36, 1) backwards; }
+#root.rt-in .wrap > :nth-child(2) { animation-delay: .06s; } #root.rt-in .wrap > :nth-child(3) { animation-delay: .12s; }
+#root.rt-in .wrap > :nth-child(4) { animation-delay: .18s; } #root.rt-in .wrap > :nth-child(n+5) { animation-delay: .24s; }
+@keyframes rt-rise { from { opacity: 0; translate: 0 14px; } }
+/* View transitions (see paint() in app.js). Theme switch: the new theme opens as a circle from the Theme button, over
+   the old one held still. Data arriving: a short cross-fade. The switcher has its own name so it never takes part */
+.rt { view-transition-name: rt-switch; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .24s; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+:root[data-vt="theme"]::view-transition-old(root) { animation: none; z-index: 0; }
+:root[data-vt="theme"]::view-transition-new(root) { z-index: 1; animation: rt-open .62s cubic-bezier(.45, 0, .15, 1) both; }
+@keyframes rt-open { from { clip-path: circle(0 at var(--rx, 90%) var(--ry, 95%)); } to { clip-path: circle(160vmax at var(--rx, 90%) var(--ry, 95%)); } }
+::view-transition-group(rt-switch) { z-index: 2; animation: none; }
+::view-transition-old(rt-switch) { display: none; } ::view-transition-new(rt-switch) { animation: none; }
 #root .hit { animation: rt-hit .9s ease-out; }
 @keyframes rt-hit { 0%, 40% { filter: brightness(1.35); } }
 
@@ -25,5 +41,14 @@ body { margin: 0; }
 .rt-opt[aria-checked="true"] { background: rgba(255, 255, 255, .13); }
 .rt-opt[aria-checked="true"]::after { content: '✓'; margin-left: auto; }
 .rt-sw { flex: none; width: 34px; height: 22px; border-radius: 5px; border: 1px solid rgba(255, 255, 255, .3); }
-@media (prefers-reduced-motion: reduce) { #root.rt-in, #root .hit { animation: none; } .rt-menu { transition: none; } }
+.rt-shade { position: fixed; inset: 0; z-index: -1; background: rgba(0, 0, 0, .5); transition: opacity .2s, visibility .2s; }
+.rt-shade[hidden] { display: block; visibility: hidden; opacity: 0; pointer-events: none; }
+@media (min-width: 601px) { .rt-shade { display: none !important; } }
+/* phone: the theme list is a sheet across the bottom with thumb-sized rows */
+@media (max-width: 600px) {
+  .rt-menu { position: fixed; left: 10px; right: 10px; bottom: calc(64px + env(safe-area-inset-bottom)); width: auto; padding: 8px; border-radius: 18px; transform-origin: bottom center; }
+  .rt-menu[hidden] { transform: translateY(18px); }
+  .rt-opt { padding: 14px 12px; font-size: 15px; } .rt-sw { width: 42px; height: 28px; } .rt-btn { height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { #root.rt-in .wrap > *, #root .hit { animation: none; } .rt-menu, .rt-shade { transition: none; } }
 @media (max-width: 900px) { #root { padding-bottom: 56px; } }

@@ -27,7 +27,7 @@ export function render(m, { esc, num, yy }) {
           <polyline fill="none" stroke="rgba(190,215,255,.4)" stroke-width="1" points="${pts.map(p => `${p.x},${p.y}`).join(' ')}"/>
           ${pts.map(p => `<a href="${esc(p.url)}"><title>${p.year}${p.title ? ` · ${esc(p.title)}` : ''}</title>
             ${p.cur ? `<circle cx="${p.x}" cy="${p.y}" r="12" fill="none" stroke="#fff" stroke-width="1"/><circle cx="${p.x}" cy="${p.y}" r="17" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1" stroke-dasharray="2 4"/>` : ''}
-            <circle class="star" cx="${p.x}" cy="${p.y}" r="${p.cur ? 7 : 4.5}" fill="rgb(${p.colour})"/><circle cx="${p.x}" cy="${p.y}" r="11" fill="transparent"/>
+            <circle class="star" cx="${p.x}" cy="${p.y}" r="${p.cur ? 7 : 4.5}" fill="rgb(${p.colour})"/><circle cx="${p.x}" cy="${p.y}" r="14" fill="transparent"/>
             <text class="${p.cur ? 's' : ''}" x="${p.x}" y="${p.y + (p.cur ? 32 : 18)}">${yy(p.year)}</text></a>`).join('')}
         </svg>`;
     };

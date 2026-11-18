@@ -1,5 +1,23 @@
 # Changelog
 
+## v26.11.19
+
+Easier to use on a phone, and changes on the page are animated instead of popping in.
+
+### Structure
+
+- improved: **Theme switch** opens the new theme as a circle growing from the Theme button
+  The list folds away first, then the new page's pieces rise in one after another.
+- improved: **The page arrives whole**: it waits a moment for the live numbers instead of growing piece by piece
+  Anything that still lands late fades in.
+- improved: **Pinned menu on phones** in Starlit Menu and Stylish, and it follows where you are
+  The entry of the section on screen is lit, and tapping one brings its section right under the bar.
+- improved: **Theme list on phones** is a sheet across the bottom with bigger rows
+- improved: **Bigger tap targets** on phones in every theme: buttons, links and platform rows
+- improved: **Smoother scrolling** on phones in Starlit Menu and Load Game
+  The panels no longer blur what is behind them on small screens.
+- fix: a press on a phone now answers: the thing you tap dips slightly
+
 ## v26.11.17
 
 A new home page in five JRPG themes you can switch between, showing the projects and a summary of the games played.

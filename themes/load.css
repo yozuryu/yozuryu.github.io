@@ -49,3 +49,11 @@ a.yr b { color:rgb(var(--c)); } a.yr .px { color:var(--dim); } .yr:not(:has(img)
 .now a { display:block; height:52px; border-radius:7px; border:2px solid var(--line); background-size:cover; background-position:center; } .now a:hover { border-color:var(--mint); }
 .lk { display:grid; grid-template-columns:1fr 1fr; gap:8px; } .lk a { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:7px; border:2px solid var(--line); font:700 13px/1 var(--d); min-width:0; } .lk a:hover { border-color:var(--mint); } .lk img { width:18px; height:18px; flex:none; }
 @media (prefers-reduced-motion: reduce) { .slot.on::before { animation:none; } }
+
+/* ── phones: thumb-sized targets, no blur to repaint while scrolling ── */
+@media (max-width: 900px) {
+  .slot, .box { backdrop-filter:none; background:rgba(17,32,35,.86); } .slot.empty { background:none; }
+  .btn { padding:14px 16px; } .act { gap:10px; flex-wrap:wrap; } .px { font-size:11px; }
+  .lk a { padding:14px 12px; } .pl { gap:2px; } .pl a { padding:11px 0; } .now a { height:60px; } .blocks { gap:8px; } .blk { font-size:10px; }
+  .top h1 { font-size:38px; }
+}

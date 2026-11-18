@@ -78,3 +78,15 @@ a.yr b { color:rgb(var(--c)); } a.yr .px { color:var(--dim); } a.yr:hover b { te
 .yr:not(:has(img)) { grid-template-columns:1fr; }
 .me img { image-rendering:auto; }
 @media (max-width: 900px) { .lks { order:6; } .mid { display:contents; } .grp { order:4; } .now { order:5; } .sky { order:5; } .pl { flex-wrap:wrap; } }
+
+/* ── phones: a pinned menu, thumb-sized targets, no blur to repaint while scrolling ── */
+@media (max-width: 900px) {
+  .pan { backdrop-filter:none; background:linear-gradient(135deg, rgba(20,36,78,.72), rgba(8,14,34,.7)); }
+  .menu { order:2; position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; margin:0 -16px; padding:6px 12px; background:rgba(6,11,28,.94); border-bottom:1px solid var(--line); scrollbar-width:none; }
+  .menu::-webkit-scrollbar { display:none; } .me { order:3; }
+  .mi { font-weight:400; font-size:14px; padding:17px 14px 14px 26px; } .px { font-size:11px; }
+  .grp, .pan { scroll-margin-top:calc(62px + env(safe-area-inset-top, 0px)); }
+  .btn { padding:15px 18px 12px; } .act { gap:10px; } .lk a { padding:14px 14px 11px; flex:1 1 40%; } .pl { gap:6px 16px; } .pl a { padding:12px 0; font-size:13px; }
+  .sky svg { margin:6px 0; } .yr { padding-top:14px; }
+  #root.rt-in .mid > *, #root.rt-in .side > * { animation:rt-rise .55s cubic-bezier(.22,1,.36,1) backwards; animation-delay:.1s; } #root.rt-in .side > :first-child { animation-delay:.04s; }
+}

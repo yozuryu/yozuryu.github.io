@@ -60,7 +60,9 @@ This site owns `/` on `yozuryu.github.io`. The project sites live under it (`/my
 
 - Tech: plain ES modules, no framework, no bundler, no npm for the site.
 - Storage keys are prefixed `root_` (storage is shared with the project sites): `root_theme`.
-- Motion is small and per theme (a cursor that bobs, a hover lift); all of it is off under `prefers-reduced-motion`.
+- **Motion.** Every change of the page goes through `paint(kind, change)` in `app.js`, which uses the View Transitions API where the browser has it: a theme switch opens the new theme as a circle from the Theme button (`rt-open`, the list folds away first), data that lands late cross-fades in. On first load and on a switch the pieces of the page rise in one after another (`#root.rt-in .wrap > *`; `app.js` drops the class so a later redraw doesn't replay it). Inside a theme, motion is small (a cursor that bobs, a hover lift, a press that answers on phones). All of it is off under `prefers-reduced-motion`.
+- **First paint waits for the data** (up to 0.9 s), so the page arrives whole instead of growing piece by piece. Don't draw before that and patch after.
+- **Phones (the owner's is ~450px wide):** in Starlit and Stylish the section menu is pinned to the top and its lit entry follows the scroll (`spy()` / `mark()` in `app.js`; the last section owns the bottom of the page); the theme list is a sheet across the bottom. Everything tappable is at least 40px tall, and Starlit and Load Game drop `backdrop-filter` (blur repainting on scroll stutters on Android). Check a change with a script, not by eye: no link under 40px, no sideways scroll.
 
 ## Changelog Convention
 

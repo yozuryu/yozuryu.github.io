@@ -132,42 +132,111 @@ function loadTheme(id) {
     return cache[t.id];
 }
 
-async function setTheme(id, { save = false, animate = true } = {}) {
+const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const phone = () => matchMedia('(max-width: 900px)').matches;
+
+// Every change of the page goes through here. Where the browser has view transitions the old page is held as a
+// picture while `change` runs, then the new one comes in: `kind` picks the animation in root.css ("theme" = a
+// circle opening from the switcher, "data" = a short cross-fade). Elsewhere, and with reduced motion, it just changes.
+function paint(kind, change) {
+    if (!document.startViewTransition || calm()) { change(); return; }
+    const html = document.documentElement;
+    html.dataset.vt = kind;
+    const t = document.startViewTransition(change);
+    t.finished.finally(() => { if (html.dataset.vt === kind) delete html.dataset.vt; });
+}
+
+let inTimer = 0;
+async function setTheme(id, { save = false, first = false } = {}) {
     const next = await loadTheme(id);
-    active = next;
-    cssEl.textContent = next.css;              // styles and markup change in the same frame
-    document.documentElement.dataset.theme = next.t.id;
-    document.documentElement.style.background = next.t.bg;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next.t.bg);
-    draw();
-    if (animate) { root.classList.remove('rt-in'); void root.offsetWidth; root.classList.add('rt-in'); }
-    window.scrollTo(0, 0);
+    const html = document.documentElement;
+    const btn = sw.querySelector('.rt-btn')?.getBoundingClientRect();      // the circle opens from the Theme button
+    html.style.setProperty('--rx', `${btn ? btn.left + btn.width / 2 : innerWidth - 60}px`);
+    html.style.setProperty('--ry', `${btn ? btn.top + btn.height / 2 : innerHeight - 34}px`);
+    const change = () => {
+        active = next;
+        cssEl.textContent = next.css;              // styles and markup change in the same frame
+        html.dataset.theme = next.t.id;
+        html.style.background = next.t.bg;
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next.t.bg);
+        activeGo = null;
+        draw();
+        window.scrollTo(0, 0);
+        drawSwitch();
+        // the pieces of the new page rise in one after another; the class is dropped so a later redraw doesn't replay it
+        root.classList.remove('rt-in'); void root.offsetWidth; root.classList.add('rt-in');
+        clearTimeout(inTimer); inTimer = setTimeout(() => root.classList.remove('rt-in'), 1100);
+    };
+    if (first) change(); else paint('theme', change);
     if (save) { try { localStorage.setItem(THEME_KEY, next.t.id); } catch { /* private mode */ } }
-    drawSwitch();
 }
 
 let queued = false;
 function redraw() {                            // several loaders finishing together make one redraw
     if (queued) return;
     queued = true;
-    requestAnimationFrame(() => { queued = false; draw(); });
+    requestAnimationFrame(() => { queued = false; root.classList.remove('rt-in'); paint('data', draw); });
 }
 function draw() {
     if (!active) return;
     root.innerHTML = active.mod.render(model, helpers);
     document.body.dataset.ready = '1';
+    if (activeGo) mark(activeGo, false);
+    spy();
 }
 
-// Menu entries inside a theme: <a data-go="memory"> lights itself and brings #memory into view
+// ── section menus inside a theme ─────────────────────────────────────────────
+// <a data-go="memory"> lights itself and brings #memory into view; while the page scrolls, the entry of the section
+// on screen is the lit one (the menus are pinned on phones). The lit entry survives a redraw.
+let activeGo = null, spyOn = null, spyHold = 0;
+function mark(id, follow = true) {
+    activeGo = id;
+    root.querySelectorAll('[data-go]').forEach(x => {
+        const on = x.dataset.go === id;
+        x.classList.toggle('on', on);
+        const bar = x.parentElement;
+        if (on && follow && bar.scrollWidth > bar.clientWidth + 4) {       // a menu that scrolls sideways keeps its lit entry in view
+            bar.scrollTo({ left: x.offsetLeft - (bar.clientWidth - x.offsetWidth) / 2, behavior: calm() ? 'auto' : 'smooth' });
+        }
+    });
+}
+function spy() {
+    spyOn?.disconnect();
+    const targets = [...new Set([...root.querySelectorAll('[data-go]')].map(x => x.dataset.go))].map(id => document.getElementById(id)).filter(Boolean);
+    if (!targets.length || !('IntersectionObserver' in window)) return;
+    const seen = new Map();
+    spyOn = new IntersectionObserver((entries) => {
+        entries.forEach(e => seen.set(e.target.id, e.isIntersecting));
+        if (Date.now() < spyHold) return;                                   // a tap decides for a moment, not the scroll it causes
+        if (atBottom()) return;                                             // the bottom of the page belongs to the last section (below)
+        // several sections can be in the band at once: the one that entered last (lowest on screen) is the one being read
+        const cur = targets.filter(t => seen.get(t.id)).sort((x, y) => y.getBoundingClientRect().top - x.getBoundingClientRect().top)[0];
+        if (cur && cur.id !== activeGo && scrollY > 8) mark(cur.id);
+    }, { rootMargin: '-25% 0px -60% 0px' });
+    targets.forEach(t => spyOn.observe(t));
+    spyLast = targets.sort((x, y) => x.getBoundingClientRect().top - y.getBoundingClientRect().top).at(-1)?.id ?? null;
+}
+// The last section may be too short to ever reach the band: at the very bottom of the page it is the one
+let spyLast = null, spyTick = false;
+const atBottom = () => scrollY > 8 && innerHeight + scrollY >= document.documentElement.scrollHeight - 6;
+addEventListener('scroll', () => {
+    if (spyTick) return;
+    spyTick = true;
+    requestAnimationFrame(() => {
+        spyTick = false;
+        if (spyLast && Date.now() >= spyHold && atBottom() && activeGo !== spyLast) mark(spyLast);
+    });
+}, { passive: true });
+
 root.addEventListener('click', (e) => {
     const go = e.target.closest('[data-go]');
     if (!go) return;
     const target = document.getElementById(go.dataset.go);
     if (!target) return;
     e.preventDefault();
-    go.parentElement.querySelectorAll('[data-go]').forEach(x => x.classList.toggle('on', x === go));
-    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    target.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'nearest' });
+    spyHold = Date.now() + 900;
+    mark(go.dataset.go);
+    target.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: phone() ? 'start' : 'nearest' });
     target.classList.remove('hit'); void target.offsetWidth; target.classList.add('hit');
 });
 
@@ -177,6 +246,7 @@ let open = false;
 function drawSwitch() {
     const cur = active?.t ?? THEMES[0];
     sw.innerHTML = `
+        <div class="rt-shade" ${open ? '' : 'hidden'}></div>
         <div class="rt-menu" role="menu" aria-label="Theme" ${open ? '' : 'hidden'}>
             <div class="rt-head">Theme</div>
             ${THEMES.map(t => `<button class="rt-opt" role="menuitemradio" aria-checked="${t.id === cur.id}" data-theme-id="${t.id}">
@@ -188,8 +258,15 @@ function drawSwitch() {
 const toggle = (to = !open) => { open = to; drawSwitch(); if (open) sw.querySelector('[aria-checked="true"]')?.focus(); };
 sw.addEventListener('click', (e) => {
     const opt = e.target.closest('[data-theme-id]');
-    if (opt) { open = false; setTheme(opt.dataset.themeId, { save: true }); return; }
+    if (opt) {            // the list folds away first, then the new theme opens from the button
+        const id = opt.dataset.themeId;
+        toggle(false);
+        loadTheme(id);
+        setTimeout(() => setTheme(id, { save: true }), calm() ? 0 : 180);
+        return;
+    }
     if (e.target.closest('.rt-btn')) toggle();
+    else if (e.target.closest('.rt-shade')) toggle(false);
 });
 sw.addEventListener('pointerover', (e) => { const o = e.target.closest('[data-theme-id]'); if (o) loadTheme(o.dataset.themeId); });   // warm it up
 // composedPath, not contains(): the switcher redraws itself on a click, so the clicked node is already gone from it
@@ -210,5 +287,12 @@ document.addEventListener('keydown', (e) => {
 const wanted = document.documentElement.dataset.theme || DEFAULT;      // set before first paint in index.html
 const [site] = await Promise.all([getJson('./data/site.json'), loadTheme(wanted)]);
 if (site) fromSite(site);
-await setTheme(wanted);
-[loadStats, loadMemory, loadChangelogs, loadPlaying].forEach(load => load().then(redraw));
+drawSwitch();
+// The first picture waits a moment for the live data, so the page arrives whole instead of growing piece by piece.
+// Whatever is later than that fades in when it lands.
+const loads = [loadStats, loadMemory, loadChangelogs, loadPlaying].map(load => load().catch(() => {}));
+let painted = false;
+loads.forEach(l => l.then(() => { if (painted) redraw(); }));
+await Promise.race([Promise.all(loads), new Promise(r => setTimeout(r, 900))]);
+await setTheme(wanted, { first: true });
+painted = true;

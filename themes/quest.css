@@ -45,3 +45,11 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; backgro
 .strip .lk a { font-weight:700; text-decoration:underline; text-underline-offset:3px; } .strip .lk a:hover { color:var(--s); }
 a.aq { transition:transform .15s; } a.aq:hover { transform:translateX(3px); } .aq small { display:block; margin-top:4px; font-size:11px; opacity:.7; }
 a.chr { transition:rotate .2s, translate .2s; } a.chr:hover { rotate:0deg; translate:0 -3px; } .chr:not(:has(img)) { grid-template-columns:1fr; }
+
+/* ── phones: thumb-sized targets ── */
+@media (max-width: 900px) {
+  .btn { display:inline-flex; align-items:center; min-height:46px; padding-inline:16px; } .go { gap:10px; flex-wrap:wrap; }
+  .pl { gap:2px; } .pl a { padding:11px 0; } .strip .lk { display:flex; flex-wrap:wrap; gap:8px; width:100%; color:transparent; }
+  .strip .lk a { color:var(--ink); padding:11px 14px; border:2px solid var(--ink); border-radius:6px; text-decoration:none; background:var(--paper2); }
+  a.aq { padding:10px 0; }
+}

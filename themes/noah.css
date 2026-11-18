@@ -58,3 +58,9 @@ a.plat { transition:translate .15s; } a.plat:hover { translate:0 -2px; }
 .lk { display:grid; grid-template-columns:1fr 1fr; gap:8px; } .lk a { display:flex; align-items:center; gap:8px; padding:7px 12px; border-radius:99px; background:#fff; border:2px solid var(--pill); font-weight:800; font-size:13px; color:var(--b8); min-width:0; }
 .lk a:hover { border-color:var(--orange); } .lk img { width:18px; height:18px; flex:none; border-radius:4px; }
 @media (max-width: 860px) { .tabs { flex-wrap:wrap; gap:6px; } .tab.far { display:inline-block; } .tab { padding:7px 14px; } }
+
+/* ── phones: thumb-sized targets ── */
+@media (max-width: 860px) {
+  .tab { padding:11px 16px; } .move { flex-wrap:wrap; gap:10px 14px; } .move a { padding:8px 0; } .lk a { padding:12px 14px; } .plat { padding:12px 6px; }
+  .band, .sec { scroll-margin-top:10px; }
+}
