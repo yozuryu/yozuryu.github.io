@@ -41,6 +41,12 @@ body { margin: 0; }
 .rt-opt[aria-checked="true"] { background: rgba(255, 255, 255, .13); }
 .rt-opt[aria-checked="true"]::after { content: '✓'; margin-left: auto; }
 .rt-sw { flex: none; width: 34px; height: 22px; border-radius: 5px; border: 1px solid rgba(255, 255, 255, .3); }
+.rt-row { display: flex; gap: 8px; justify-content: flex-end; }
+.rt-share { width: 300px; } .rt-cards { display: grid; grid-template-columns: 0.56fr 1fr; gap: 8px; padding: 2px 4px 4px; align-items: end; }
+.rt-card { display: grid; gap: 7px; padding: 6px 6px 8px; border: 0; border-radius: 10px; background: rgba(255, 255, 255, .07); color: inherit; font: inherit; cursor: pointer; }
+.rt-card:hover { background: rgba(255, 255, 255, .15); } .rt-card:active { transform: scale(.97); }
+.rt-card img { display: block; width: 100%; border-radius: 6px; background: rgba(255, 255, 255, .06); } .rt-story img { aspect-ratio: 9 / 16; } .rt-link img { aspect-ratio: 1200 / 630; }
+.rt-note { padding: 0 10px; font-size: 12px; font-weight: 500; color: #9aa3b8; } .rt-note:not(:empty) { padding-bottom: 8px; }
 .rt-shade { position: fixed; inset: 0; z-index: -1; background: rgba(0, 0, 0, .5); transition: opacity .2s, visibility .2s; }
 .rt-shade[hidden] { display: block; visibility: hidden; opacity: 0; pointer-events: none; }
 @media (min-width: 601px) { .rt-shade { display: none !important; } }
@@ -48,7 +54,16 @@ body { margin: 0; }
 @media (max-width: 600px) {
   .rt-menu { position: fixed; left: 10px; right: 10px; bottom: calc(64px + env(safe-area-inset-bottom)); width: auto; padding: 8px; border-radius: 18px; transform-origin: bottom center; }
   .rt-menu[hidden] { transform: translateY(18px); }
-  .rt-opt { padding: 14px 12px; font-size: 15px; } .rt-sw { width: 42px; height: 28px; } .rt-btn { height: 44px; }
+  .rt-opt { padding: 14px 12px; font-size: 15px; } .rt-sw { width: 42px; height: 28px; } .rt-btn { height: 44px; } .rt-card { font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) { #root.rt-in .wrap > *, #root .hit { animation: none; } .rt-menu, .rt-shade { transition: none; } }
 @media (max-width: 900px) { #root { padding-bottom: 56px; } }
+
+/* ── share cards (?card=story|link): a fixed frame the active theme fills. Drawn small and shot enlarged:
+   story 450 × 800 → 1080 × 1920, link 800 × 420 → 1200 × 630. A theme tunes it with --z and its own .sc rules ── */
+body[data-card] .rt { display: none; } body[data-card] #root { padding: 0; } body[data-card] { overflow: hidden; }
+.sc { position: relative; overflow: hidden; box-sizing: border-box; } .sc-story { width: 450px; height: 800px; } .sc-link { width: 800px; height: 420px; }
+.sc .in { position: relative; z-index: 1; display: grid; gap: 12px; align-content: start; padding: 16px; zoom: var(--z, 1); }
+.sc .col { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.sc-link .in { grid-template-columns: 1fr 1fr; } .sc-link .in > .c-a { grid-column: 1 / -1; }
+.sc .scf { position: absolute; z-index: 2; left: 0; right: 0; bottom: 10px; display: flex; gap: 8px; align-items: center; justify-content: center; }

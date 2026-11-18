@@ -19,6 +19,8 @@ One page, drawn as a JRPG menu in five themes. The **Theme** button (bottom righ
 
 Every theme shows the same things: the two projects, totals across RetroAchievements, Steam and Xbox, the games being played now, this year's Memory Card, and links. The numbers are live, read from Savepoint's public data.
 
+**Share cards:** the Share button beside Theme hands out a picture of the progress summary in the current theme's style, as a **Story** (tall, 1080 × 1920) or a **Post** (wide, 1200 × 630). They are made by `node scripts/render-cards.js` and kept in `assets/share/`; run it again to refresh the numbers.
+
 Each theme recreates a style only; no game art, characters or logos are used.
 
 ## How it's built

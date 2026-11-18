@@ -37,3 +37,23 @@ export function render(m, { esc, num, yy }) {
     <div class="keys px"><span><b>Tab</b>Select file</span><span><b>Enter</b>Continue</span><span><b>T</b>Theme</span></div>
     </div>`;
 }
+
+// The share card: the save data alone. No projects on it.
+export function card(m, { esc, num, yy, site, asOf }, shape) {
+    const t = m.totals, mem = m.memory;
+    const pad = mem ? ((5 - mem.years.length % 5) % 5 || 5) : 0;
+    return `<div class="sc sc-${shape}"><div class="in">
+      <div class="top c-a"><h1>Save <span>data</span></h1><div class="me"><img src="${esc(m.avatar)}" alt=""><div><b>${esc(m.name)}</b><span>${esc(m.title)}</span></div></div></div>
+      <div class="col">
+        <div class="box"><h3 class="px">File 01 · ${esc(asOf)}</h3>
+          <div class="tot"><div><b>${num(t.hours)}</b><span class="px">Hours</span></div><div><b>${num(t.unlocks)}</b><span class="px">Unlocks</span></div><div><b>${num(t.completed)}</b><span class="px">Completed</span></div></div>
+          ${m.plats.length ? `<div class="pl">${m.plats.map(p => `<a><img src="${esc(p.icon)}" alt="">${esc(p.name)}<em>${p.value} ${p.unit}</em></a>`).join('')}</div>` : ''}</div>
+        ${m.playing.length ? `<div class="box"><h3 class="px">Last played</h3><div class="now">${m.playing.map(g => `<a style="background-image:url(${esc(g.cover)})"></a>`).join('')}</div></div>` : ''}
+      </div>
+      <div class="col">
+        ${mem ? `<div class="box"><h3 class="px">Memory card · ${mem.years.length} of ${mem.years.length + pad} blocks</h3>
+          <div class="blocks">${mem.years.map(y => `<a class="blk y${y.year === mem.year ? ' sel' : ''}" style="--c:${y.colour}">${yy(y.year)}</a>`).join('')}${'<div class="blk">—</div>'.repeat(pad)}</div>
+          <a class="yr" style="--c:${mem.colour}"><img src="${esc(mem.thumb)}" alt="" onerror="this.remove()"><div><span class="px">Block ${mem.years.length} · ${mem.year}${mem.partial ? ' so far' : ''}</span><b>${esc(mem.title)}</b><p>${esc(mem.line)}</p></div></a></div>` : ''}
+      </div>
+    </div><div class="scf px">${esc(site)}</div></div>`;
+}

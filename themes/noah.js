@@ -44,3 +44,24 @@ export function render(m, { esc, num }) {
     <div class="hints"><span class="hint"><span class="key" style="width:44px">Tab</span>Select</span><span class="hint"><span class="key" style="width:52px">Enter</span>Open</span><span class="hint"><span class="gl">T</span>Theme</span></div>
     </div>`;
 }
+
+// The share card: the adventure log and the party. No creations on it.
+export function card(m, { esc, num, site, asOf }, shape) {
+    const t = m.totals, mem = m.memory;
+    return `<div class="sc sc-${shape}"><div class="in">
+      <div class="hud c-a"><div class="port"><img src="${esc(m.avatar)}" alt="">${t.completed != null ? `<b>★ ${num(t.completed)}</b>` : ''}</div>
+        <div class="who"><h1 class="out">${esc(m.name)}</h1><p class="out">${esc(m.title)}</p></div><span class="tab on">${esc(site)}</span></div>
+      <div class="col"><div class="frame"><div class="sec"><h2>Adventure Log · ${esc(asOf)}</h2><div>
+        <div class="data">
+          <div class="row"><span class="l">Hours played</span><span class="v">${num(t.hours)}</span></div>
+          <div class="row"><span class="l">Unlocks</span><span class="v">${num(t.unlocks)}</span></div>
+          <div class="row"><span class="l">Completed</span><span class="v">${num(t.completed)}${t.beaten ? `<small>+ ${num(t.beaten)} beaten</small>` : ''}</span></div>
+        </div>
+        ${m.plats.length ? `<div class="plats">${m.plats.map(p => `<a class="plat"><img src="${esc(p.icon)}" alt=""><b>${p.value}</b><span>${esc(p.label)}</span></a>`).join('')}</div>` : ''}
+      </div></div></div></div>
+      <div class="col"><div class="frame"><div class="band"><div class="lab">❧ Party · playing now</div>
+        <div class="party">${m.playing.map(g => `<a class="card"><div style="background-image:url(${esc(g.tall)})"></div>${g.pct != null ? `<em class="out">${g.pct}%</em>` : ''}<span>${esc(g.name)}</span></a>`).join('<span class="arrow">▸</span>')}
+          ${mem ? `<a class="mc"><img src="${esc(mem.thumb)}" alt="" onerror="this.remove()"><div><h4>MEMORY CARD · ${mem.year}</h4><b>${esc(mem.title)}</b><p>${esc(mem.line)}</p></div></a>` : ''}</div>
+      </div></div></div>
+    </div></div>`;
+}

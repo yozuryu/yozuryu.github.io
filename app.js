@@ -9,7 +9,7 @@ const G = 'https://fonts.googleapis.com/css2?family=';
 export const THEMES = [
     { id: 'starlit', name: 'Starlit Menu', bg: '#060b1c', sw: ['#0b1736', '#86dcff', '#ecd398'], fonts: 'Josefin+Sans:wght@300;400;600&family=Figtree:wght@400;500;600&family=Silkscreen' },
     { id: 'load',    name: 'Load Game',    bg: '#0b1416', sw: ['#13292b', '#6ff2c8', '#ffc857'], fonts: 'Oxanium:wght@500;700;800&family=Figtree:wght@400;500;600;700&family=Silkscreen' },
-    { id: 'quest',   name: 'Quest Board',  bg: '#231711', sw: ['#4a2f20', '#f1e2bd', '#c8452e'], fonts: 'Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&family=Silkscreen' },
+    { id: 'quest',   name: 'Quest Board',  bg: '#1c120c', sw: ['#5d3d25', '#e9d8ae', '#9c2a1c'], fonts: 'Cinzel:wght@700;800;900&family=Alegreya:ital,wght@0,400;0,500;0,700;1,400;1,500' },
     { id: 'stylish', name: 'Stylish',      bg: '#f3efe6', sw: ['#15131a', '#f3efe6', '#ff2e63'], fonts: 'Barlow+Condensed:ital,wght@0,800;1,800;1,900&family=Barlow:ital,wght@0,500;0,600;1,600&family=Permanent+Marker&family=Silkscreen' },
     { id: 'noah',    name: 'Home Camp',    bg: '#cfe6d3', sw: ['#f2eee3', '#f99f51', '#6b554a'], fonts: 'M+PLUS+Rounded+1c:wght@500;700;800;900' },
 ];
@@ -20,7 +20,10 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<'
 const num = (n) => (n == null ? '—' : Number(n).toLocaleString('en-US'));
 const short = (n) => (n == null ? '—' : n >= 10000 ? `${(n / 1000).toFixed(0)}k` : n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
 const yy = (y) => String(y).slice(-2);
-const helpers = { esc, num, short, yy };
+// ?card=story|link draws the active theme's share card instead of the page (scripts/render-cards.js shoots it)
+const CARD = ['story', 'link'].find(c => c === new URLSearchParams(location.search).get('card')) ?? null;
+const helpers = { esc, num, short, yy, site: location.hostname.endsWith('github.io') ? location.hostname : 'yozuryu.github.io',
+    asOf: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) };
 
 const getJson = (url) => fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null);
 const getText = (url) => fetch(url).then(r => (r.ok ? r.text() : '')).catch(() => '');
@@ -150,7 +153,7 @@ let inTimer = 0;
 async function setTheme(id, { save = false, first = false } = {}) {
     const next = await loadTheme(id);
     const html = document.documentElement;
-    const btn = sw.querySelector('.rt-btn')?.getBoundingClientRect();      // the circle opens from the Theme button
+    const btn = sw.querySelector('.rt-theme')?.getBoundingClientRect();      // the circle opens from the Theme button
     html.style.setProperty('--rx', `${btn ? btn.left + btn.width / 2 : innerWidth - 60}px`);
     html.style.setProperty('--ry', `${btn ? btn.top + btn.height / 2 : innerHeight - 34}px`);
     const change = () => {
@@ -164,7 +167,7 @@ async function setTheme(id, { save = false, first = false } = {}) {
         window.scrollTo(0, 0);
         drawSwitch();
         // the pieces of the new page rise in one after another; the class is dropped so a later redraw doesn't replay it
-        root.classList.remove('rt-in'); void root.offsetWidth; root.classList.add('rt-in');
+        root.classList.remove('rt-in'); void root.offsetWidth; if (!CARD) root.classList.add('rt-in');
         clearTimeout(inTimer); inTimer = setTimeout(() => root.classList.remove('rt-in'), 1100);
     };
     if (first) change(); else paint('theme', change);
@@ -179,10 +182,30 @@ function redraw() {                            // several loaders finishing toge
 }
 function draw() {
     if (!active) return;
-    root.innerHTML = active.mod.render(model, helpers);
+    root.innerHTML = CARD ? active.mod.card(model, helpers, CARD) : active.mod.render(model, helpers);
     document.body.dataset.ready = '1';
     if (activeGo) mark(activeGo, false);
     spy();
+    if (CARD) fitCard();
+}
+
+// A share card must fit its frame exactly, whatever the numbers and names are: the content is zoomed until it does
+// (a few passes, because text re-wraps as the zoom changes). Runs again as fonts and pictures arrive.
+function fitCard() {
+    const sc = root.querySelector('.sc'), inn = sc?.querySelector('.in');
+    if (!inn) return;
+    const room = sc.clientHeight - (parseFloat(getComputedStyle(sc).getPropertyValue('--foot')) || 0);
+    let z = 1;
+    for (let i = 0; i < 8; i++) {
+        inn.style.zoom = z;
+        const h = inn.getBoundingClientRect().height;
+        if (h <= room + .5 && (z === 1 || h >= room - 6)) break;
+        z = Math.max(.4, Math.min(1, z * Math.sqrt(room / h)));      // height falls about with the square of the zoom
+    }
+}
+if (CARD) {
+    root.addEventListener('load', fitCard, true);                    // a picture that sets its own height
+    document.fonts?.ready.then(fitCard);
 }
 
 // ── section menus inside a theme ─────────────────────────────────────────────
@@ -242,20 +265,41 @@ root.addEventListener('click', (e) => {
 
 // ── the switcher ─────────────────────────────────────────────────────────────
 const sw = document.getElementById('switch');
-let open = false;
+let open = false, share = false, hasCards = false;
 function drawSwitch() {
     const cur = active?.t ?? THEMES[0];
     sw.innerHTML = `
-        <div class="rt-shade" ${open ? '' : 'hidden'}></div>
+        <div class="rt-shade" ${open || share ? '' : 'hidden'}></div>
+        <div class="rt-menu rt-share" role="dialog" aria-label="Share card" ${share ? '' : 'hidden'}>
+            <div class="rt-head">Share card · ${esc(cur.name)}</div>
+            <div class="rt-cards">${[['story', 'Story'], ['link', 'Post']].map(([k, label]) => `<button class="rt-card rt-${k}" data-pic="${cur.id}-${k}">
+                <img src="./assets/share/${cur.id}-${k}.jpg" alt="${label} card" loading="lazy"><span>${label}</span></button>`).join('')}</div>
+            <div class="rt-note" aria-live="polite"></div>
+        </div>
         <div class="rt-menu" role="menu" aria-label="Theme" ${open ? '' : 'hidden'}>
             <div class="rt-head">Theme</div>
             ${THEMES.map(t => `<button class="rt-opt" role="menuitemradio" aria-checked="${t.id === cur.id}" data-theme-id="${t.id}">
                 <span class="rt-sw" style="background:linear-gradient(135deg, ${t.sw[0]} 0 50%, ${t.sw[1]} 50% 78%, ${t.sw[2]} 78%)"></span>${esc(t.name)}</button>`).join('')}
         </div>
-        <button class="rt-btn" aria-haspopup="menu" aria-expanded="${open}" title="Change theme (T)">
-            <span class="rt-dots">${cur.sw.map(c => `<i style="background:${c}"></i>`).join('')}</span>Theme</button>`;
+        <div class="rt-row">${hasCards ? `<button class="rt-btn rt-sharebtn" aria-haspopup="dialog" aria-expanded="${share}" title="Share a card of my progress (S)">Share</button>` : ''}
+        <button class="rt-btn rt-theme" aria-haspopup="menu" aria-expanded="${open}" title="Change theme (T)">
+            <span class="rt-dots">${cur.sw.map(c => `<i style="background:${c}"></i>`).join('')}</span>Theme</button></div>`;
 }
-const toggle = (to = !open) => { open = to; drawSwitch(); if (open) sw.querySelector('[aria-checked="true"]')?.focus(); };
+const toggle = (to = !open) => { open = to; share = false; drawSwitch(); if (open) sw.querySelector('[aria-checked="true"]')?.focus(); };
+const toggleShare = (to = !share) => { share = to; open = false; drawSwitch(); if (share) sw.querySelector('.rt-card')?.focus(); };
+
+// Hand a card out: the phone's share sheet with the picture where that exists, else save the file
+async function sendPic(name) {
+    const note = sw.querySelector('.rt-note'), say = (t) => { if (note) note.textContent = t; };
+    try {
+        const blob = await (await fetch(`./assets/share/${name}.jpg`)).blob();
+        const file = new File([blob], `yozuryu-${name}.jpg`, { type: 'image/jpeg' });
+        if (navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file], title: `${model.name}'s progress`, url: location.origin + '/' }); return; }
+        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: file.name });
+        a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        say('Saved to your downloads');
+    } catch (e) { if (e?.name !== 'AbortError') say('Could not share it: try again'); }
+}
 sw.addEventListener('click', (e) => {
     const opt = e.target.closest('[data-theme-id]');
     if (opt) {            // the list folds away first, then the new theme opens from the button
@@ -265,16 +309,20 @@ sw.addEventListener('click', (e) => {
         setTimeout(() => setTheme(id, { save: true }), calm() ? 0 : 180);
         return;
     }
-    if (e.target.closest('.rt-btn')) toggle();
-    else if (e.target.closest('.rt-shade')) toggle(false);
+    const pic = e.target.closest('[data-pic]');
+    if (pic) { sendPic(pic.dataset.pic); return; }
+    if (e.target.closest('.rt-sharebtn')) toggleShare();
+    else if (e.target.closest('.rt-theme')) toggle();
+    else if (e.target.closest('.rt-shade')) { toggle(false); }
 });
 sw.addEventListener('pointerover', (e) => { const o = e.target.closest('[data-theme-id]'); if (o) loadTheme(o.dataset.themeId); });   // warm it up
 // composedPath, not contains(): the switcher redraws itself on a click, so the clicked node is already gone from it
-document.addEventListener('click', (e) => { if (open && !e.composedPath().includes(sw)) toggle(false); });
+document.addEventListener('click', (e) => { if ((open || share) && !e.composedPath().includes(sw)) toggle(false); });
 document.addEventListener('keydown', (e) => {
     if (e.metaKey || e.ctrlKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
-    if (e.key === 'Escape' && open) { toggle(false); sw.querySelector('.rt-btn')?.focus(); }
+    if (e.key === 'Escape' && (open || share)) { const back = share ? '.rt-sharebtn' : '.rt-theme'; toggle(false); sw.querySelector(back)?.focus(); }
     else if (e.key === 't' || e.key === 'T') toggle();
+    else if ((e.key === 's' || e.key === 'S') && hasCards) toggleShare();
     else if (open && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
         e.preventDefault();
         const opts = [...sw.querySelectorAll('.rt-opt')];
@@ -288,11 +336,14 @@ const wanted = document.documentElement.dataset.theme || DEFAULT;      // set be
 const [site] = await Promise.all([getJson('./data/site.json'), loadTheme(wanted)]);
 if (site) fromSite(site);
 drawSwitch();
+// The Share button only exists once the card pictures do (scripts/render-cards.js makes them)
+fetch('./assets/share/starlit-link.jpg', { method: 'HEAD' }).then(r => { if (r.ok && !CARD) { hasCards = true; drawSwitch(); } }).catch(() => {});
 // The first picture waits a moment for the live data, so the page arrives whole instead of growing piece by piece.
 // Whatever is later than that fades in when it lands.
 const loads = [loadStats, loadMemory, loadChangelogs, loadPlaying].map(load => load().catch(() => {}));
 let painted = false;
 loads.forEach(l => l.then(() => { if (painted) redraw(); }));
-await Promise.race([Promise.all(loads), new Promise(r => setTimeout(r, 900))]);
+if (CARD) document.body.dataset.card = CARD;
+await Promise.race([Promise.all(loads), new Promise(r => setTimeout(r, CARD ? 8000 : 900))]);      // a card is a picture: it waits for everything
 await setTheme(wanted, { first: true });
 painted = true;

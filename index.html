@@ -6,6 +6,15 @@
     <title>Yozuryu</title>
     <meta name="description" content="Yozuryu's home page: Savepoint and Cheevodex, and a summary of the games played, in five JRPG menu themes.">
     <meta name="theme-color" content="#060b1c">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yozuryu.github.io/">
+    <meta property="og:title" content="Yozuryu">
+    <meta property="og:description" content="Weekend adventurer. Hours played, unlocks and completions across RetroAchievements, Steam and Xbox, and the things I built around them.">
+    <meta property="og:image" content="https://yozuryu.github.io/assets/share/starlit-link.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://yozuryu.github.io/assets/share/starlit-link.jpg">
     <link rel="icon" href="./assets/favicon.ico" sizes="48x48">
     <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
     <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
@@ -16,7 +25,7 @@
          Storage is shared with the project sites: every key here starts with root_ -->
     <script>
         (function () {
-            var bg = { starlit: '#060b1c', load: '#0b1416', quest: '#231711', stylish: '#f3efe6', noah: '#cfe6d3' };
+            var bg = { starlit: '#060b1c', load: '#0b1416', quest: '#1c120c', stylish: '#f3efe6', noah: '#cfe6d3' };
             var t = new URLSearchParams(location.search).get('theme');
             try { t = t || localStorage.getItem('root_theme'); } catch (e) {}
             if (!bg[t]) t = 'starlit';

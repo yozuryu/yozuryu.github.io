@@ -46,6 +46,149 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; backgro
 a.aq { transition:transform .15s; } a.aq:hover { transform:translateX(3px); } .aq small { display:block; margin-top:4px; font-size:11px; opacity:.7; }
 a.chr { transition:rotate .2s, translate .2s; } a.chr:hover { rotate:0deg; translate:0 -3px; } .chr:not(:has(img)) { grid-template-columns:1fr; }
 
+/* ── the traditional pass: a framed plank board on a tavern wall, parchment notices held by iron nails, a leather
+   guild card with stitching, wax seals, ornamental borders and flourishes. Serif capitals instead of pixel type ── */
+:root { --wood:#1c120c; --plank:#5d3d25; --plank2:#4c3120; --paper:#e9d8ae; --paper2:#d7c18d; --ink:#2b1b10; --soft:#5d4630; --s:#9c2a1c; --a:#2f5d3a; --brass:#e0bd62; --brass2:#7a5a1e;
+  --leather:#6e4025; --leather2:#4a2814; --d:'Cinzel', 'Trajan Pro', Georgia, serif; --px:'Cinzel', Georgia, serif;
+  --board: radial-gradient(ellipse 70px 13px at 16% 28%, rgba(0,0,0,.3), transparent 70%), radial-gradient(ellipse 44px 9px at 74% 63%, rgba(0,0,0,.26), transparent 70%), radial-gradient(ellipse 56px 11px at 43% 90%, rgba(0,0,0,.24), transparent 70%),
+    radial-gradient(ellipse 30px 7px at 90% 14%, rgba(0,0,0,.22), transparent 70%), repeating-linear-gradient(90deg, rgba(0,0,0,.5) 0 2px, rgba(255,220,170,.07) 2px 3px, transparent 3px 168px),
+    repeating-linear-gradient(90.6deg, rgba(255,220,170,.05) 0 1px, transparent 1px 7px, rgba(0,0,0,.07) 7px 8px, transparent 8px 19px, rgba(0,0,0,.05) 19px 20px, transparent 20px 31px),
+    repeating-linear-gradient(90deg, var(--plank) 0 168px, var(--plank2) 168px 336px, #553723 336px 504px); }
+body { font:500 15px/1.5 Alegreya, Georgia, serif; background: radial-gradient(70% 46% at 50% -6%, rgba(255,186,96,.34), transparent 70%), repeating-linear-gradient(0deg, rgba(0,0,0,.3) 0 2px, transparent 2px 118px), repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 2px, transparent 2px 236px), #1c120c; }
+body::before { background: radial-gradient(120% 90% at 50% 38%, transparent 52%, rgba(0,0,0,.66)); }
+.px { font:700 10.5px/1.25 var(--d); letter-spacing:.15em; }
+/* the board: planks in a heavy frame with iron corners */
+.wrap { margin:26px auto 30px; padding:30px 32px 38px; gap:26px 24px; border:16px solid; border-color:#4b2f1c #2c1a0f #22140b #3d2516; border-radius:6px; background:var(--board);
+  box-shadow: inset 0 0 0 3px #1f1209, inset 0 0 70px rgba(0,0,0,.6), 0 0 0 3px #150c06, 0 26px 60px rgba(0,0,0,.65); }
+.br { position:absolute; z-index:3; width:54px; height:54px; pointer-events:none; clip-path:polygon(0 0, 100% 0, 100% 34%, 34% 34%, 34% 100%, 0 100%);
+  background: radial-gradient(circle at 17% 17%, #c9c9cf 0 3px, #2a2a2e 3.5px 5px, transparent 5.5px), radial-gradient(circle at 80% 17%, #c9c9cf 0 3px, #2a2a2e 3.5px 5px, transparent 5.5px), radial-gradient(circle at 17% 80%, #c9c9cf 0 3px, #2a2a2e 3.5px 5px, transparent 5.5px), linear-gradient(135deg, #6a6a70, #38383d 55%, #232327);
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.6)); }
+.br.tl { left:-18px; top:-18px; } .br.tr { right:-18px; top:-18px; rotate:90deg; } .br.rb { right:-18px; bottom:-18px; rotate:180deg; } .br.lb { left:-18px; bottom:-18px; rotate:270deg; }
+/* the sign: a carved plank */
+.sign { margin-bottom:2px; padding:13px 46px 11px; border-radius:5px; color:#ecd9ad; background:repeating-linear-gradient(1deg, rgba(0,0,0,.08) 0 1px, transparent 1px 6px), linear-gradient(#80532f, #5f3c21 60%, #4a2d18); border:3px solid #24140a;
+  box-shadow: inset 0 2px 0 rgba(255,220,170,.28), inset 0 -3px 0 rgba(0,0,0,.4), 0 7px 0 #170d07, 0 16px 28px rgba(0,0,0,.6); }
+.sign::before, .sign::after { width:12px; height:12px; background:radial-gradient(circle at 35% 30%, #f6dc93, #b88a2c 60%, #6b4c12); box-shadow:0 1px 2px rgba(0,0,0,.6); } .sign::before { left:14px; } .sign::after { right:14px; }
+.sign h1 { font:900 27px/1 var(--d); letter-spacing:.1em; text-transform:uppercase; color:var(--brass); text-shadow:0 2px 0 #1c0f07, 0 -1px 0 rgba(255,235,190,.3); }
+.sign h1::before { content:'⚜'; margin-right:14px; font-size:.8em; } .sign h1::after { content:'⚜'; margin-left:14px; font-size:.8em; } .sign span { opacity:.85; }
+/* parchment, an iron nail, an ornamental border */
+.note { border-radius:2px; color:var(--ink);
+  background: radial-gradient(120% 80% at 18% 8%, rgba(255,247,218,.6), transparent 60%), radial-gradient(42% 30% at 88% 92%, rgba(140,88,36,.26), transparent 70%), radial-gradient(30% 22% at 8% 82%, rgba(140,88,36,.18), transparent 70%), radial-gradient(18% 12% at 70% 20%, rgba(140,88,36,.1), transparent 70%), linear-gradient(#ecdcb4, #dbc590);
+  box-shadow: 0 13px 26px rgba(0,0,0,.6), 0 2px 0 rgba(0,0,0,.35), inset 0 0 0 1px rgba(90,55,25,.4), inset 0 0 36px rgba(120,72,28,.42); }
+.note::before, .note.t::before, .note.g::before { top:9px; width:13px; height:13px; background:radial-gradient(circle at 35% 30%, #cfcfd4, #606066 55%, #222226); box-shadow:0 2px 3px rgba(0,0,0,.65), 0 0 0 1px rgba(0,0,0,.25); }
+.note::after { content:''; position:absolute; inset:7px; pointer-events:none; border:1px solid rgba(60,36,16,.5); background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cg transform='rotate(0 13 13)' fill='none' stroke='%233c2410' stroke-width='1.1'%3E%3Cpath d='M1 25V8a7 7 0 0 1 7-7h17M5 25V10a5 5 0 0 1 5-5h15'/%3E%3Cpath d='M10 10c3 0 5 2 5 5-3 0-5-2-5-5z' fill='%233c2410'/%3E%3C/g%3E%3C/svg%3E") left top/26px 26px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cg transform='rotate(90 13 13)' fill='none' stroke='%233c2410' stroke-width='1.1'%3E%3Cpath d='M1 25V8a7 7 0 0 1 7-7h17M5 25V10a5 5 0 0 1 5-5h15'/%3E%3Cpath d='M10 10c3 0 5 2 5 5-3 0-5-2-5-5z' fill='%233c2410'/%3E%3C/g%3E%3C/svg%3E") right top/26px 26px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cg transform='rotate(180 13 13)' fill='none' stroke='%233c2410' stroke-width='1.1'%3E%3Cpath d='M1 25V8a7 7 0 0 1 7-7h17M5 25V10a5 5 0 0 1 5-5h15'/%3E%3Cpath d='M10 10c3 0 5 2 5 5-3 0-5-2-5-5z' fill='%233c2410'/%3E%3C/g%3E%3C/svg%3E") right bottom/26px 26px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cg transform='rotate(270 13 13)' fill='none' stroke='%233c2410' stroke-width='1.1'%3E%3Cpath d='M1 25V8a7 7 0 0 1 7-7h17M5 25V10a5 5 0 0 1 5-5h15'/%3E%3Cpath d='M10 10c3 0 5 2 5 5-3 0-5-2-5-5z' fill='%233c2410'/%3E%3C/g%3E%3C/svg%3E") left bottom/26px 26px no-repeat; }
+/* ── old paper, old wood: the notices are parchment only (no leather), torn at the edges, stained, creased and
+   heavily ornamented; the planks are worn, scratched and carry the scraps of older notices. The textures are real noise
+   (SVG turbulence, the filters live in quest.js): .pp is the sheet, .pg its grain and stains, .wd the wood grain ── */
+.defs { position:absolute; width:0; height:0; }
+.wrap { isolation:isolate; } .wrap > * { z-index:1; } .wrap > :not(.br):not(.wd):not(.scrap) { position:relative; }
+.wd { position:absolute; inset:0; z-index:0 !important; pointer-events:none; filter:url(#qb-wood); mix-blend-mode:multiply; opacity:.9; }
+/* wear: pale rubbed patches, long scratches, old nail holes, a dark water stain */
+.wrap::before { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:
+  radial-gradient(3px 3px at 22% 78%, #120a05 60%, transparent 62%), radial-gradient(3px 3px at 24.5% 79.5%, #120a05 60%, transparent 62%), radial-gradient(3px 3px at 71% 86%, #120a05 60%, transparent 62%), radial-gradient(3px 3px at 93% 58%, #120a05 60%, transparent 62%), radial-gradient(3px 3px at 6% 60%, #120a05 60%, transparent 62%), radial-gradient(3px 3px at 48% 94%, #120a05 60%, transparent 62%),
+  linear-gradient(101deg, transparent 31.9%, rgba(255,226,180,.17) 32%, transparent 32.25%), linear-gradient(98deg, transparent 33.4%, rgba(20,10,4,.3) 33.5%, transparent 33.7%), linear-gradient(83deg, transparent 71.2%, rgba(255,226,180,.14) 71.3%, transparent 71.5%),
+  linear-gradient(172deg, transparent 80.3%, rgba(20,10,4,.28) 80.4%, transparent 80.6%), linear-gradient(11deg, transparent 12.1%, rgba(255,226,180,.12) 12.2%, transparent 12.4%), linear-gradient(64deg, transparent 55.6%, rgba(20,10,4,.22) 55.7%, transparent 55.85%),
+  radial-gradient(34% 22% at 12% 92%, rgba(10,5,2,.5), transparent 70%), radial-gradient(26% 18% at 88% 96%, rgba(10,5,2,.42), transparent 70%), radial-gradient(20% 26% at 99% 30%, rgba(10,5,2,.35), transparent 70%),
+  radial-gradient(22% 14% at 58% 97%, rgba(255,214,160,.1), transparent 70%), radial-gradient(18% 20% at 30% 6%, rgba(255,214,160,.08), transparent 70%); }
+:root { --plank:#553722; --plank2:#44291a; }
+.br { background: radial-gradient(circle at 17% 17%, #a59a8e 0 3px, #2a2320 3.5px 5px, transparent 5.5px), radial-gradient(circle at 80% 17%, #a59a8e 0 3px, #2a2320 3.5px 5px, transparent 5.5px), radial-gradient(circle at 17% 80%, #a59a8e 0 3px, #2a2320 3.5px 5px, transparent 5.5px),
+  radial-gradient(60% 50% at 70% 20%, rgba(150,70,25,.55), transparent 70%), radial-gradient(40% 60% at 20% 70%, rgba(150,70,25,.4), transparent 70%), linear-gradient(135deg, #5a5552, #322d2b 55%, #1e1b1a); }
+.sign { background:radial-gradient(40% 80% at 12% 60%, rgba(0,0,0,.25), transparent 70%), radial-gradient(30% 70% at 86% 30%, rgba(0,0,0,.22), transparent 70%), repeating-linear-gradient(1deg, rgba(0,0,0,.12) 0 1px, transparent 1px 5px), linear-gradient(#70482a, #54341d 60%, #3f2614); }
+.sign h1 { color:#cfa955; }
+/* the sign: an old plank hanging crooked on two chains. .sw is the plank (chipped edge, cracks), .sg its grain */
+.sign { --tilt:-2.6deg; isolation:isolate; rotate:var(--tilt); margin:34px 0 14px; padding:16px 54px 13px; background:none; border:0; border-radius:0; box-shadow:none; }
+.sign .sw { position:absolute; inset:0; z-index:-2; filter:url(#qb-rough2) drop-shadow(0 7px 0 #120a05) drop-shadow(0 16px 12px rgba(0,0,0,.62)); background:
+  linear-gradient(94deg, transparent 22%, rgba(12,6,2,.75) 22.2%, transparent 22.6%), linear-gradient(86deg, transparent 63%, rgba(12,6,2,.6) 63.2%, transparent 63.5%), linear-gradient(178deg, transparent 58%, rgba(12,6,2,.5) 58.6%, transparent 59.4%),
+  radial-gradient(30% 90% at 6% 50%, rgba(0,0,0,.45), transparent 70%), radial-gradient(26% 80% at 96% 40%, rgba(0,0,0,.4), transparent 70%), radial-gradient(40% 60% at 48% 100%, rgba(0,0,0,.3), transparent 70%),
+  radial-gradient(22% 50% at 30% 0, rgba(255,214,160,.14), transparent 70%), linear-gradient(#6b4528, #4d3019 55%, #36200f); }
+.sign .sg { position:absolute; inset:3px; z-index:-1; filter:url(#qb-woodh); mix-blend-mode:multiply; pointer-events:none; }
+.sign .ch { position:absolute; z-index:-3; bottom:calc(100% - 13px); width:15px; rotate:calc(-1 * var(--tilt)); transform-origin:50% 100%; filter:drop-shadow(0 2px 1px rgba(0,0,0,.6));
+  background:radial-gradient(ellipse 5.4px 8px at 50% 50%, transparent 36%, #a39287 42%, #4a3c36 72%, #1c1512 84%, transparent 90%) 0 0/15px 16px repeat-y; }
+.sign .ch.l { left:20px; height:96px; } .sign .ch.r { right:20px; height:72px; }
+.sign::before, .sign::after { top:9px; translate:0 0; width:12px; height:12px; background:radial-gradient(circle at 35% 30%, #b3a29a, #5e4234 55%, #22150f); box-shadow:0 2px 2px rgba(0,0,0,.65), 0 0 0 1px rgba(60,25,8,.5); } .sign::before { left:21px; } .sign::after { right:21px; }
+.sign h1 { color:transparent; background:linear-gradient(100deg, #d6b05a, #a07c38 16%, #d2ab55 31%, #8f6e30 47%, #cda651 60%, #a5803b 78%, #d6b05a); -webkit-background-clip:text; background-clip:text; text-shadow:none; filter:drop-shadow(0 2px 0 #170c05) drop-shadow(0 -1px 0 rgba(255,225,170,.16)); }
+.sign span { color:#cdb689; opacity:.7; }
+@media (max-width: 900px) { .sign { margin:28px 0 10px; padding:13px 38px 10px; } .sign .ch.l { left:12px; height:70px; } .sign .ch.r { right:12px; height:58px; } .sign::before { left:14px; top:7px; } .sign::after { right:14px; top:7px; } }
+/* scraps of older notices, still nailed up */
+.scrap { position:absolute; z-index:1; pointer-events:none; } .scrap b { position:absolute; inset:0; background:linear-gradient(#d9c693, #c3aa73); filter:url(#qb-rough) drop-shadow(0 4px 5px rgba(0,0,0,.55)); }
+.scrap::before { content:''; position:absolute; z-index:1; left:50%; top:5px; width:11px; height:11px; translate:-50% 0; border-radius:50%; background:radial-gradient(circle at 35% 30%, #a8938a, #5a3d2c 55%, #21140e); box-shadow:0 2px 2px rgba(0,0,0,.6); }
+.scrap::after { content:''; position:absolute; inset:22px 12px auto; height:26px; background:repeating-linear-gradient(rgba(60,36,16,.45) 0 1px, transparent 1px 7px); }
+.scrap.s1 { left:5%; bottom:5%; width:110px; height:64px; rotate:-7deg; } .scrap.s1 b { clip-path:polygon(0 0, 100% 0, 100% 70%, 78% 100%, 55% 62%, 30% 96%, 0 58%); }
+.scrap.s2 { right:6%; bottom:7%; width:86px; height:92px; rotate:9deg; } .scrap.s2 b { clip-path:polygon(0 0, 100% 0, 92% 54%, 70% 44%, 60% 100%, 28% 70%, 0 88%); }
+.scrap.s3 { left:17%; bottom:14%; width:60px; height:40px; rotate:14deg; } .scrap.s3 b { clip-path:polygon(0 0, 100% 0, 84% 100%, 40% 60%, 0 90%); } .scrap.s3::after { display:none; }
+/* the sheet */
+.note { isolation:isolate; background:none; box-shadow:none; border-radius:0; }
+.pp, .pg { position:absolute; pointer-events:none; } .pp { inset:0; z-index:-2; filter:url(#qb-rough) drop-shadow(0 12px 12px rgba(0,0,0,.6)) drop-shadow(0 2px 1px rgba(0,0,0,.4)); background:
+  radial-gradient(9px 26px at 50% 24px, rgba(120,58,18,.42), transparent 70%),                                         /* rust under the nail */
+  radial-gradient(circle at 78% 86%, transparent 21px, rgba(110,64,24,.4) 22px, rgba(110,64,24,.4) 24px, transparent 26px), /* a cup ring */
+  linear-gradient(90deg, transparent calc(50% - 1px), rgba(70,40,16,.28) 50%, rgba(255,246,214,.4) calc(50% + 1px), transparent calc(50% + 2px)),   /* fold */
+  linear-gradient(0deg, transparent calc(46% - 1px), rgba(70,40,16,.24) 46%, rgba(255,246,214,.35) calc(46% + 1px), transparent calc(46% + 2px)),
+  radial-gradient(60% 40% at 0 0, rgba(80,42,14,.55), transparent 70%), radial-gradient(50% 36% at 100% 100%, rgba(80,42,14,.6), transparent 70%), radial-gradient(40% 30% at 100% 0, rgba(80,42,14,.42), transparent 70%), radial-gradient(44% 30% at 0 100%, rgba(80,42,14,.48), transparent 70%),
+  radial-gradient(120% 80% at 40% 30%, rgba(255,244,208,.5), transparent 62%), linear-gradient(#e2cf9d, #cbb27a); }
+.pg { inset:6px; z-index:-1; filter:url(#qb-age); mix-blend-mode:multiply; opacity:.85; } .note.t .pg { filter:url(#qb-age2); }
+/* the cup ring and the folds sit somewhere else on every sheet (layers 2 to 4), or are missing */
+/* ten layers, so ten positions: a shorter list would repeat and slide the parchment itself off the sheet */
+.note.t .pp { background-position:0 0, -60px -220px, 14px 0, 0 30px, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+.card .pp { background-position:0 0, -400px 0, -22px 0, 0 -40px, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+.act .pp { background-position:0 0, -150px -20px, 30px 0, 0 400px, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+.chr .pp { background-position:0 0, 10px 6px, -400px 0, 0 12px, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+.strip .pp { background-position:0 0, -400px 0, 60px 0, 0 400px, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+.pp { background-repeat:no-repeat; }
+.note::before, .note.t::before, .note.g::before { top:10px; width:13px; height:13px; background:radial-gradient(circle at 35% 30%, #b3a29a, #5e4234 55%, #22150f); box-shadow:0 2px 3px rgba(0,0,0,.65), 0 0 0 1px rgba(60,25,8,.45); }
+/* the ornament: a chain-of-diamonds frame with a filigree curl in every corner */
+.note::after { inset:9px; border:12px solid transparent; border-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36' fill='none' stroke='%233c2410' stroke-width='1'%3E%3Cpath d='M12 2.5h12M12 9.5h12M12 26.5h12M12 33.5h12M2.5 12v12M9.5 12v12M26.5 12v12M33.5 12v12'/%3E%3Cpath d='M18 3.6l2.4 2.4-2.4 2.4-2.4-2.4z' fill='%233c2410' stroke='none'/%3E%3Cpath d='M18 27.6l2.4 2.4-2.4 2.4-2.4-2.4z' fill='%233c2410' stroke='none'/%3E%3Cpath d='M6 15.6l2.4 2.4-2.4 2.4-2.4-2.4z' fill='%233c2410' stroke='none'/%3E%3Cpath d='M30 15.6l2.4 2.4-2.4 2.4-2.4-2.4z' fill='%233c2410' stroke='none'/%3E%3Cpath d='M12 2.5H2.5V12M12 9.5H9.5V12M24 2.5h9.5V12M24 9.5h2.5V12M12 33.5H2.5V24M12 26.5H9.5V24M24 33.5h9.5V24M24 26.5h2.5V24'/%3E%3Cpath d='M6 3.6l2.4 2.4-2.4 2.4-2.4-2.4z' fill='%233c2410' stroke='none'/%3E%3Cpath d='M30 3.6l2.4 2.4-2.4 2.4-2.4-2.4z' fill='%233c2410' stroke='none'/%3E%3Cpath d='M6 27.6l2.4 2.4-2.4 2.4-2.4-2.4z' fill='%233c2410' stroke='none'/%3E%3Cpath d='M30 27.6l2.4 2.4-2.4 2.4-2.4-2.4z' fill='%233c2410' stroke='none'/%3E%3C/svg%3E") 12 round; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cg transform='rotate(0 22 22)' fill='none' stroke='%233c2410' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M2 42V14C2 7 7 2 14 2h28'/%3E%3Cpath d='M7 42V17c0-6 4-10 10-10h25'/%3E%3Cpath d='M12 30c0-10 8-18 18-18'/%3E%3Cpath d='M12 30c4 0 7-3 7-7s-3-6-6-5-3 5 0 6'/%3E%3Cpath d='M30 12c0 4-3 7-7 7s-6-3-5-6 5-3 6 0'/%3E%3Cpath d='M14 14l5 5M10 10l2 2' /%3E%3Ccircle cx='9' cy='9' r='2.2' fill='%233c2410'/%3E%3Ccircle cx='34' cy='5' r='1.2' fill='%233c2410'/%3E%3Ccircle cx='5' cy='34' r='1.2' fill='%233c2410'/%3E%3C/g%3E%3C/svg%3E") left top/44px 44px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cg transform='rotate(90 22 22)' fill='none' stroke='%233c2410' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M2 42V14C2 7 7 2 14 2h28'/%3E%3Cpath d='M7 42V17c0-6 4-10 10-10h25'/%3E%3Cpath d='M12 30c0-10 8-18 18-18'/%3E%3Cpath d='M12 30c4 0 7-3 7-7s-3-6-6-5-3 5 0 6'/%3E%3Cpath d='M30 12c0 4-3 7-7 7s-6-3-5-6 5-3 6 0'/%3E%3Cpath d='M14 14l5 5M10 10l2 2' /%3E%3Ccircle cx='9' cy='9' r='2.2' fill='%233c2410'/%3E%3Ccircle cx='34' cy='5' r='1.2' fill='%233c2410'/%3E%3Ccircle cx='5' cy='34' r='1.2' fill='%233c2410'/%3E%3C/g%3E%3C/svg%3E") right top/44px 44px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cg transform='rotate(180 22 22)' fill='none' stroke='%233c2410' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M2 42V14C2 7 7 2 14 2h28'/%3E%3Cpath d='M7 42V17c0-6 4-10 10-10h25'/%3E%3Cpath d='M12 30c0-10 8-18 18-18'/%3E%3Cpath d='M12 30c4 0 7-3 7-7s-3-6-6-5-3 5 0 6'/%3E%3Cpath d='M30 12c0 4-3 7-7 7s-6-3-5-6 5-3 6 0'/%3E%3Cpath d='M14 14l5 5M10 10l2 2' /%3E%3Ccircle cx='9' cy='9' r='2.2' fill='%233c2410'/%3E%3Ccircle cx='34' cy='5' r='1.2' fill='%233c2410'/%3E%3Ccircle cx='5' cy='34' r='1.2' fill='%233c2410'/%3E%3C/g%3E%3C/svg%3E") right bottom/44px 44px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cg transform='rotate(270 22 22)' fill='none' stroke='%233c2410' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M2 42V14C2 7 7 2 14 2h28'/%3E%3Cpath d='M7 42V17c0-6 4-10 10-10h25'/%3E%3Cpath d='M12 30c0-10 8-18 18-18'/%3E%3Cpath d='M12 30c4 0 7-3 7-7s-3-6-6-5-3 5 0 6'/%3E%3Cpath d='M30 12c0 4-3 7-7 7s-6-3-5-6 5-3 6 0'/%3E%3Cpath d='M14 14l5 5M10 10l2 2' /%3E%3Ccircle cx='9' cy='9' r='2.2' fill='%233c2410'/%3E%3Ccircle cx='34' cy='5' r='1.2' fill='%233c2410'/%3E%3Ccircle cx='5' cy='34' r='1.2' fill='%233c2410'/%3E%3C/g%3E%3C/svg%3E") left bottom/44px 44px no-repeat; background-origin:padding-box; opacity:.82; }
+.note { padding-left:30px !important; padding-right:30px !important; }
+/* the guild card: a licence on parchment */
+.card { padding:38px 30px 46px; color:var(--ink); border-radius:0; box-shadow:none; background:none; }
+.card::before, .card.g::before { top:10px; width:13px; height:13px; }
+.card .crest { width:58px; height:58px; margin:0 auto 4px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none' stroke='%233c2410' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M12 8l40 44M52 8L12 52'/%3E%3Cpath d='M9 5l6 2-2 4zM55 5l-6 2 2 4z' fill='%233c2410'/%3E%3Cpath d='M8 48l8 8M56 48l-8 8'/%3E%3Cpath d='M32 12c7 4 12 5 16 5 0 16-5 28-16 35-11-7-16-19-16-35 4 0 9-1 16-5z' fill='%23e6d3a3'/%3E%3Cpath d='M32 20l3.2 6.6 7.2 1-5.2 5 1.2 7.2-6.4-3.4-6.4 3.4 1.2-7.2-5.2-5 7.2-1z' fill='%233c2410' stroke='none'/%3E%3C/svg%3E") center/contain no-repeat; }
+.card .lic { text-align:center; color:var(--soft); letter-spacing:.3em; margin-bottom:12px; } .card .lic::before { content:'~ '; } .card .lic::after { content:' ~'; }
+.card .hd { border-bottom:0; padding-bottom:12px; background:linear-gradient(90deg, transparent, rgba(43,27,16,.55) 15%, rgba(43,27,16,.55) 85%, transparent) bottom/100% 1px no-repeat; } .card .hd .px { color:var(--soft) !important; }
+.card img.av { border:2px solid var(--ink); outline:1px solid rgba(43,27,16,.5); outline-offset:2px; border-radius:1px; filter:sepia(.3) contrast(1.04); }
+.card h2 { font:900 26px/1 var(--d); letter-spacing:.05em; color:var(--ink); } .card .rk { white-space:nowrap; letter-spacing:.08em; font-size:9.5px; background:none; color:var(--s); border:0; padding:0; margin-top:7px; }
+.card p { color:#4a3524; font-size:15.5px; text-align:center; margin:14px 0; }
+.tot { gap:0; border:1px solid rgba(43,27,16,.6); outline:1px solid rgba(43,27,16,.3); outline-offset:2px; } .tot div { background:none; border-radius:0; padding:9px 2px 7px; } .tot div + div { border-left:1px solid rgba(43,27,16,.45); }
+.tot b { font:800 21px/1 var(--d); } .tot span { font:700 8.5px/1.7 var(--d); letter-spacing:.12em; color:var(--soft); }
+.pl { margin-top:14px; gap:0; } .card .pl a, .card .pl div { font-size:14.5px; padding:7px 0; border-bottom:1px dotted rgba(43,27,16,.45); } .card .pl em { font:700 13px/1 var(--d); color:var(--ink); }
+.card .sg { margin:16px 0 0 26px; font-style:italic; font-size:13.5px; color:var(--soft); } .card .sg b { display:block; width:58%; margin-top:16px; border-top:1px solid rgba(43,27,16,.6); font:700 8px/2 var(--d); letter-spacing:.14em; font-style:normal; }
+/* wax, with ribbon tails */
+.seal { right:20px; bottom:22px; width:70px; height:70px; rotate:-12deg; opacity:1; border:0; border-radius:47% 53% 51% 49% / 52% 47% 53% 48%; color:#f7e2b8; font:800 8px/1.25 var(--d); letter-spacing:.1em; text-transform:uppercase; text-shadow:0 1px 0 rgba(0,0,0,.45);
+  background:radial-gradient(circle at 34% 28%, #db5c45, var(--s) 52%, #5c140b); box-shadow:0 4px 7px rgba(0,0,0,.5), inset 0 0 0 5px rgba(0,0,0,.13), inset 0 0 0 7px rgba(255,255,255,.1), inset 0 -3px 6px rgba(0,0,0,.35); }
+.seal::before, .seal::after, .rank::before, .rank::after { content:''; position:absolute; z-index:-1; top:60%; width:17px; height:44px; background:linear-gradient(90deg, #8c2417, #6a180e); clip-path:polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%); }
+.seal::before, .rank::before { left:16px; rotate:14deg; } .seal::after, .rank::after { right:16px; rotate:-12deg; } .rank.a::before, .rank.a::after { background:linear-gradient(90deg, #2a5335, #1b3a24); }
+/* quest notices */
+.quest { padding:44px 30px 78px; } .quest .hdr { display:table; margin:0 auto 16px; padding:7px 30px 6px; color:#f7e2b8; letter-spacing:.3em; background:linear-gradient(#a8301f, #7c1d12); clip-path:polygon(0 0, 100% 0, calc(100% - 11px) 50%, 100% 100%, 0 100%, 11px 50%); text-shadow:0 1px 0 rgba(0,0,0,.4); }
+.quest.t .hdr { background:linear-gradient(#3b7449, #234a2d); }
+.quest p::first-letter { float:left; margin:3px 7px 0 0; padding:3px 6px 1px; font:900 30px/1 var(--d); color:#f7e2b8; background:var(--s); box-shadow:0 0 0 1px var(--ink), inset 0 0 0 2px rgba(247,226,184,.4); } .quest.t p::first-letter { background:var(--a); }
+.stp { position:absolute; right:40px; bottom:34px; padding:5px 9px 4px; rotate:-11deg; border:2px solid var(--s); outline:1px solid var(--s); outline-offset:2px; color:var(--s); font:900 13px/1 var(--d); letter-spacing:.18em; text-transform:uppercase; opacity:.62; mix-blend-mode:multiply; pointer-events:none; }
+.quest .sh { height:168px; border:2px solid var(--ink); border-radius:1px; outline:1px solid rgba(43,27,16,.5); outline-offset:3px; margin:0 3px; filter:sepia(.3) saturate(.85) contrast(1.03); box-shadow:inset 0 0 30px rgba(60,30,10,.5); }
+.quest .in { padding:16px 3px 0; }
+.rank { right:-14px; top:-16px; width:68px; height:68px; rotate:-9deg; border-radius:47% 53% 51% 49% / 52% 47% 53% 48%; color:#f7e2b8; font:900 25px/1 var(--d); padding-bottom:8px;
+  background:radial-gradient(circle at 34% 28%, #db5c45, var(--s) 52%, #5c140b); box-shadow:0 4px 7px rgba(0,0,0,.55), inset 0 0 0 5px rgba(0,0,0,.13), inset 0 0 0 7px rgba(255,255,255,.1), inset 0 -3px 6px rgba(0,0,0,.35); text-shadow:0 1px 0 rgba(0,0,0,.45); }
+.rank.a { background:radial-gradient(circle at 34% 28%, #5d9a6c, var(--a) 52%, #153220); } .rank.lv { font-size:25px; } .rank small, .rank.lv small { bottom:11px; font:700 7px/1 var(--d); letter-spacing:.16em; }
+.quest h3 { font:800 29px/1.05 var(--d); letter-spacing:.03em; } .quest h3 img { border-radius:6px; box-shadow:0 0 0 1px var(--ink); }
+.fl { height:14px; margin:10px 0 2px; display:grid; place-items:center; background:linear-gradient(90deg, transparent, rgba(43,27,16,.6) 18%, rgba(43,27,16,.6) 82%, transparent) center/100% 1px no-repeat; }
+.fl { height:18px; } .fl::after { content:'❦ ⚔ ❦'; padding:0 10px; font-size:13px; line-height:1; letter-spacing:.2em; color:var(--ink); background:#d9c592; }
+.quest p { font-size:15px; color:#4a3524; } .rw { background:rgba(120,78,30,.13); border:1px solid rgba(60,36,16,.45); border-radius:1px; font-size:14.5px; } .rw span { font:700 9px/2 var(--d); letter-spacing:.12em; width:70px; } .rw div:first-child span::before { content:'◈ '; color:var(--s); }
+.btn { border-radius:2px; border:1.5px solid var(--ink); background:rgba(255,249,226,.55); box-shadow:0 3px 0 rgba(43,27,16,.6); font:700 12.5px/1 var(--d); letter-spacing:.09em; text-transform:uppercase; padding:11px 15px 10px; }
+.btn.p { background:linear-gradient(#ad3321, #7c1d12); border-color:#45100a; color:#f7e2b8; box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 3px 0 #45100a; text-shadow:0 1px 0 rgba(0,0,0,.4); }
+.quest.t .btn.p { background:linear-gradient(#3b7449, #234a2d); border-color:#12281a; box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 3px 0 #12281a; }
+/* the notice strip: a scroll */
+.strip { padding:22px 34px 20px; } .strip::after { inset:6px 10px; border-width:8px 0; background:none; }
+.strip::before, .strip.g::before { left:11px; top:50%; translate:0 -50%; } .strip .px + b { margin-left:2px; }
+.strip b { font:800 15px/1 var(--d); letter-spacing:.05em; } .strip .lk { font-size:15px; }
+/* side notes */
+.act h4, .chr h4 { color:var(--soft); text-align:center; letter-spacing:.2em; } .act { padding:40px 30px 30px; } .chr { padding:40px 30px 32px; }
+.act h4::before, .chr h4::before { content:'✦ '; } .act h4::after, .chr h4::after { content:' ✦'; }
+.aq { border-top:1px solid rgba(43,27,16,.3); } .aq div:first-child { border:2px solid var(--ink); border-radius:1px; filter:sepia(.25); } .aq b { font-size:14.5px; font-weight:700; }
+.aq i { height:5px; border-radius:0; background:rgba(43,27,16,.16); border:0; } .aq i u { background:var(--s); } .aq small { font-style:italic; font-size:12.5px; }
+.chr img { border-radius:1px; filter:sepia(.25); } .chr b { font:800 19px/1.1 var(--d); letter-spacing:.03em; } .chr p { font-size:13.5px; }
+@media (max-width: 900px) {
+  .wrap { margin:10px 8px 14px; padding:20px 12px 26px; border-width:10px; gap:22px; } .br { width:40px; height:40px; } .br.tl { left:-12px; top:-12px; } .br.tr { right:-12px; top:-12px; } .br.rb { right:-12px; bottom:-12px; } .br.lb { left:-12px; bottom:-12px; }
+  .sign { padding:11px 34px 9px; } .sign h1 { font-size:19px; } .sign h1::before { margin-right:9px; } .sign h1::after { margin-left:9px; }
+  .quest { padding:42px 26px 76px; } .note { padding-left:26px !important; padding-right:26px !important; } .scrap.s2, .scrap.s3 { display:none; } .scrap.s1 { left:auto; right:8%; bottom:8px; } .wrap { padding-bottom:70px !important; } .stp { right:34px; bottom:32px; }
+  .quest .sh { height:150px; } .rank { right:-8px; top:-14px; } .quest h3 { font-size:26px; } .strip { padding:15px 24px 14px; }
+}
+
 /* ── phones: thumb-sized targets ── */
 @media (max-width: 900px) {
   .btn { display:inline-flex; align-items:center; min-height:46px; padding-inline:16px; } .go { gap:10px; flex-wrap:wrap; }
@@ -53,3 +196,6 @@ a.chr { transition:rotate .2s, translate .2s; } a.chr:hover { rotate:0deg; trans
   .strip .lk a { color:var(--ink); padding:11px 14px; border:2px solid var(--ink); border-radius:6px; text-decoration:none; background:var(--paper2); }
   a.aq { padding:10px 0; }
 }
+
+/* ── share card ── */
+.sc { background:var(--board); box-shadow:inset 0 0 0 8px #2c1a0f, inset 0 0 0 10px #150c06, inset 0 0 60px rgba(0,0,0,.6); } .sc .in { gap:18px; padding:22px 24px 22px; } .sc .col { gap:18px; } .sc .sign { justify-self:center; margin:14px 0 6px; } .sc .sign .ch.l { height:60px; } .sc .sign .ch.r { height:48px; } .sc .card { rotate:-.8deg; padding-bottom:40px; } .sc { isolation:isolate; } .sc .in { z-index:1; } .sc .quest:nth-child(2) { margin:0; }

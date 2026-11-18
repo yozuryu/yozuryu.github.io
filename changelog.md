@@ -2,10 +2,15 @@
 
 ## v26.11.19
 
-Easier to use on a phone, and changes on the page are animated instead of popping in.
+Share cards in every theme, easier to use on a phone, and changes on the page are animated instead of popping in.
 
 ### Structure
 
+- new: **Share cards**: a picture of my progress in the style of each theme, as a story (tall) and a post (wide)
+  Hours, unlocks, completions, the three platforms, this year's Memory Card and the games being played. The Share button beside Theme hands out the card of the theme you are looking at.
+- improved: **Quest Board** is an old guild board now
+  Worn, scratched planks with scraps of older notices still nailed up. Every notice is aged parchment with torn edges, stains and folds, a heavy ornamental frame, a ribbon heading, an illuminated first letter and a wax seal for the project's level. The guild card is a licence on the same paper. The title is an old plank hanging crooked on two chains.
+- new: **Link preview**: sharing the address now shows a card instead of a bare link
 - improved: **Theme switch** opens the new theme as a circle growing from the Theme button
   The list folds away first, then the new page's pieces rise in one after another.
 - improved: **The page arrives whole**: it waits a moment for the live numbers instead of growing piece by piece

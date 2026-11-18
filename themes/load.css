@@ -57,3 +57,6 @@ a.yr b { color:rgb(var(--c)); } a.yr .px { color:var(--dim); } .yr:not(:has(img)
   .lk a { padding:14px 12px; } .pl { gap:2px; } .pl a { padding:11px 0; } .now a { height:60px; } .blocks { gap:8px; } .blk { font-size:10px; }
   .top h1 { font-size:38px; }
 }
+
+/* ── share card ── */
+.sc { --foot:30px; } .sc .top { flex-wrap:nowrap; align-items:center; } .sc .top h1 { font-size:40px; } .sc .scf { color:var(--mint); letter-spacing:.2em; }

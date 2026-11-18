@@ -39,3 +39,27 @@ export function render(m, { esc, num }) {
     </div>
     </div>`;
 }
+
+// The share card: the player's status page torn out of the zine. No projects on it.
+export function card(m, { esc, num, site, asOf }, shape) {
+    const t = m.totals, mem = m.memory, ord = ['1st', '2nd', '3rd', '4th'];
+    return `<div class="sc sc-${shape}"><div class="bg"><i class="burst"></i><i class="dots"></i><b class="g2">Status</b><i class="blot"></i><s>✦</s><s>×</s><s>+</s></div><div class="in">
+      <div class="col">
+        <div class="hero">
+          <span class="tag px">Player 1</span>
+          <div class="pt"><i></i><img src="${esc(m.avatar)}" alt=""></div>
+          <h1 class="name" style="--n:${Math.max(4, m.name.length) + 1}">${[...m.name].map(c => `<span>${esc(c)}</span>`).join('')}</h1>
+          <div class="ttl px">${esc(m.title)}</div>
+          ${m.motto ? `<p class="motto">${esc(m.motto)}.</p>` : ''}
+          <div class="res"><div><span class="px">Hours</span><b>${num(t.hours)}</b></div><div><span class="px">Unlocks</span><b>${num(t.unlocks)}</b></div><div><span class="px">Completed</span><b>${num(t.completed)}</b></div></div>
+          ${m.plats.length ? `<div class="pl">${m.plats.map(p => `<a><img src="${esc(p.icon)}" alt="">${p.value} ${p.unit}</a>`).join('')}</div>` : ''}
+        </div>
+      </div>
+      <div class="col">
+        ${m.playing.length ? `<div class="turn"><span class="note">still playing…</span><h3 class="hd px">Turn order</h3><div class="tl">
+          ${m.playing.map((g, i) => `<a class="tn"><div class="cv" style="background-image:url(${esc(g.cover)})"></div><em>${ord[i]}</em><b>${esc(g.name)}</b>${g.pct != null ? `<u><i style="width:${g.pct}%"></i></u><small>${g.pct}% done</small>` : ''}</a>`).join('')}</div></div>` : ''}
+        ${mem ? `<div class="memw"><a class="mem"><span class="yr">${mem.year}</span><img src="${esc(mem.thumb)}" alt="" onerror="this.remove()"><div><span class="px">Memory card · ${mem.year}${mem.partial ? ' so far' : ''}</span><h3>${esc(mem.title)}</h3><p>${esc(mem.line)}</p></div></a><div class="stamp"><span>Saved<small>${esc(asOf)}</small></span></div></div>` : ''}
+        <div class="scf px">${esc(site)}</div>
+      </div>
+    </div></div>`;
+}

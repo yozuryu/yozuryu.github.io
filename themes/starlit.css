@@ -90,3 +90,7 @@ a.yr b { color:rgb(var(--c)); } a.yr .px { color:var(--dim); } a.yr:hover b { te
   .sky svg { margin:6px 0; } .yr { padding-top:14px; }
   #root.rt-in .mid > *, #root.rt-in .side > * { animation:rt-rise .55s cubic-bezier(.22,1,.36,1) backwards; animation-delay:.1s; } #root.rt-in .side > :first-child { animation-delay:.04s; }
 }
+
+/* ── share card ── */
+.sc { --foot:30px; } .sc .top .r { width:auto; margin-left:auto; } .sc .top { flex-wrap:nowrap; } .sc .menu { display:none; }
+.sc .scf { color:var(--gold); letter-spacing:.2em; } .sc .sky svg { margin:2px 0 -8px; }
